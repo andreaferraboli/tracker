@@ -1,12 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/firebase_options.dart';
+import 'package:tracker/routes/recipe_tips_screen.dart';
 import 'routes/home_screen.dart';
 import 'routes/shopping_screen.dart';
 import 'routes/add_meal_screen.dart';
 import 'routes/view_expenses_screen.dart';
 import 'routes/inventory_screen.dart';
 import 'routes/view_meals_screen.dart';
-
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+  );
   runApp(MyApp());
 }
 
@@ -42,6 +52,7 @@ class _MyAppState extends State<MyApp> {
         '/viewExpenses': (context) => ViewExpensesScreen(),
         '/inventory': (context) => InventoryScreen(),
         '/viewMeals': (context) => ViewMealsScreen(),
+        '/recipeTips': (context) => RecipeTipsScreen(),
       },
     );
   }

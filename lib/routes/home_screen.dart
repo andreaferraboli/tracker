@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback toggleTheme;
@@ -54,26 +54,32 @@ class HomeScreen extends StatelessWidget {
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: <Widget>[
-          _buildMenuButton(context, 'Fare la spesa', Icons.shopping_cart, '/shopping'),
-          _buildMenuButton(context, 'Inserire un pasto', Icons.restaurant, '/addMeal'),
-          _buildMenuButton(context, 'Visualizzare spese', Icons.receipt_long, '/viewExpenses'),
-          _buildMenuButton(context, 'Vedere inventario', Icons.inventory, '/inventory'),
-          _buildMenuButton(context, 'Visualizzare pasti', Icons.fastfood, '/viewMeals'),
-          _buildMenuButton(context, 'Vuoto', Icons.block, null),
+          _buildMenuButton(context, 'Fare la spesa', Icons.shopping_cart, '/shopping', Color.fromARGB(
+              255, 34, 83, 9)),
+          _buildMenuButton(context, 'Inserire un pasto', Icons.restaurant, '/addMeal', Color.fromARGB(
+              255, 154, 135, 0)),
+          _buildMenuButton(context, 'Visualizzare spese', Icons.receipt_long, '/viewExpenses', Color.fromARGB(
+              255, 97, 3, 3)),
+          _buildMenuButton(context, 'Vedere inventario', Icons.inventory, '/inventory', Color.fromARGB(255 , 34, 65, 98)),
+          _buildMenuButton(context, 'Visualizzare pasti', Icons.fastfood, '/viewMeals', Color.fromARGB(
+              255, 94, 34, 98)),
+          _buildMenuButton(context, 'Suggerisci ricette', Icons.food_bank_outlined, '/recipeTips', Color.fromARGB(
+              255, 182, 81, 0)),
         ],
       ),
     );
   }
 
   // Funzione per creare un pulsante nel grid
-  Widget _buildMenuButton(BuildContext context, String label, IconData icon, String? route) {
+  Widget _buildMenuButton(BuildContext context, String label, IconData icon, String? route, Color color) {
     return ElevatedButton(
       onPressed: route != null
           ? () {
-              Navigator.pushNamed(context, route);
-            }
+        Navigator.pushNamed(context, route);
+      }
           : null, // Pulsante disabilitato se la route è null
       style: ElevatedButton.styleFrom(
+        backgroundColor: color, // Colore del pulsante
         padding: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
