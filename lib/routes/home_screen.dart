@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback toggleTheme;
 
-  HomeScreen({super.key, required this.toggleTheme});
+  const HomeScreen({super.key, required this.toggleTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -54,29 +55,35 @@ class HomeScreen extends StatelessWidget {
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: <Widget>[
-          _buildMenuButton(context, 'Fare la spesa', Icons.shopping_cart, '/shopping', Color.fromARGB(
-              255, 34, 83, 9)),
-          _buildMenuButton(context, 'Inserire un pasto', Icons.restaurant, '/addMeal', Color.fromARGB(
-              255, 154, 135, 0)),
-          _buildMenuButton(context, 'Visualizzare spese', Icons.receipt_long, '/viewExpenses', Color.fromARGB(
-              255, 97, 3, 3)),
-          _buildMenuButton(context, 'Vedere inventario', Icons.inventory, '/inventory', Color.fromARGB(255 , 34, 65, 98)),
-          _buildMenuButton(context, 'Visualizzare pasti', Icons.fastfood, '/viewMeals', Color.fromARGB(
-              255, 94, 34, 98)),
-          _buildMenuButton(context, 'Suggerisci ricette', Icons.food_bank_outlined, '/recipeTips', Color.fromARGB(
-              255, 182, 81, 0)),
+          _buildMenuButton(context, 'Fare la spesa', Icons.shopping_cart,
+              '/shopping', const Color.fromARGB(255, 34, 83, 9)),
+          _buildMenuButton(context, 'Inserire un pasto', Icons.restaurant,
+              '/addMeal', const Color.fromARGB(255, 154, 135, 0)),
+          _buildMenuButton(context, 'Visualizzare spese', Icons.receipt_long,
+              '/viewExpenses', const Color.fromARGB(255, 97, 3, 3)),
+          _buildMenuButton(context, 'Vedere inventario', Icons.inventory,
+              '/inventory', const Color.fromARGB(255, 34, 65, 98)),
+          _buildMenuButton(context, 'Visualizzare pasti', Icons.fastfood,
+              '/viewMeals', const Color.fromARGB(255, 94, 34, 98)),
+          _buildMenuButton(
+              context,
+              'Suggerisci ricette',
+              Icons.food_bank_outlined,
+              '/recipeTips',
+              const Color.fromARGB(255, 182, 81, 0)),
         ],
       ),
     );
   }
 
   // Funzione per creare un pulsante nel grid
-  Widget _buildMenuButton(BuildContext context, String label, IconData icon, String? route, Color color) {
+  Widget _buildMenuButton(BuildContext context, String label, IconData icon,
+      String? route, Color color) {
     return ElevatedButton(
       onPressed: route != null
           ? () {
-        Navigator.pushNamed(context, route);
-      }
+              Navigator.pushNamed(context, route);
+            }
           : null, // Pulsante disabilitato se la route è null
       style: ElevatedButton.styleFrom(
         backgroundColor: color, // Colore del pulsante

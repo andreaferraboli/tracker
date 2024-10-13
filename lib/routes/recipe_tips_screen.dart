@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RecipeTipsScreen extends StatefulWidget {
+  const RecipeTipsScreen({super.key});
+
   @override
   _RecipeTipsScreenState createState() => _RecipeTipsScreenState();
 }
@@ -24,7 +26,7 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
     // );
 
     // Simulazione di un JSON ricevuto da una richiesta HTTP
-    final String mockJsonResponse = '''
+    const String mockJsonResponse = '''
     {
       "meals": [
         {
@@ -66,16 +68,16 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recipe Tips'),
+        title: const Text('Recipe Tips'),
       ),
       body: _mealSuggestions.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
         itemCount: _mealSuggestions.length,
         itemBuilder: (context, index) {
           final recipe = _mealSuggestions[index];
           return Card(
-            margin: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
             child: ListTile(
               title: Text(recipe['name']),
               subtitle: Text("Ingredients: ${recipe['ingredients'].join(', ')}"),

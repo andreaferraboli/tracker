@@ -2,30 +2,30 @@ class Product {
   String productId;
   String productName;
   String category;
-  double priceTotal;
-  double pricePerPackage;
-  double totalWeight;
-  double weightPerPackage;
-  int quantityOwned;
-  Map<String, double> macronutrientsPer100g;
+  double totalPrice; // Rinominato da priceTotal
+  double price; // Prezzo unitario
+  int quantity; // Rinominato da quantityOwned
+  String unit; // Unità di misura
+  Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
   String expirationDate;
   String supermarket;
-  String lastPurchaseDate;
+  String purchaseDate; // Rinominato da lastPurchaseDate
+  String barcode; // Nuovo campo
 
   // Costruttore
   Product({
     required this.productId,
     required this.productName,
     required this.category,
-    required this.priceTotal,
-    required this.pricePerPackage,
-    required this.totalWeight,
-    required this.weightPerPackage,
-    required this.quantityOwned,
-    required this.macronutrientsPer100g,
+    required this.totalPrice,
+    required this.price,
+    required this.quantity,
+    required this.unit,
+    required this.macronutrients,
     required this.expirationDate,
     required this.supermarket,
-    required this.lastPurchaseDate,
+    required this.purchaseDate,
+    required this.barcode,
   });
 
   // Metodo per la deserializzazione da JSON (fromJson)
@@ -34,15 +34,15 @@ class Product {
       productId: json['productId'],
       productName: json['productName'],
       category: json['category'],
-      priceTotal: json['priceTotal'].toDouble(),
-      pricePerPackage: json['pricePerPackage'].toDouble(),
-      totalWeight: json['totalWeight'].toDouble(),
-      weightPerPackage: json['weightPerPackage'].toDouble(),
-      quantityOwned: json['quantityOwned'],
-      macronutrientsPer100g: Map<String, double>.from(json['macronutrientsPer100g']),
+      totalPrice: json['totalPrice'],
+      price: json['price'],
+      quantity: json['quantity'],
+      unit: json['unit'],
+      macronutrients: Map<String, double>.from(json['macronutrients']),
       expirationDate: json['expirationDate'],
       supermarket: json['supermarket'],
-      lastPurchaseDate: json['lastPurchaseDate'],
+      purchaseDate: json['purchaseDate'],
+      barcode: json['barcode'],
     );
   }
 
@@ -52,15 +52,15 @@ class Product {
       'productId': productId,
       'productName': productName,
       'category': category,
-      'priceTotal': priceTotal,
-      'pricePerPackage': pricePerPackage,
-      'totalWeight': totalWeight,
-      'weightPerPackage': weightPerPackage,
-      'quantityOwned': quantityOwned,
-      'macronutrientsPer100g': macronutrientsPer100g,
+      'totalPrice': totalPrice,
+      'price': price,
+      'quantity': quantity,
+      'unit': unit,
+      'macronutrients': macronutrients,
       'expirationDate': expirationDate,
       'supermarket': supermarket,
-      'lastPurchaseDate': lastPurchaseDate,
+      'purchaseDate': purchaseDate,
+      'barcode': barcode,
     };
   }
 }

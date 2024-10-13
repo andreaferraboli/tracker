@@ -2,6 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseScreen extends StatelessWidget {
+  const ExpenseScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +31,7 @@ class ExpenseScreen extends StatelessWidget {
               ),
             ),
             // Lista delle spese
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView(
                 children: [
@@ -44,8 +46,8 @@ class ExpenseScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Icon(Icons.add),
         backgroundColor: Colors.amber,
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -57,21 +59,21 @@ class ExpenseScreen extends StatelessWidget {
         value: 56,
         title: '56%',
         radius: 50,
-        titleStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        titleStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       PieChartSectionData(
         color: Colors.blue,
         value: 33,
         title: '33%',
         radius: 50,
-        titleStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        titleStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
       PieChartSectionData(
         color: Colors.green,
         value: 11,
         title: '11%',
         radius: 50,
-        titleStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        titleStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     ];
   }
@@ -81,8 +83,8 @@ class ExpenseScreen extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: color,
         child: Text(
-          '${percentage}%',
-          style: TextStyle(color: Colors.white),
+          '$percentage%',
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       title: Text(category),

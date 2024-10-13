@@ -39,6 +39,10 @@ dependencies:
   graphic: ^2.5.0
   quiver: ^3.2.2
   intl: ^0.19.0
+  cloud_firestore: ^5.4.4
+  http: ^1.2.2
+  firebase_core: ^3.6.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

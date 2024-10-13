@@ -17,7 +17,7 @@ void main() async {
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -47,11 +47,11 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(toggleTheme: _toggleTheme),
-        '/shopping': (context) => ShoppingScreen(),
-        '/addMeal': (context) => AddMealScreen(),
-        '/viewExpenses': (context) => ViewExpensesScreen(),
-        '/inventory': (context) => InventoryScreen(),
-        '/viewMeals': (context) => ViewMealsScreen(),
+        '/shopping': (context) => const ShoppingScreen(),
+        '/addMeal': (context) => const AddMealScreen(),
+        '/viewExpenses': (context) => const ViewExpensesScreen(),
+        '/inventory': (context) => const InventoryScreen(),
+        '/viewMeals': (context) => const ViewMealsScreen(),
         '/recipeTips': (context) => RecipeTipsScreen(),
       },
     );
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
 final ThemeData _lightTheme = ThemeData(
   brightness: Brightness.light,
   primarySwatch: Colors.blue, // Serie di tonalità di blu
-  colorScheme: ColorScheme.light(
+  colorScheme: const ColorScheme.light(
     primary: Colors.blue, // Colore principale
     secondary: Colors.orange, // Colore secondario
   ),
@@ -85,14 +85,14 @@ final ThemeData _lightTheme = ThemeData(
   ),
   cardColor: Colors.grey[100], // Colore delle card
   dividerColor: Colors.grey, // Colore dei divisori
-  iconTheme: IconThemeData(color: Colors.blue), // Colore delle icone
+  iconTheme: const IconThemeData(color: Colors.blue), // Colore delle icone
 );
 
 // Definizione del tema scuro
 final ThemeData _darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.deepPurple, // Serie di tonalità di viola
-  colorScheme: ColorScheme.dark(
+  colorScheme: const ColorScheme.dark(
     primary: Colors.deepPurple, // Colore principale
     secondary: Colors.pinkAccent, // Colore secondario
   ),
@@ -115,7 +115,7 @@ final ThemeData _darkTheme = ThemeData(
   ),
   cardColor: Colors.grey[850], // Colore delle card
   dividerColor: Colors.grey[700], // Colore dei divisori
-  iconTheme: IconThemeData(color: Colors.pinkAccent), // Colore delle icone
+  iconTheme: const IconThemeData(color: Colors.pinkAccent), // Colore delle icone
 );
 
 

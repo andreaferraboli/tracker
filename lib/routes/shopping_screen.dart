@@ -55,7 +55,7 @@ class ShoppingScreen extends StatelessWidget {
       onTap: () {
         // Qui puoi implementare la logica per aggiungere un supermercato
       },
-      child: Card(
+      child: const Card(
         elevation: 4,
         child: Center(
           child: Column(
@@ -65,10 +65,10 @@ class ShoppingScreen extends StatelessWidget {
                 Icons.add,
                 size: 40,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 'Aggiungi Supermercato',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
