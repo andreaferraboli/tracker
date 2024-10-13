@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/routes/add_product_screen.dart';
 
 class SupermarketScreen extends StatefulWidget {
   final String supermarketName;
@@ -128,8 +129,10 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              uploadProductToFirestore(
-                  "andrea_ferraboli"); // Chiamata alla funzione quando si preme il pulsante
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddProductScreen()),
+              );
             },
             child: const Text('Aggiungi Prodotto'),
           ),

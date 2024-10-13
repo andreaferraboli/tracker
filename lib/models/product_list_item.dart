@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/services/category.dart';
 
 class ProductListItem extends StatelessWidget {
   final Product product; // Singolo oggetto Product
@@ -16,13 +17,8 @@ class ProductListItem extends StatelessWidget {
         padding: EdgeInsets.all(10.0),
         child: Row(
           children: [
-            // Immagine del prodotto
-            Image.network(
-              'https://via.placeholder.com/150?text=${product.category}',
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
-            ),
+            // Usa l'icona caricata direttamente dalla categoria
+            CategoryIcon.iconFromCategory(product.category),
             SizedBox(width: 15), // Spaziatura tra immagine e testo
             // Dettagli del prodotto
             Expanded(
@@ -81,5 +77,6 @@ class ProductListItem extends StatelessWidget {
         ),
       ),
     );
+
   }
 }

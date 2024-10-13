@@ -30,21 +30,21 @@ class Product {
 
   // Metodo per la deserializzazione da JSON (fromJson)
   factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      productId: json['productId'],
-      productName: json['productName'],
-      category: json['category'],
-      totalPrice: json['totalPrice'],
-      price: json['price'],
-      quantity: json['quantity'],
-      unit: json['unit'],
-      macronutrients: Map<String, double>.from(json['macronutrients']),
-      expirationDate: json['expirationDate'],
-      supermarket: json['supermarket'],
-      purchaseDate: json['purchaseDate'],
-      barcode: json['barcode'],
-    );
-  }
+  return Product(
+    productId: json['productId'],
+    productName: json['productName'],
+    category: json['category'],
+    totalPrice: double.parse(json['totalPrice'].toStringAsFixed(2)),
+    price: double.parse(json['price'].toStringAsFixed(2)),
+    quantity: json['quantity'],
+    unit: json['unit'],
+    macronutrients: (json['macronutrients'] as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toDouble())),
+    expirationDate: json['expirationDate'],
+    supermarket: json['supermarket'],
+    purchaseDate: json['purchaseDate'],
+    barcode: json['barcode'],
+  );
+}
 
   // Metodo per la serializzazione in JSON (toJson)
   Map<String, dynamic> toJson() {
