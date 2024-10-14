@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/services/category.dart';
 
-class ProductListItem extends StatelessWidget {
+class ProductListItem extends StatefulWidget {
   final Product product; // Singolo oggetto Product
+  final void Function(double, bool) onTotalPriceChange; // Funzione per aggiornare il prezzo totale
 
-  ProductListItem({required this.product});
+  ProductListItem({required this.product, required this.onTotalPriceChange});
+
+  @override
+  _ProductListItemState createState() => _ProductListItemState();
+}
+
+class _ProductListItemState extends State<ProductListItem> {
+  int buyQuantity = 0; // Quantità del prodotto da gestire nello stato
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +26,7 @@ class ProductListItem extends StatelessWidget {
         child: Row(
           children: [
             // Usa l'icona caricata direttamente dalla categoria
-            CategoryIcon.iconFromCategory(product.category),
+            CategoryIcon.iconFromCategory(widget.product.category),
             SizedBox(width: 15), // Spaziatura tra immagine e testo
             // Dettagli del prodotto
             Expanded(
@@ -27,7 +35,7 @@ class ProductListItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    product.productName,
+                    widget.product.productName,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -35,7 +43,7 @@ class ProductListItem extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    product.category,
+                    widget.product.category,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
@@ -43,7 +51,7 @@ class ProductListItem extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Prezzo: €${product.totalPrice.toStringAsFixed(2)}',
+                    'Prezzo: €${widget.product.totalPrice.toStringAsFixed(2)}',
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 14,
@@ -56,20 +64,39 @@ class ProductListItem extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    if (product.quantity > 0) {
-                      // logica per ridurre quantità
-                    }
-                  },
-                ),
-                Text(product.quantity.toString()),
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    // logica per aumentare quantità
-                  },
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.remove),
+                          iconSize: 30.0, // Aumenta dimensione icona
+                          color: Colors.blue, // Colore di sfondo blu
+                          onPressed: () {
+                            if (buyQuantity > 0) {
+                              setState(() {
+                                buyQuantity--;
+                              });
+                              widget.onTotalPriceChange(widget.product.price, false);
+                            }
+                          },
+                        ),
+                        Text('$buyQuantity'),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          iconSize: 30.0, // Aumenta dimensione icona
+                          color: Colors.blue, // Colore di sfondo blu
+                          onPressed: () {
+                            setState(() {
+                              buyQuantity++;
+                            });
+                            widget.onTotalPriceChange(widget.product.price, true);
+                          },
+                        ),
+                      ],
+                    ),
+                    Text('Posseduto: ${widget.product.quantity}'),
+                  ],
                 ),
               ],
             ),
@@ -77,6 +104,5 @@ class ProductListItem extends StatelessWidget {
         ),
       ),
     );
-
   }
 }

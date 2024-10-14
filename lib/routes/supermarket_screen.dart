@@ -7,6 +7,7 @@ import 'package:tracker/routes/add_product_screen.dart';
 class SupermarketScreen extends StatefulWidget {
   final String supermarketName;
 
+
   const SupermarketScreen({super.key, required this.supermarketName});
 
   @override
@@ -17,6 +18,15 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
   bool isConnected = false;
+  void _updateTotalBalance(double price, bool isAdding) {
+    setState(() {
+      if (isAdding) {
+        totalBalance += price;
+      } else {
+        totalBalance -= price;
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -95,7 +105,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
         // Itera sui prodotti per creare un widget ProductList per ciascuno
         for (var product in productsArray) {
           productWidgets.add(
-            ProductListItem(product: Product.fromJson(product)),
+            ProductListItem(product: Product.fromJson(product), onTotalPriceChange: _updateTotalBalance),
           );
         }
 

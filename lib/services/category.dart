@@ -9,7 +9,8 @@ class CategoryIcon {
   // Metodo sincrono per caricare i dati
   static Future<void> loadCategoriesData() async {
     if (_categoriesData == null) {
-      final jsonString = await rootBundle.loadString('assets/json/categories.json');
+      final jsonString =
+          await rootBundle.loadString('assets/json/categories.json');
       _categoriesData = json.decode(jsonString);
     }
   }
@@ -37,7 +38,7 @@ class CategoryIcon {
   // Metodo helper per costruire l'icona della categoria
   static Widget _buildCategoryIcon(String categoryName) {
     final category = _categoriesData?.firstWhere(
-          (category) => category['nomeCategoria'] == categoryName,
+      (category) => category['nomeCategoria'] == categoryName,
       orElse: () => null,
     );
 
@@ -46,19 +47,34 @@ class CategoryIcon {
       final colorHex = category['coloreSfondo'];
 
       return Container(
-        color: _hexToColor(colorHex), // Converti il colore da hex
-        child: Icon(
-          _getFlutterIcon(iconName), // Ottieni l'icona Flutter
-          color: Colors.white,
+        width: 50.0, // Aumenta la larghezza del contenitore
+        height: 50.0, // Aumenta l'altezza del contenitore
+        decoration: BoxDecoration(
+          color: _hexToColor(colorHex), // Converti il colore da hex
+          shape: BoxShape.circle, // Forma circolare
+        ),
+        child: Center(
+          child: Icon(
+            _getFlutterIcon(iconName), // Ottieni l'icona Flutter
+            color: Colors.white,
+            size: 30.0, // Dimensione dell'icona
+          ),
         ),
       );
     } else {
-      // Se la categoria non esiste nel JSON, restituisci un'icona di default
       return Container(
-        color: Colors.grey,
-        child: Icon(
-          Icons.category,
-          color: Colors.white,
+        width: 50.0, // Aumenta la larghezza del contenitore
+        height: 50.0, // Aumenta l'altezza del contenitore
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          shape: BoxShape.circle, // Forma circolare
+        ),
+        child: Center(
+          child: Icon(
+            Icons.category,
+            color: Colors.white,
+            size: 30.0, // Dimensione dell'icona di default
+          ),
         ),
       );
     }
