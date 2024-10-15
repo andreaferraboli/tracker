@@ -47,7 +47,7 @@ class ExpenseScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         backgroundColor: Colors.amber,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

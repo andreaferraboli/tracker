@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
         '/viewExpenses': (context) => const ViewExpensesScreen(),
         '/inventory': (context) => const InventoryScreen(),
         '/viewMeals': (context) => const ViewMealsScreen(),
-        '/recipeTips': (context) => RecipeTipsScreen(),
+        '/recipeTips': (context) => const RecipeTipsScreen(),
       },
     );
   }

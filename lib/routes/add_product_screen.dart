@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'dart:convert';
 
 class AddProductScreen extends StatefulWidget {
+  const AddProductScreen({super.key});
+
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
 }
@@ -28,17 +30,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
       appBar: AppBar(
         backgroundColor: Colors.red,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text('Nuova spesa', style: TextStyle(color: Colors.white)),
+        title: const Text('Nuova spesa', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
-            icon: Icon(Icons.star_border, color: Colors.white),
+            icon: const Icon(Icons.star_border, color: Colors.white),
             onPressed: () {},
           ),
           IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.white),
+            icon: const Icon(Icons.more_vert, color: Colors.white),
             onPressed: () {},
           ),
         ],
@@ -48,7 +50,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             children: [
               _buildTopButtons(),
               _buildValueInput(),
@@ -74,11 +76,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          icon: Icon(Icons.menu, color: Colors.white),
+          icon: const Icon(Icons.menu, color: Colors.white),
           onPressed: () {},
         ),
         IconButton(
-          icon: Icon(Icons.refresh, color: Colors.white),
+          icon: const Icon(Icons.refresh, color: Colors.white),
           onPressed: () {},
         ),
       ],
@@ -87,8 +89,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Widget _buildValueInput() {
     return TextFormField(
-      style: TextStyle(color: Colors.white, fontSize: 24),
-      decoration: InputDecoration(
+      style: const TextStyle(color: Colors.white, fontSize: 24),
+      decoration: const InputDecoration(
         labelText: 'Valore',
         labelStyle: TextStyle(color: Colors.white54),
         suffixText: '€',
@@ -103,7 +105,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Widget _buildCategorySelector() {
     return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
       ),
@@ -115,8 +117,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: Row(
             children: [
               Icon(category == 'Casa' ? Icons.home : Icons.category, color: Colors.green),
-              SizedBox(width: 10),
-              Text(category, style: TextStyle(color: Colors.white)),
+              const SizedBox(width: 10),
+              Text(category, style: const TextStyle(color: Colors.white)),
             ],
           ),
         );
@@ -131,8 +133,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Widget _buildTotalValue() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -144,18 +146,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Widget _buildDivider() {
-    return Divider(color: Colors.white54);
+    return const Divider(color: Colors.white54);
   }
 
   Widget _buildIconTextField(IconData icon, String label, Function(String?) onSaved) {
     return TextFormField(
-      style: TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         icon: Icon(icon, color: Colors.white54),
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white54),
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
-        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        labelStyle: const TextStyle(color: Colors.white54),
+        enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
       ),
       onSaved: onSaved,
     );
@@ -163,7 +165,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Widget _buildControlledSwitch() {
     return SwitchListTile(
-      title: Text('Controllata', style: TextStyle(color: Colors.white)),
+      title: const Text('Controllata', style: TextStyle(color: Colors.white)),
       value: _productData['isControlled'],
       onChanged: (bool value) {
         setState(() {
@@ -179,11 +181,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
-          icon: Icon(Icons.camera_alt, color: Colors.white54),
+          icon: const Icon(Icons.camera_alt, color: Colors.white54),
           onPressed: () {},
         ),
         IconButton(
-          icon: Icon(Icons.image, color: Colors.white54),
+          icon: const Icon(Icons.image, color: Colors.white54),
           onPressed: () {},
         ),
       ],
@@ -195,17 +197,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Expanded(
           child: ElevatedButton(
-            child: Text('ANNULLA'),
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('ANNULLA'),
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            child: Text('SALVA'),
             onPressed: _saveProduct,
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text('SALVA'),
           ),
         ),
       ],

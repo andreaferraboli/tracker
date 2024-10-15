@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class CategoryIcon {
@@ -26,7 +27,7 @@ class CategoryIcon {
           if (snapshot.connectionState == ConnectionState.done) {
             return _buildCategoryIcon(categoryName);
           } else {
-            return CircularProgressIndicator(); // Indicatore di caricamento
+            return const CircularProgressIndicator(); // Indicatore di caricamento
           }
         },
       );
@@ -48,30 +49,43 @@ class CategoryIcon {
       final colorHex = category['coloreSfondo'];
 
       return Container(
-        width: 50.0, // Aumenta la larghezza del contenitore
-        height: 50.0, // Aumenta l'altezza del contenitore
+        width: 50.0, // Larghezza del contenitore
+        height: 50.0, // Altezza del contenitore
         decoration: BoxDecoration(
           color: _hexToColor(colorHex), // Converti il colore da hex
           shape: BoxShape.circle, // Forma circolare
         ),
-        child: Center(
-          child: Icon(
-            //TODO: aggiusta icona che va fuori i bordi
-            _getFlutterIcon(iconName), // Ottieni l'icona Flutter
-            color: Colors.white,
-            size: 30.0, // Dimensione dell'icona
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Ottieni la dimensione massima disponibile per l'icona
+            double maxIconSize = constraints.biggest.width *
+                0.6; // Adatta l'icona al 60% del contenitore
+
+            return Center(
+              child: Container(
+                width: 30.0, // Larghezza fissa dell'icona
+                child: FittedBox(
+                  fit: BoxFit.contain, // Adatta l'icona in base alla larghezza
+                  child: Icon(
+                    _getFlutterIcon(iconName), // Ottieni l'icona Flutter
+                    color: _isDarkColor(colorHex) ? Colors.white : Colors.black,
+                    size: 50.0, // La dimensione originale dell'icona
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       );
     } else {
       return Container(
         width: 50.0, // Aumenta la larghezza del contenitore
         height: 50.0, // Aumenta l'altezza del contenitore
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.grey,
           shape: BoxShape.circle, // Forma circolare
         ),
-        child: Center(
+        child: const Center(
           child: Icon(
             Icons.category,
             color: Colors.white,
@@ -88,6 +102,13 @@ class CategoryIcon {
     return Color(int.parse('FF$hexCode', radix: 16));
   }
 
+  // Helper per determinare se un colore è scuro
+  static bool _isDarkColor(String hexColor) {
+    final color = _hexToColor(hexColor);
+    final brightness = color.computeLuminance();
+    return brightness < 0.5;
+  }
+
   // Helper per ottenere l'icona Flutter dal nome dell'icona
   static IconData _getFlutterIcon(String iconName) {
     switch (iconName) {
@@ -100,11 +121,11 @@ class CategoryIcon {
       case 'fruit':
         return Icons.apple;
       case 'dairy_products':
-        return FontAwesomeIcons.cow;
+        return HugeIcons.strokeRoundedCheese;
       case 'pasta':
         return FontAwesomeIcons.wheatAwn;
       case 'meat':
-        return FontAwesomeIcons.drumstickBite;
+        return HugeIcons.strokeRoundedChickenThighs;
       case 'fish':
         return FontAwesomeIcons.fish;
       case 'water':

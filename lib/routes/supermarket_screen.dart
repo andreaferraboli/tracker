@@ -7,7 +7,6 @@ import 'package:tracker/routes/add_product_screen.dart';
 class SupermarketScreen extends StatefulWidget {
   final String supermarketName;
 
-
   const SupermarketScreen({super.key, required this.supermarketName});
 
   @override
@@ -78,9 +77,9 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
     CollectionReference productsRef =
         FirebaseFirestore.instance.collection('products');
     QuerySnapshot querySnapshot = await productsRef.get();
-    querySnapshot.docs.forEach((doc) {
+    for (var doc in querySnapshot.docs) {
       doc.reference.delete();
-    });
+    }
   }
 
   void _checkConnection() {
@@ -105,7 +104,9 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
         // Itera sui prodotti per creare un widget ProductList per ciascuno
         for (var product in productsArray) {
           productWidgets.add(
-            ProductListItem(product: Product.fromJson(product), onTotalPriceChange: _updateTotalBalance),
+            ProductListItem(
+                product: Product.fromJson(product),
+                onTotalPriceChange: _updateTotalBalance),
           );
         }
 
@@ -133,7 +134,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Saldo Totale: €$totalBalance',
+              'Saldo Totale: €${totalBalance.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 24),
             ),
           ),

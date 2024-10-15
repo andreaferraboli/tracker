@@ -4,9 +4,11 @@ import 'package:tracker/services/category.dart';
 
 class ProductListItem extends StatefulWidget {
   final Product product; // Singolo oggetto Product
-  final void Function(double, bool) onTotalPriceChange; // Funzione per aggiornare il prezzo totale
+  final void Function(double, bool)
+      onTotalPriceChange; // Funzione per aggiornare il prezzo totale
 
-  ProductListItem({required this.product, required this.onTotalPriceChange});
+  const ProductListItem(
+      {super.key, required this.product, required this.onTotalPriceChange});
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
@@ -18,16 +20,16 @@ class _ProductListItemState extends State<ProductListItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
       elevation: 3,
       child: Container(
         width: 300, // Larghezza fissa per la card
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
             // Usa l'icona caricata direttamente dalla categoria
             CategoryIcon.iconFromCategory(widget.product.category),
-            SizedBox(width: 15), // Spaziatura tra immagine e testo
+            const SizedBox(width: 15), // Spaziatura tra immagine e testo
             // Dettagli del prodotto
             Expanded(
               child: Column(
@@ -36,23 +38,23 @@ class _ProductListItemState extends State<ProductListItem> {
                 children: [
                   Text(
                     widget.product.productName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Text(
                     widget.product.category,
-                    style: TextStyle(
-                      color: Colors.grey,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 106, 106, 106),
                       fontSize: 14,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
-                    'Prezzo: €${widget.product.totalPrice.toStringAsFixed(2)}',
-                    style: TextStyle(
+                    '€${widget.product.price.toStringAsFixed(2)}, Totale €${(widget.product.price * buyQuantity).toStringAsFixed(2)}',
+                    style: const TextStyle(
                       color: Colors.black87,
                       fontSize: 14,
                     ),
@@ -67,31 +69,50 @@ class _ProductListItemState extends State<ProductListItem> {
                 Column(
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.remove),
-                          iconSize: 30.0, // Aumenta dimensione icona
-                          color: Colors.blue, // Colore di sfondo blu
-                          onPressed: () {
-                            if (buyQuantity > 0) {
-                              setState(() {
-                                buyQuantity--;
-                              });
-                              widget.onTotalPriceChange(widget.product.price, false);
-                            }
-                          },
+                        Material(
+                          shape: const CircleBorder(), // Forma a cerchio
+                          color: Theme.of(context)
+                              .primaryColor, // Colore di sfondo primary del tema
+                          child: IconButton(
+                            icon: const Icon(Icons.remove, color: Colors.white),
+                            iconSize: 30.0, // Aumenta dimensione icona
+                            padding: const EdgeInsets.all(
+                                10.0), // Padding per rendere il bottone circolare
+                            onPressed: () {
+                              if (buyQuantity > 0) {
+                                setState(() {
+                                  buyQuantity--;
+                                });
+                                widget.onTotalPriceChange(
+                                    widget.product.price, false);
+                              }
+                            },
+                          ),
                         ),
-                        Text('$buyQuantity'),
-                        IconButton(
-                          icon: Icon(Icons.add),
-                          iconSize: 30.0, // Aumenta dimensione icona
-                          color: Colors.blue, // Colore di sfondo blu
-                          onPressed: () {
-                            setState(() {
-                              buyQuantity++;
-                            });
-                            widget.onTotalPriceChange(widget.product.price, true);
-                          },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Text('$buyQuantity',
+                              style: const TextStyle(fontSize: 20.0)),
+                        ),
+                        Material(
+                          shape: const CircleBorder(), // Forma a cerchio
+                          color: Theme.of(context)
+                              .primaryColor, // Colore di sfondo primary del tema
+                          child: IconButton(
+                            icon: const Icon(Icons.add, color: Colors.white),
+                            iconSize: 30.0, // Aumenta dimensione icona
+                            padding: const EdgeInsets.all(
+                                10.0), // Padding per rendere il bottone circolare
+                            onPressed: () {
+                              setState(() {
+                                buyQuantity++;
+                              });
+                              widget.onTotalPriceChange(
+                                  widget.product.price, true);
+                            },
+                          ),
                         ),
                       ],
                     ),
