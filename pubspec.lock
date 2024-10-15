@@ -142,6 +142,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  flutter_riverpod:
+    dependency: "direct main"
+    description:
+      name: flutter_riverpod
+      sha256: "711d916456563f715bde1e139d7cfdca009f8264befab3ac9f8ded8b6ec26405"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -152,6 +160,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      sha256: "275ff26905134bcb59417cf60ad979136f1f8257f2f449914b2c3e05bbb4cd6f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.7.0"
   graphic:
     dependency: "direct main"
     description:
@@ -280,6 +296,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
+  riverpod:
+    dependency: transitive
+    description:
+      name: riverpod
+      sha256: c86fedfb45dd1da98ee6493dd9374325cdf494e7d523ebfb0c387eecc5f7b5c9
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -301,6 +325,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.1"
+  state_notifier:
+    dependency: transitive
+    description:
+      name: state_notifier
+      sha256: b8677376aa54f2d7c58280d5a007f9e8774f1968d1fb1c096adcb4792fba29bb
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   stream_channel:
     dependency: transitive
     description:

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 class AddProductScreen extends StatefulWidget {
   @override
@@ -11,84 +10,58 @@ class AddProductScreen extends StatefulWidget {
 class _AddProductScreenState extends State<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _productData = {
-    'productId': '',
-    'productName': '',
     'category': '',
-    'price': 0.0,
-    'quantity': 0,
-    'unit': '',
-    'totalPrice': 0.0,
-    'supermarket': '',
-    'purchaseDate': '',
-    'expirationDate': '',
-    'barcode': '',
-    'macronutrients': {
-      'calories': 0,
-      'protein': 0.0,
-      'fat': 0.0,
-      'carbohydrates': 0.0,
-    },
+    'value': 0.0,
+    'portfolio': '',
+    'date': DateTime.now(),
+    'assignedTo': '',
+    'notes': '',
+    'isControlled': false,
   };
 
-  List<String> categories = [];
-  String? selectedCategory;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCategories();
-  }
-
-  Future<void> _loadCategories() async {
-  final jsonString = await rootBundle.loadString('assets/json/categories.json');
-  final List<dynamic> jsonData = json.decode(jsonString);
-  setState(() {
-    categories = jsonData.map((category) => category['name'] as String).toList();
-  });
-}
-
-  void _uploadProductToFirestore() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      // Calculate total price automatically
-      _productData['totalPrice'] = _productData['price'] * _productData['quantity'];
-
-      // Implement your Firestore upload logic here
-      print(_productData); // Just for testing purposes
-    }
-  }
+  List<String> categories = ['Casa', 'Seleziona categoria'];
+  String? selectedCategory = 'Casa';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Aggiungi Prodotto'),
+        backgroundColor: Colors.red,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text('Nuova spesa', style: TextStyle(color: Colors.white)),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.star_border, color: Colors.white),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.more_vert, color: Colors.white),
+            onPressed: () {},
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        color: Colors.grey[900],
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
+            padding: EdgeInsets.all(16),
             children: [
-              _buildInputCard('ID Prodotto', (value) => _productData['productId'] = value),
-              _buildInputCard('Nome Prodotto', (value) => _productData['productName'] = value),
-              _buildCategoryCard(),
-              _buildInputCard('Prezzo', (value) => _productData['price'] = double.tryParse(value!) ?? 0.0, isNumeric: true),
-              _buildInputCard('Quantità', (value) => _productData['quantity'] = int.tryParse(value!) ?? 0, isNumeric: true),
-              _buildInputCard('Unità di Misura', (value) => _productData['unit'] = value),
-              _buildInputCard('Supermercato', (value) => _productData['supermarket'] = value),
-              _buildInputCard('Data di Acquisto (YYYY-MM-DD)', (value) => _productData['purchaseDate'] = value),
-              _buildInputCard('Data di Scadenza (YYYY-MM-DD)', (value) => _productData['expirationDate'] = value),
-              _buildInputCard('Codice a Barre', (value) => _productData['barcode'] = value),
-              _buildMacronutrientsCard('Calorie (per 100g)', (value) => _productData['macronutrients']['calories'] = int.tryParse(value!) ?? 0),
-              _buildMacronutrientsCard('Proteine (per 100g)', (value) => _productData['macronutrients']['protein'] = double.tryParse(value!) ?? 0.0),
-              _buildMacronutrientsCard('Grassi (per 100g)', (value) => _productData['macronutrients']['fat'] = double.tryParse(value!) ?? 0.0),
-              _buildMacronutrientsCard('Carboidrati (per 100g)', (value) => _productData['macronutrients']['carbohydrates'] = double.tryParse(value!) ?? 0.0),
-
-              ElevatedButton(
-                onPressed: _uploadProductToFirestore,
-                child: Text('Aggiungi Prodotto'),
-              ),
+              _buildTopButtons(),
+              _buildValueInput(),
+              _buildCategorySelector(),
+              _buildTotalValue(),
+              _buildDivider(),
+              _buildIconTextField(Icons.account_balance, 'Portafoglio', (value) => _productData['portfolio'] = value),
+              _buildIconTextField(Icons.calendar_today, '15/10/2024', (value) => _productData['date'] = value),
+              _buildIconTextField(Icons.person, 'A (Opzionale)', (value) => _productData['assignedTo'] = value),
+              _buildIconTextField(Icons.note, 'Note (Opzionale)', (value) => _productData['notes'] = value),
+              _buildControlledSwitch(),
+              _buildImageButtons(),
+              _buildBottomButtons(),
             ],
           ),
         ),
@@ -96,66 +69,154 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildInputCard(String label, Function(String?) onSaved, {bool isNumeric = false}) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: TextFormField(
-          decoration: InputDecoration(labelText: label),
-          keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-          onSaved: onSaved,
-          validator: (value) => value!.isEmpty ? 'Campo obbligatorio' : null,
+  Widget _buildTopButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: Icon(Icons.menu, color: Colors.white),
+          onPressed: () {},
         ),
+        IconButton(
+          icon: Icon(Icons.refresh, color: Colors.white),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildValueInput() {
+    return TextFormField(
+      style: TextStyle(color: Colors.white, fontSize: 24),
+      decoration: InputDecoration(
+        labelText: 'Valore',
+        labelStyle: TextStyle(color: Colors.white54),
+        suffixText: '€',
+        suffixStyle: TextStyle(color: Colors.white),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+      ),
+      keyboardType: TextInputType.number,
+      onSaved: (value) => _productData['value'] = double.tryParse(value!) ?? 0.0,
+    );
+  }
+
+  Widget _buildCategorySelector() {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+      ),
+      dropdownColor: Colors.grey[800],
+      value: selectedCategory,
+      items: categories.map((category) {
+        return DropdownMenuItem<String>(
+          value: category,
+          child: Row(
+            children: [
+              Icon(category == 'Casa' ? Icons.home : Icons.category, color: Colors.green),
+              SizedBox(width: 10),
+              Text(category, style: TextStyle(color: Colors.white)),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          selectedCategory = value;
+          _productData['category'] = selectedCategory;
+        });
+      },
+    );
+  }
+
+  Widget _buildTotalValue() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Totale:', style: TextStyle(color: Colors.white)),
+          Text('0,00 €', style: TextStyle(color: Colors.white)),
+        ],
       ),
     );
   }
 
-  Widget _buildCategoryCard() {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: DropdownButtonFormField<String>(
-          decoration: InputDecoration(labelText: 'Categoria'),
-          value: selectedCategory,
-          items: categories.map((category) {
-            return DropdownMenuItem<String>(
-              value: category,
-              child: Text(category),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              selectedCategory = value;
-              _productData['category'] = selectedCategory;
-            });
-          },
-          validator: (value) => value == null ? 'Campo obbligatorio' : null,
-        ),
+  Widget _buildDivider() {
+    return Divider(color: Colors.white54);
+  }
+
+  Widget _buildIconTextField(IconData icon, String label, Function(String?) onSaved) {
+    return TextFormField(
+      style: TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        icon: Icon(icon, color: Colors.white54),
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.white54),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
       ),
+      onSaved: onSaved,
     );
   }
 
-  Widget _buildMacronutrientsCard(String label, Function(String?) onSaved) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(label),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              onSaved: onSaved,
-              validator: (value) => null, // Optional fields
-            ),
-          ],
-        ),
-      ),
+  Widget _buildControlledSwitch() {
+    return SwitchListTile(
+      title: Text('Controllata', style: TextStyle(color: Colors.white)),
+      value: _productData['isControlled'],
+      onChanged: (bool value) {
+        setState(() {
+          _productData['isControlled'] = value;
+        });
+      },
+      activeColor: Colors.red,
     );
+  }
+
+  Widget _buildImageButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          icon: Icon(Icons.camera_alt, color: Colors.white54),
+          onPressed: () {},
+        ),
+        IconButton(
+          icon: Icon(Icons.image, color: Colors.white54),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            child: Text('ANNULLA'),
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          ),
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: ElevatedButton(
+            child: Text('SALVA'),
+            onPressed: _saveProduct,
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _saveProduct() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      // Implement your save logic here
+      print(_productData);
+    }
   }
 }

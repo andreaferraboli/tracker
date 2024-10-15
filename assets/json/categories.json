@@ -1,52 +1,52 @@
 [
   {
     "nomeCategoria": "Carne",
-    "iconaFlutter": "restaurant_menu",
+    "iconaFlutter": "meat",
     "coloreSfondo": "#FFC107"  
   },
   {
     "nomeCategoria": "Pesce",
-    "iconaFlutter": "local_fish_market",
+    "iconaFlutter": "fish",
     "coloreSfondo": "#03A9F4"  
   },
   {
     "nomeCategoria": "Pasta, Pane e Sughi",
-    "iconaFlutter": "local_dining",
+    "iconaFlutter": "pasta",
     "coloreSfondo": "#FFEB3B"  
   },
   {
     "nomeCategoria": "Verdura",
-    "iconaFlutter": "eco",
+    "iconaFlutter": "vegetables",
     "coloreSfondo": "#4CAF50"  
   },
   {
     "nomeCategoria": "Frutta",
-    "iconaFlutter": "apple",
+    "iconaFlutter": "fruit",
     "coloreSfondo": "#FF5722"  
   },
   {
     "nomeCategoria": "Latticini",
-    "iconaFlutter": "local_cafe",
+    "iconaFlutter": "dairy_products",
     "coloreSfondo": "#9C27B0"  
   },
   {
     "nomeCategoria": "Legumi",
-    "iconaFlutter": "spa",
+    "iconaFlutter": "legumes",
     "coloreSfondo": "#8BC34A"  
   },
   {
     "nomeCategoria": "Acqua",
-    "iconaFlutter": "local_drink",
+    "iconaFlutter": "water",
     "coloreSfondo": "#2196F3"  
   },
   {
     "nomeCategoria": "Dolci",
-    "iconaFlutter": "cake",
+    "iconaFlutter": "dessert",
     "coloreSfondo": "#E91E63"  
   },
   {
     "nomeCategoria": "Bevande",
-    "iconaFlutter": "local_bar",
+    "iconaFlutter": "drinks",
     "coloreSfondo": "#607D8B"  
   }
 ]

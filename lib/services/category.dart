@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class CategoryIcon {
@@ -55,6 +56,7 @@ class CategoryIcon {
         ),
         child: Center(
           child: Icon(
+            //TODO: aggiusta icona che va fuori i bordi
             _getFlutterIcon(iconName), // Ottieni l'icona Flutter
             color: Colors.white,
             size: 30.0, // Dimensione dell'icona
@@ -89,26 +91,26 @@ class CategoryIcon {
   // Helper per ottenere l'icona Flutter dal nome dell'icona
   static IconData _getFlutterIcon(String iconName) {
     switch (iconName) {
-      case 'restaurant_menu':
-        return Icons.restaurant_menu;
-      case 'local_fish_market':
-        return Icons.set_meal_sharp;
-      case 'local_dining':
-        return Icons.local_dining;
-      case 'eco':
-        return Icons.eco;
-      case 'apple':
-        return Icons.apple;
-      case 'local_cafe':
-        return Icons.local_cafe;
-      case 'spa':
+      case 'drinks':
+        return FontAwesomeIcons.bottleWater;
+      case 'vegetables':
+        return FontAwesomeIcons.carrot;
+      case 'legumes':
         return Icons.spa;
-      case 'local_drink':
-        return Icons.local_drink;
-      case 'cake':
-        return Icons.cake;
-      case 'local_bar':
-        return Icons.local_bar;
+      case 'fruit':
+        return Icons.apple;
+      case 'dairy_products':
+        return FontAwesomeIcons.cow;
+      case 'pasta':
+        return FontAwesomeIcons.wheatAwn;
+      case 'meat':
+        return FontAwesomeIcons.drumstickBite;
+      case 'fish':
+        return FontAwesomeIcons.fish;
+      case 'water':
+        return Icons.water_drop;
+      case 'dessert':
+        return FontAwesomeIcons.cookieBite;
       default:
         return Icons.category; // Icona di default
     }
