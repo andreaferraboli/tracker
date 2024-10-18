@@ -20,6 +20,14 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.login),
+            onPressed: () {
+              Navigator.pushNamed(context, '/login');
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(

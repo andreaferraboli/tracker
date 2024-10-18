@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
-
+import 'package:tracker/models/image_input.dart';
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
 
@@ -23,6 +24,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   List<String> categories = ['Casa', 'Seleziona categoria'];
   String? selectedCategory = 'Casa';
+  File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +59,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
               _buildCategorySelector(),
               _buildTotalValue(),
               _buildDivider(),
-              _buildIconTextField(Icons.account_balance, 'Portafoglio', (value) => _productData['portfolio'] = value),
-              _buildIconTextField(Icons.calendar_today, '15/10/2024', (value) => _productData['date'] = value),
-              _buildIconTextField(Icons.person, 'A (Opzionale)', (value) => _productData['assignedTo'] = value),
-              _buildIconTextField(Icons.note, 'Note (Opzionale)', (value) => _productData['notes'] = value),
+              _buildIconTextField(
+                  Icons.account_balance, 'Portafoglio', (value) =>
+              _productData['portfolio'] = value),
+              _buildIconTextField(Icons.calendar_today, '15/10/2024', (value) =>
+              _productData['date'] = value),
+              _buildIconTextField(Icons.person, 'A (Opzionale)', (value) =>
+              _productData['assignedTo'] = value),
+              _buildIconTextField(Icons.note, 'Note (Opzionale)', (value) =>
+              _productData['notes'] = value),
               _buildControlledSwitch(),
-              _buildImageButtons(),
+              _buildImageInput(),
               _buildBottomButtons(),
             ],
           ),
@@ -95,19 +102,24 @@ class _AddProductScreenState extends State<AddProductScreen> {
         labelStyle: TextStyle(color: Colors.white54),
         suffixText: '€',
         suffixStyle: TextStyle(color: Colors.white),
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
-        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)),
       ),
       keyboardType: TextInputType.number,
-      onSaved: (value) => _productData['value'] = double.tryParse(value!) ?? 0.0,
+      onSaved: (value) =>
+      _productData['value'] = double.tryParse(value!) ?? 0.0,
     );
   }
 
   Widget _buildCategorySelector() {
     return DropdownButtonFormField<String>(
       decoration: const InputDecoration(
-        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
-        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)),
       ),
       dropdownColor: Colors.grey[800],
       value: selectedCategory,
@@ -116,7 +128,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           value: category,
           child: Row(
             children: [
-              Icon(category == 'Casa' ? Icons.home : Icons.category, color: Colors.green),
+              Icon(category == 'Casa' ? Icons.home : Icons.category,
+                  color: Colors.green),
               const SizedBox(width: 10),
               Text(category, style: const TextStyle(color: Colors.white)),
             ],
@@ -149,15 +162,18 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return const Divider(color: Colors.white54);
   }
 
-  Widget _buildIconTextField(IconData icon, String label, Function(String?) onSaved) {
+  Widget _buildIconTextField(IconData icon, String label,
+      Function(String?) onSaved) {
     return TextFormField(
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         icon: Icon(icon, color: Colors.white54),
         labelText: label,
         labelStyle: const TextStyle(color: Colors.white54),
-        enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
-        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)),
       ),
       onSaved: onSaved,
     );
@@ -176,19 +192,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildImageButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.camera_alt, color: Colors.white54),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const Icon(Icons.image, color: Colors.white54),
-          onPressed: () {},
-        ),
-      ],
+  Widget _buildImageInput() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: ImageInput(
+        onPickImage: (image) {
+          setState(() {
+            _selectedImage = image;
+          });
+        },
+      ),
     );
   }
 
@@ -221,4 +234,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       print(_productData);
     }
   }
+
+
 }

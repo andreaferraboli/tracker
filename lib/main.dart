@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracker/firebase_options.dart';
+import 'package:tracker/routes/auth.dart';
 import 'package:tracker/routes/recipe_tips_screen.dart';
 import 'routes/home_screen.dart';
 import 'routes/shopping_screen.dart';
@@ -47,6 +48,7 @@ class _MyAppState extends State<MyApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(toggleTheme: _toggleTheme),
+        '/login': (context) =>  AuthPage(),
         '/shopping': (context) => const ShoppingScreen(),
         '/addMeal': (context) => const AddMealScreen(),
         '/viewExpenses': (context) => const ViewExpensesScreen(),

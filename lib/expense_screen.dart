@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/routes/auth.dart';
 
 class ExpenseScreen extends StatelessWidget {
   const ExpenseScreen({super.key});
@@ -14,6 +15,15 @@ class ExpenseScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.receipt_long),
             onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.login),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AuthPage()),
+              );
+            },
           ),
         ],
       ),
