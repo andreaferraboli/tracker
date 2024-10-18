@@ -62,7 +62,7 @@ class CategoryIcon {
                 0.6; // Adatta l'icona al 60% del contenitore
 
             return Center(
-              child: Container(
+              child: SizedBox(
                 width: 30.0, // Larghezza fissa dell'icona
                 child: FittedBox(
                   fit: BoxFit.contain, // Adatta l'icona in base alla larghezza

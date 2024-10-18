@@ -212,7 +212,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('ANNULLA'),
+            child: const Text('ANNULLA'),
           ),
         ),
         const SizedBox(width: 16),
@@ -220,7 +220,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: ElevatedButton(
             onPressed: _saveProduct,
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('SALVA'),
+            child: const Text('SALVA'),
           ),
         ),
       ],

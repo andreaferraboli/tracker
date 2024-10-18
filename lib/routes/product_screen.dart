@@ -19,16 +19,16 @@ class ProductScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Category: ${product.category}', style: Theme.of(context).textTheme.titleLarge),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text('Total Price: \$${product.totalPrice.toStringAsFixed(2)}'),
             Text('Unit Price: \$${product.price.toStringAsFixed(2)}'),
             Text('Quantity: ${product.quantity} ${product.unit}'),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text('Macronutrients (per 100g):', style: Theme.of(context).textTheme.titleMedium),
             ...product.macronutrients.entries.map((entry) =>
               Text('${entry.key}: ${entry.value}g')
-            ).toList(),
-            SizedBox(height: 16),
+            ),
+            const SizedBox(height: 16),
             Text('Expiration Date: ${product.expirationDate}'),
             Text('Supermarket: ${product.supermarket}'),
             Text('Purchase Date: ${product.purchaseDate}'),

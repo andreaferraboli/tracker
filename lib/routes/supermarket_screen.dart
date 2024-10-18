@@ -142,7 +142,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddProductScreen()),
+                MaterialPageRoute(builder: (context) => const AddProductScreen()),
               );
             },
             child: const Text('Aggiungi Prodotto'),

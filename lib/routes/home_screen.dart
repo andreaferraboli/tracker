@@ -1,12 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback toggleTheme;
+  final User? user;
 
-  const HomeScreen({super.key, required this.toggleTheme});
+  const HomeScreen({super.key, required this.toggleTheme, this.user});
+
+  //init dove stampo a console user
 
   @override
   Widget build(BuildContext context) {
+    print(user);
+    print("user_id" + user!.uid);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -21,12 +27,21 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.login),
-            onPressed: () {
-              Navigator.pushNamed(context, '/login');
-            },
-          ),
+          if (user == null)
+            IconButton(
+              icon: const Icon(Icons.login),
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                user!.email ?? '',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
         ],
       ),
       drawer: Drawer(
