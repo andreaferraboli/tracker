@@ -18,14 +18,21 @@ class _AuthPageState extends State<AuthPage> {
   // Funzione per autenticare l'utente
   Future<void> _authenticateUser() async {
     try {
-      // Login o creazione dell'account
+      UserCredential userCredential;
       if (isLogin) {
-        await _auth.signInWithEmailAndPassword(
+        userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       } else {
-        await _auth.createUserWithEmailAndPassword(
+        if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Passwords do not match')),
+          );
+          return;
+        }
+
+        userCredential = await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
@@ -50,6 +57,8 @@ class _AuthPageState extends State<AuthPage> {
     // Rilascia i controller quando non sono più necessari
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -66,9 +75,22 @@ class _AuthPageState extends State<AuthPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (!isLogin)
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(labelText: 'Username'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your username';
+                    }
+                    return null;
+                  },
+                ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
@@ -88,6 +110,20 @@ class _AuthPageState extends State<AuthPage> {
                   return null;
                 },
               ),
+              if (!isLogin)
+                const SizedBox(height: 16),
+              if (!isLogin)
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  decoration: const InputDecoration(labelText: 'Confirm Password'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
+                    return null;
+                  },
+                ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
@@ -103,9 +139,7 @@ class _AuthPageState extends State<AuthPage> {
                     isLogin = !isLogin;
                   });
                 },
-                child: Text(isLogin
-                    ? 'Create an account'
-                    : 'Already have an account? Login'),
+                child: Text(isLogin ? 'Create an account' : 'Already have an account? Login'),
               ),
             ],
           ),

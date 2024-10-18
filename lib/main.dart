@@ -5,6 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
 import 'package:tracker/routes/recipe_tips_screen.dart';
+import 'package:tracker/providers/user_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/routes/user_screen.dart';
 import 'routes/home_screen.dart';
 import 'routes/shopping_screen.dart';
 import 'routes/add_meal_screen.dart';
@@ -70,6 +73,7 @@ class _MyAppState extends State<MyApp> {
       ),
       routes: {
         '/shopping': (context) => const ShoppingScreen(),
+        '/user': (context) => UserScreen(),
         '/addMeal': (context) => const AddMealScreen(),
         '/viewExpenses': (context) => const ViewExpensesScreen(),
         '/inventory': (context) => const InventoryScreen(),
@@ -80,7 +84,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-// Definizione del tema chiaro
 final ThemeData _lightTheme = ThemeData(
   brightness: Brightness.light,
   primarySwatch: Colors.blue,
@@ -110,7 +113,6 @@ final ThemeData _lightTheme = ThemeData(
   iconTheme: const IconThemeData(color: Colors.blue),
 );
 
-// Definizione del tema scuro
 final ThemeData _darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.deepPurple,

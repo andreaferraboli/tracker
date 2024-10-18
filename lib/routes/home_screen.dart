@@ -28,19 +28,40 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           if (user == null)
-            IconButton(
-              icon: const Icon(Icons.login),
-              onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              },
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    "accedi/registrati",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.login),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+              ],
             )
           else
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                user!.email ?? '',
-                style: const TextStyle(fontSize: 16),
-              ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    user.displayName ?? '',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.person),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/user');
+                  },
+                ),
+              ],
             ),
         ],
       ),
@@ -65,6 +86,14 @@ class HomeScreen extends StatelessWidget {
               title: const Text('Cambia tema'),
               onTap: () {
                 toggleTheme(); // Chiama la funzione per cambiare il tema
+                Navigator.pop(context); // Chiude il drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                FirebaseAuth.instance.signOut(); // Effettua il logout
                 Navigator.pop(context); // Chiude il drawer
               },
             ),
