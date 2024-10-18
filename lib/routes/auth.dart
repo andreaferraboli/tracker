@@ -13,6 +13,8 @@ class _AuthPageState extends State<AuthPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _usernameController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Funzione per autenticare l'utente
@@ -90,6 +92,7 @@ class _AuthPageState extends State<AuthPage> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
+                textCapitalization: TextCapitalization.none,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tracker/models/image_input.dart';
@@ -13,6 +15,7 @@ class AddProductScreen extends StatefulWidget {
 class _AddProductScreenState extends State<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _productData = {
+    'name': '',
     'category': '',
     'value': 0.0,
     'portfolio': '',
@@ -227,13 +230,29 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  void _saveProduct() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      // Implement your save logic here
-      print(_productData);
+ void _saveProduct() async {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+
+    if (_selectedImage != null) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child(user.uid)
+            .child('product_images')
+            .child('${_productData['name']}_${UniqueKey().toString()}.jpg');
+
+        await storageRef.putFile(_selectedImage!);
+        final imageUrl = await storageRef.getDownloadURL();
+        _productData['imageUrl'] = imageUrl;
+      }
     }
+
+    // Implement your save logic here
+    print(_productData);
   }
+}
 
 
 }

@@ -1,12 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/providers/user_provider.dart';
 
-class UserScreen extends ConsumerWidget {
+class UserScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    print(user);
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Profile'),

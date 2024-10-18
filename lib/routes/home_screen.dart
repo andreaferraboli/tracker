@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -26,6 +27,7 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
+        // After
         actions: [
           if (user == null)
             Row(
@@ -51,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
-                    user.displayName ?? '',
+                    user!.displayName ?? '',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
