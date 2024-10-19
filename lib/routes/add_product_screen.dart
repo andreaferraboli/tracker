@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tracker/models/image_input.dart';
+
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
 
@@ -14,31 +14,43 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  // Aggiornamento della mappa _productData per includere i nuovi parametri
   final Map<String, dynamic> _productData = {
-    'name': '',
+    'barcode': '',
     'category': '',
-    'value': 0.0,
-    'portfolio': '',
-    'date': DateTime.now(),
-    'assignedTo': '',
-    'notes': '',
-    'isControlled': false,
+    'expirationDate': '',
+    'macronutrients': {
+      'calories': 0,
+      'carbohydrates': 0.0,
+      'fat': 0.0,
+      'protein': 0.0,
+    },
+    'price': 0.0,
+    'productId': '',
+    'productName': '',
+    'purchaseDate': '',
+    'quantity': 0,
+    'supermarket': '',
+    'totalPrice': 0.0,
+    'unit': '',
   };
 
-  List<String> categories = ['Casa', 'Seleziona categoria'];
-  String? selectedCategory = 'Casa';
+  List<String> categories = ['Latticini', 'Seleziona categoria'];
+  String? selectedCategory = 'Latticini';
   File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text('Nuova spesa', style: TextStyle(color: Colors.white)),
+        title:
+            const Text('Nuovo Prodotto', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             icon: const Icon(Icons.star_border, color: Colors.white),
@@ -58,20 +70,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               _buildTopButtons(),
+              _buildTextField(
+                  'Barcode', (value) => _productData['barcode'] = value),
+              _buildTextField('Nome Prodotto',
+                  (value) => _productData['productName'] = value),
               _buildValueInput(),
               _buildCategorySelector(),
-              _buildTotalValue(),
-              _buildDivider(),
-              _buildIconTextField(
-                  Icons.account_balance, 'Portafoglio', (value) =>
-              _productData['portfolio'] = value),
-              _buildIconTextField(Icons.calendar_today, '15/10/2024', (value) =>
-              _productData['date'] = value),
-              _buildIconTextField(Icons.person, 'A (Opzionale)', (value) =>
-              _productData['assignedTo'] = value),
-              _buildIconTextField(Icons.note, 'Note (Opzionale)', (value) =>
-              _productData['notes'] = value),
-              _buildControlledSwitch(),
+              _buildTextField('Data di Scadenza',
+                  (value) => _productData['expirationDate'] = value),
+              _buildMacronutrientInput('Calorie', 'calories'),
+              _buildMacronutrientInput('Carboidrati', 'carbohydrates'),
+              _buildMacronutrientInput('Grassi', 'fat'),
+              _buildMacronutrientInput('Proteine', 'protein'),
+              _buildTextField(
+                  'ID Prodotto', (value) => _productData['productId'] = value),
+              _buildTextField('Unità', (value) => _productData['unit'] = value),
+              _buildQuantityInput(),
+              _buildTextField('Supermercato',
+                  (value) => _productData['supermarket'] = value),
+              _buildTextField(
+                  'Prezzo Totale',
+                  (value) => _productData['totalPrice'] =
+                      double.tryParse(value!) ?? 0.0),
               _buildImageInput(),
               _buildBottomButtons(),
             ],
@@ -101,28 +121,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return TextFormField(
       style: const TextStyle(color: Colors.white, fontSize: 24),
       decoration: const InputDecoration(
-        labelText: 'Valore',
+        labelText: 'Prezzo',
         labelStyle: TextStyle(color: Colors.white54),
         suffixText: '€',
         suffixStyle: TextStyle(color: Colors.white),
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white54)),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
       ),
       keyboardType: TextInputType.number,
       onSaved: (value) =>
-      _productData['value'] = double.tryParse(value!) ?? 0.0,
+          _productData['price'] = double.tryParse(value!) ?? 0.0,
     );
   }
 
   Widget _buildCategorySelector() {
     return DropdownButtonFormField<String>(
       decoration: const InputDecoration(
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white54)),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
       ),
       dropdownColor: Colors.grey[800],
       value: selectedCategory,
@@ -131,7 +151,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           value: category,
           child: Row(
             children: [
-              Icon(category == 'Casa' ? Icons.home : Icons.category,
+              Icon(category == 'Latticini' ? Icons.fastfood : Icons.category,
                   color: Colors.green),
               const SizedBox(width: 10),
               Text(category, style: const TextStyle(color: Colors.white)),
@@ -148,29 +168,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildTotalValue() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('Totale:', style: TextStyle(color: Colors.white)),
-          Text('0,00 €', style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDivider() {
-    return const Divider(color: Colors.white54);
-  }
-
-  Widget _buildIconTextField(IconData icon, String label,
-      Function(String?) onSaved) {
+  Widget _buildTextField(String label, Function(String?) onSaved) {
     return TextFormField(
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        icon: Icon(icon, color: Colors.white54),
         labelText: label,
         labelStyle: const TextStyle(color: Colors.white54),
         enabledBorder: const UnderlineInputBorder(
@@ -182,16 +183,36 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildControlledSwitch() {
-    return SwitchListTile(
-      title: const Text('Controllata', style: TextStyle(color: Colors.white)),
-      value: _productData['isControlled'],
-      onChanged: (bool value) {
-        setState(() {
-          _productData['isControlled'] = value;
-        });
-      },
-      activeColor: Colors.red,
+  Widget _buildMacronutrientInput(String label, String fieldName) {
+    return TextFormField(
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white54),
+        enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)),
+      ),
+      keyboardType: TextInputType.number,
+      onSaved: (value) => _productData['macronutrients'][fieldName] =
+          double.tryParse(value!) ?? 0.0,
+    );
+  }
+
+  Widget _buildQuantityInput() {
+    return TextFormField(
+      style: const TextStyle(color: Colors.white),
+      decoration: const InputDecoration(
+        labelText: 'Quantità',
+        labelStyle: TextStyle(color: Colors.white54),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white54)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+      ),
+      keyboardType: TextInputType.number,
+      onSaved: (value) => _productData['quantity'] = int.tryParse(value!) ?? 0,
     );
   }
 
@@ -214,7 +235,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
         Expanded(
           child: ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
             child: const Text('ANNULLA'),
           ),
         ),
@@ -222,7 +245,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
         Expanded(
           child: ElevatedButton(
             onPressed: _saveProduct,
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
             child: const Text('SALVA'),
           ),
         ),
@@ -230,29 +255,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
- void _saveProduct() async {
-  if (_formKey.currentState!.validate()) {
-    _formKey.currentState!.save();
+  void _saveProduct() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    if (_selectedImage != null) {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child(user.uid)
-            .child('product_images')
-            .child('${_productData['name']}_${UniqueKey().toString()}.jpg');
+      if (_selectedImage != null) {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child(user.uid)
+              .child('product_images')
+              .child(
+                  '${_productData['productName']}_${UniqueKey().toString()}.jpg');
 
-        await storageRef.putFile(_selectedImage!);
-        final imageUrl = await storageRef.getDownloadURL();
-        _productData['imageUrl'] = imageUrl;
+          await storageRef.putFile(_selectedImage!);
+          final imageUrl = await storageRef.getDownloadURL();
+          _productData['imageUrl'] = imageUrl;
+        }
       }
+
+      // Implement your save logic here
+      print(_productData);
     }
-
-    // Implement your save logic here
-    print(_productData);
   }
-}
-
-
 }
