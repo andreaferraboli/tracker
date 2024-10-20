@@ -102,7 +102,8 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: GridView.count(
-        crossAxisCount: 2, // Definisce due pulsanti per riga
+        crossAxisCount: 2,
+        // Definisce due pulsanti per riga
         padding: const EdgeInsets.all(16),
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,

@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tracker/models/product_list_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 
 class SupermarketScreen extends StatefulWidget {
@@ -17,6 +20,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
   bool isConnected = false;
+
   void _updateTotalBalance(double price, bool isAdding) {
     setState(() {
       if (isAdding) {
@@ -32,53 +36,52 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
     super.initState();
     // deleteAllProducts();
     // _checkConnection();
-    _fetchProducts("andrea_ferraboli"); // Recupera i prodotti dal database
+    // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
+    _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
+        widget.supermarketName); // Recupera i prodotti dal database
   }
 
-  Future<void> uploadProductToFirestore(String userId) async {
-    // Definisci il prodotto da aggiungere
-    Map<String, dynamic> product = {
-      "productId": "12345",
-      "productName": "Latte intero",
-      "category": "Latticini",
-      "price": 1.50,
-      "quantity": 2,
-      "unit": "litro",
-      "totalPrice": 3.00,
-      "supermarket": "Esselunga",
-      "purchaseDate": "2024-10-12",
-      "macronutrients": {
-        "calories": 60,
-        "protein": 3.2,
-        "fat": 3.6,
-        "carbohydrates": 4.7
-      },
-      "expirationDate": "2024-11-01",
-      "barcode": "8001234567890"
-    };
+  Future<void> uploadProductsFromJsonToFirestore(
+      String userId, String jsonFilePath) async {
+    // Leggi il file JSON
+    String jsonString =
+        await DefaultAssetBundle.of(context).loadString(jsonFilePath);
+    List<dynamic> products = json.decode(jsonString);
 
     // Riferimento al documento dell'utente basato sul suo id
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
 
     try {
-      // Aggiorna il documento esistente aggiungendo il prodotto all'array "products"
-      await userDocRef.update({
-        "products": FieldValue.arrayUnion([product])
-      });
-      print('Prodotto aggiunto con successo!');
+      // Aggiorna il documento esistente aggiungendo i prodotti all'array "products"
+      await userDocRef.update({"products": FieldValue.arrayUnion(products)});
+      print('Prodotti aggiunti con successo!');
     } catch (e) {
-      print('Errore durante l\'aggiunta del prodotto: $e');
+      print('Errore durante l\'aggiunta dei prodotti: $e');
     }
   }
 
 //funzione per cancellare tutti i documenti in products
   Future<void> deleteAllProducts() async {
-    CollectionReference productsRef =
-        FirebaseFirestore.instance.collection('products');
-    QuerySnapshot querySnapshot = await productsRef.get();
-    for (var doc in querySnapshot.docs) {
-      doc.reference.delete();
+    DocumentReference userDocRef = FirebaseFirestore.instance
+        .collection('products')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+
+    try {
+      await userDocRef.update({"products": FieldValue.delete()});
+      print('Prodotti eliminati con successo!');
+    } catch (e) {
+      print('Errore durante l\'eliminazione dei prodotti: $e');
+    }
+    try {
+      userDocRef = FirebaseFirestore.instance
+          .collection('products')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+      userDocRef.set({
+        "products": [],
+      });
+    } catch (e) {
+      print('Errore durante l\'impostazione dei prodotti: $e');
     }
   }
 
@@ -90,7 +93,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
     });
   }
 
-  Future<void> _fetchProducts(String userId) async {
+  Future<void> _fetchProducts(String userId, String supermarketName) async {
     // Riferimento al documento dell'utente basato sul suo id
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
@@ -102,12 +105,17 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
         final List<ProductListItem> productWidgets = [];
 
         // Itera sui prodotti per creare un widget ProductList per ciascuno
-        for (var product in productsArray) {
-          productWidgets.add(
-            ProductListItem(
-                product: Product.fromJson(product),
-                onTotalPriceChange: _updateTotalBalance),
-          );
+        if (productsArray.isNotEmpty &&
+            productsArray[0]['productName'] != null) {
+          for (var product in productsArray) {
+            if (product['supermarket'] == supermarketName) {
+              productWidgets.add(
+                ProductListItem(
+                    product: Product.fromJson(product),
+                    onTotalPriceChange: _updateTotalBalance),
+              );
+            }
+          }
         }
 
         // Aggiorna lo stato del widget per mostrare la lista dei prodotti
@@ -138,23 +146,48 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
               style: const TextStyle(fontSize: 24),
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddProductScreen()),
-              );
-            },
-            child: const Text('Aggiungi Prodotto'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AddProductScreen(
+                              supermarketName: widget.supermarketName,
+                            )),
+                  );
+                },
+                child: const Text('Aggiungi Prodotto'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Colors.green, // Imposta il colore di sfondo del bottone
+                ),
+                onPressed: () {
+                  // Logica per salvare la spesa
+                },
+                child: const Text('Salva Spesa'),
+              ),
+            ],
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: purchasedProducts.length,
-              itemBuilder: (context, index) {
-                return purchasedProducts[
-                    index]; // Corretto il ritorno del widget
-              },
-            ),
+            child: purchasedProducts.isNotEmpty
+                ? ListView.builder(
+                    itemCount: purchasedProducts.length,
+                    itemBuilder: (context, index) {
+                      return purchasedProducts[
+                          index]; // Corretto il ritorno del widget
+                    },
+                  )
+                : Center(
+                    child: Text(
+                      'Non ci sono prodotti salvati disponibili',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
           )
         ],
       ),

@@ -88,7 +88,8 @@ class ExpenseScreen extends StatelessWidget {
     ];
   }
 
-  Widget buildExpenseTile(String category, String amount, int percentage, Color color) {
+  Widget buildExpenseTile(
+      String category, String amount, int percentage, Color color) {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: color,

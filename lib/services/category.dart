@@ -1,8 +1,9 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 class CategoryIcon {
   // Mappa per memorizzare i dati delle categorie
@@ -15,6 +16,11 @@ class CategoryIcon {
           await rootBundle.loadString('assets/json/categories.json');
       _categoriesData = json.decode(jsonString);
     }
+  }
+
+  //funzione che ritorna il json delle categorie
+  static List<dynamic>? getCategoriesData() {
+    return _categoriesData;
   }
 
   // Restituisci l'icona e il colore della categoria dal file JSON
@@ -62,16 +68,16 @@ class CategoryIcon {
                 0.6; // Adatta l'icona al 60% del contenitore
 
             return Center(
-              child: SizedBox(
-                width: 30.0, // Larghezza fissa dell'icona
-                child: FittedBox(
-                  fit: BoxFit.contain, // Adatta l'icona in base alla larghezza
-                  child: Icon(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  double maxIconSize = constraints.biggest.width *
+                      0.6; // Adatta l'icona al 60% del contenitore
+                  return Icon(
                     _getFlutterIcon(iconName), // Ottieni l'icona Flutter
                     color: _isDarkColor(colorHex) ? Colors.white : Colors.black,
-                    size: 50.0, // La dimensione originale dell'icona
-                  ),
-                ),
+                    size: maxIconSize, // Dimensione automatica dell'icona
+                  );
+                },
               ),
             );
           },

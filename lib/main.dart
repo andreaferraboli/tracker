@@ -1,21 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
 import 'package:tracker/routes/recipe_tips_screen.dart';
 import 'package:tracker/routes/user_screen.dart';
-import 'routes/home_screen.dart';
-import 'routes/shopping_screen.dart';
+
 import 'routes/add_meal_screen.dart';
-import 'routes/view_expenses_screen.dart';
+import 'routes/home_screen.dart';
 import 'routes/inventory_screen.dart';
+import 'routes/shopping_screen.dart';
+import 'routes/view_expenses_screen.dart';
 import 'routes/view_meals_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Aggiunto controllo degli errori per Firebase
   try {
     await Firebase.initializeApp(
@@ -28,7 +29,7 @@ void main() async {
     // Log dell'errore o altre azioni di gestione dell'errore
     print('Errore durante l\'inizializzazione di Firebase: $e');
   }
-  
+
   runApp(const MyApp());
 }
 
@@ -63,7 +64,9 @@ class _MyAppState extends State<MyApp> {
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasData) {
-            return HomeScreen(toggleTheme: _toggleTheme, user: snapshot.data!); // Aggiunto il toggleTheme e lo user
+            return HomeScreen(
+                toggleTheme: _toggleTheme,
+                user: snapshot.data!); // Aggiunto il toggleTheme e lo user
           } else {
             return const AuthPage();
           }

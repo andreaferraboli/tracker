@@ -1,5 +1,6 @@
- // Schermata per visualizzare i pasti precedenti
- import 'package:flutter/material.dart';
+// Schermata per visualizzare i pasti precedenti
+import 'package:flutter/material.dart';
+
 class ViewMealsScreen extends StatelessWidget {
   const ViewMealsScreen({super.key});
 

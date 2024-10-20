@@ -1,4 +1,5 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+
 // Schermata per vedere l'inventario
 class InventoryScreen extends StatelessWidget {
   const InventoryScreen({super.key});

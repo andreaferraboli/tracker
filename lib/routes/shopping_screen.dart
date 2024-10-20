@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'supermarket_screen.dart'; // Assicurati di avere questa importazione
 
 class ShoppingScreen extends StatelessWidget {
@@ -14,8 +15,9 @@ class ShoppingScreen extends StatelessWidget {
         crossAxisCount: 2, // Numero di colonne
         padding: const EdgeInsets.all(16.0),
         children: [
-          _buildSupermarketCard(context, 'Eurospin',
-              'assets/images/Eurospin.png'), // Assicurati di avere l'immagine nel percorso corretto
+          _buildSupermarketCard(
+              context, 'Eurospin', 'assets/images/Eurospin.png'),
+          // Assicurati di avere l'immagine nel percorso corretto
           _buildSupermarketCard(context, 'Lidl', 'assets/images/Lidl.png'),
           _buildSupermarketCard(
               context, 'Esselunga', 'assets/images/Esselunga.png'),

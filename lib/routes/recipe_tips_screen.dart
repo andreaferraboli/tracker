@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 
 class RecipeTipsScreen extends StatefulWidget {
   const RecipeTipsScreen({super.key});
@@ -72,18 +73,19 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
       body: _mealSuggestions.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-        itemCount: _mealSuggestions.length,
-        itemBuilder: (context, index) {
-          final recipe = _mealSuggestions[index];
-          return Card(
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              title: Text(recipe['name']),
-              subtitle: Text("Ingredients: ${recipe['ingredients'].join(', ')}"),
+              itemCount: _mealSuggestions.length,
+              itemBuilder: (context, index) {
+                final recipe = _mealSuggestions[index];
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    title: Text(recipe['name']),
+                    subtitle: Text(
+                        "Ingredients: ${recipe['ingredients'].join(', ')}"),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

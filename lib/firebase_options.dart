@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'tracker-fa204.appspot.com',
     measurementId: 'G-X24S001K3Z',
   );
-
 }

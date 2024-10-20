@@ -38,7 +38,18 @@ class _ProductListItemState extends State<ProductListItem> {
           child: Row(
             children: [
               // Usa l'icona caricata direttamente dalla categoria
-              CategoryIcon.iconFromCategory(widget.product.category),
+              widget.product.imageUrl != null &&
+                      widget.product.imageUrl.isNotEmpty
+                  ? Image.network(
+                      widget.product.imageUrl,
+                      width: 50,
+                      height: 50,
+                      errorBuilder: (context, error, stackTrace) {
+                        return CategoryIcon.iconFromCategory(
+                            widget.product.category);
+                      },
+                    )
+                  : CategoryIcon.iconFromCategory(widget.product.category),
               const SizedBox(width: 15), // Spaziatura tra immagine e testo
               // Dettagli del prodotto
               Expanded(
@@ -82,15 +93,17 @@ class _ProductListItemState extends State<ProductListItem> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Material(
-                            shape: const CircleBorder(), // Forma a cerchio
-                            color: Theme.of(context)
-                                .primaryColor, // Colore di sfondo primary del tema
+                            shape: const CircleBorder(),
+                            // Forma a cerchio
+                            color: Theme.of(context).primaryColor,
+                            // Colore di sfondo primary del tema
                             child: IconButton(
                               icon:
                                   const Icon(Icons.remove, color: Colors.white),
-                              iconSize: 30.0, // Aumenta dimensione icona
-                              padding: const EdgeInsets.all(
-                                  10.0), // Padding per rendere il bottone circolare
+                              iconSize: 30.0,
+                              // Aumenta dimensione icona
+                              padding: const EdgeInsets.all(10.0),
+                              // Padding per rendere il bottone circolare
                               onPressed: () {
                                 if (buyQuantity > 0) {
                                   setState(() {
@@ -109,14 +122,16 @@ class _ProductListItemState extends State<ProductListItem> {
                                 style: const TextStyle(fontSize: 20.0)),
                           ),
                           Material(
-                            shape: const CircleBorder(), // Forma a cerchio
-                            color: Theme.of(context)
-                                .primaryColor, // Colore di sfondo primary del tema
+                            shape: const CircleBorder(),
+                            // Forma a cerchio
+                            color: Theme.of(context).primaryColor,
+                            // Colore di sfondo primary del tema
                             child: IconButton(
                               icon: const Icon(Icons.add, color: Colors.white),
-                              iconSize: 30.0, // Aumenta dimensione icona
-                              padding: const EdgeInsets.all(
-                                  10.0), // Padding per rendere il bottone circolare
+                              iconSize: 30.0,
+                              // Aumenta dimensione icona
+                              padding: const EdgeInsets.all(10.0),
+                              // Padding per rendere il bottone circolare
                               onPressed: () {
                                 setState(() {
                                   buyQuantity++;

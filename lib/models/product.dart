@@ -10,7 +10,8 @@ class Product {
   String expirationDate;
   String supermarket;
   String purchaseDate; // Rinominato da lastPurchaseDate
-  String barcode; // Nuovo campo
+  String barcode;
+  String imageUrl; // Nuovo campo
 
   // Costruttore
   Product({
@@ -26,25 +27,28 @@ class Product {
     required this.supermarket,
     required this.purchaseDate,
     required this.barcode,
+    this.imageUrl = '',
   });
 
   // Metodo per la deserializzazione da JSON (fromJson)
   factory Product.fromJson(Map<String, dynamic> json) {
-  return Product(
-    productId: json['productId'],
-    productName: json['productName'],
-    category: json['category'],
-    totalPrice: double.parse(json['totalPrice'].toStringAsFixed(2)),
-    price: double.parse(json['price'].toStringAsFixed(2)),
-    quantity: json['quantity'],
-    unit: json['unit'],
-    macronutrients: (json['macronutrients'] as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toDouble())),
-    expirationDate: json['expirationDate'],
-    supermarket: json['supermarket'],
-    purchaseDate: json['purchaseDate'],
-    barcode: json['barcode'],
-  );
-}
+    return Product(
+      productId: json['productId'],
+      productName: json['productName'],
+      category: json['category'],
+      totalPrice: double.parse(json['totalPrice'].toStringAsFixed(2)),
+      price: double.parse(json['price'].toStringAsFixed(2)),
+      quantity: json['quantity'],
+      unit: json['unit'],
+      macronutrients: (json['macronutrients'] as Map<String, dynamic>)
+          .map((key, value) => MapEntry(key, value.toDouble())),
+      expirationDate: json['expirationDate'],
+      supermarket: json['supermarket'],
+      purchaseDate: json['purchaseDate'],
+      barcode: json['barcode'],
+      imageUrl: json['imageUrl'],
+    );
+  }
 
   // Metodo per la serializzazione in JSON (toJson)
   Map<String, dynamic> toJson() {
@@ -61,6 +65,7 @@ class Product {
       'supermarket': supermarket,
       'purchaseDate': purchaseDate,
       'barcode': barcode,
+      'imageUrl': imageUrl,
     };
   }
 }

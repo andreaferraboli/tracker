@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -27,7 +28,8 @@ class _AuthPageState extends State<AuthPage> {
           password: _passwordController.text.trim(),
         );
       } else {
-        if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
+        if (_passwordController.text.trim() !=
+            _confirmPasswordController.text.trim()) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Passwords do not match')),
           );
@@ -39,7 +41,12 @@ class _AuthPageState extends State<AuthPage> {
           password: _passwordController.text.trim(),
         );
       }
-
+      DocumentReference userDocRef = FirebaseFirestore.instance
+          .collection('products')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+      userDocRef.set({
+        "products": [],
+      });
       // Mostra messaggio di successo
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -113,12 +120,12 @@ class _AuthPageState extends State<AuthPage> {
                   return null;
                 },
               ),
-              if (!isLogin)
-                const SizedBox(height: 16),
+              if (!isLogin) const SizedBox(height: 16),
               if (!isLogin)
                 TextFormField(
                   controller: _confirmPasswordController,
-                  decoration: const InputDecoration(labelText: 'Confirm Password'),
+                  decoration:
+                      const InputDecoration(labelText: 'Confirm Password'),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -142,7 +149,9 @@ class _AuthPageState extends State<AuthPage> {
                     isLogin = !isLogin;
                   });
                 },
-                child: Text(isLogin ? 'Create an account' : 'Already have an account? Login'),
+                child: Text(isLogin
+                    ? 'Create an account'
+                    : 'Already have an account? Login'),
               ),
             ],
           ),
