@@ -5,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
 import 'package:tracker/routes/recipe_tips_screen.dart';
-import 'package:tracker/providers/user_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/routes/user_screen.dart';
 import 'routes/home_screen.dart';
 import 'routes/shopping_screen.dart';

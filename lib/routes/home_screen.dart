@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(user);
-    print("user_id" + user!.uid);
+    print("user_id${user!.uid}");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -32,11 +31,11 @@ class HomeScreen extends StatelessWidget {
           if (user == null)
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
                     "accedi/registrati",
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
                 IconButton(

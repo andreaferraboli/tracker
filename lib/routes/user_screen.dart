@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/providers/user_provider.dart';
 
 class UserScreen extends StatelessWidget {
+  const UserScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;

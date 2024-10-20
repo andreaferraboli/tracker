@@ -21,7 +21,7 @@ class ExpenseScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AuthPage()),
+                MaterialPageRoute(builder: (context) => const AuthPage()),
               );
             },
           ),
