@@ -11,7 +11,10 @@ class Product {
   String supermarket;
   String purchaseDate; // Rinominato da lastPurchaseDate
   String barcode;
-  String imageUrl; // Nuovo campo
+  String imageUrl;
+  double totalWeight;
+  double unitWeight;
+  double unitPrice;
 
   // Costruttore
   Product({
@@ -28,6 +31,9 @@ class Product {
     required this.purchaseDate,
     required this.barcode,
     this.imageUrl = '',
+    this.totalWeight = 0,
+    this.unitWeight = 0,
+    this.unitPrice = 0,
   });
 
   // Metodo per la deserializzazione da JSON (fromJson)
@@ -47,6 +53,9 @@ class Product {
       purchaseDate: json['purchaseDate'],
       barcode: json['barcode'],
       imageUrl: json['imageUrl'],
+      totalWeight: double.parse(json['totalWeight'].toString()),
+      unitWeight: double.parse(json['unitWeight'].toString()),
+      unitPrice: double.parse(json['unitPrice'].toString()),
     );
   }
 
@@ -66,6 +75,9 @@ class Product {
       'purchaseDate': purchaseDate,
       'barcode': barcode,
       'imageUrl': imageUrl,
+      'totalWeight': totalWeight,
+      'unitWeight': unitWeight,
+      'unitPrice': unitPrice,
     };
   }
 }

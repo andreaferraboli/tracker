@@ -4,7 +4,9 @@ import 'package:tracker/models/macronutrientDialog.dart';
 class MacronutrientTable extends StatefulWidget {
   final void Function(Map<String, double>) onSave;
 
-  MacronutrientTable(this.onSave);
+  Map<String, double>? macronutrients;
+
+  MacronutrientTable(this.onSave,this.macronutrients);
 
   @override
   _MacronutrientTableState createState() => _MacronutrientTableState();
@@ -33,6 +35,9 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
   @override
   void initState() {
     super.initState();
+    if (widget.macronutrients != null) {
+      macronutrients = widget.macronutrients!;
+    }
     editedName = macronutrientsArray[0];
   }
 

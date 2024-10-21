@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
 
+import '../models/product.dart';
 import '../services/category.dart';
 
 class AddProductScreen extends StatefulWidget {
-  final String supermarketName;
+  final String? supermarketName;
 
-  const AddProductScreen({super.key, required this.supermarketName});
+  final Product? product;
+
+  const AddProductScreen({super.key, this.supermarketName, this.product});
 
   @override
   _AddProductScreenState createState() => _AddProductScreenState();
@@ -50,17 +53,46 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String? selectedCategory = 'Latticini';
   File? _selectedImage;
   final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _totalWeightController = TextEditingController();
+  final TextEditingController _nameProductController = TextEditingController();
+  final TextEditingController _barcodeController = TextEditingController();
+
   final TextEditingController _imageUrlController = TextEditingController();
+  //aggiungi i controller per ogni campo di testo
 
   @override
   void initState() {
     super.initState();
+    if (widget.product != null) {
+      _productData['barcode'] = widget.product!.barcode;
+      _productData['category'] = widget.product!.category;
+      _productData['expirationDate'] = widget.product!.expirationDate;
+      _productData['macronutrients'] = widget.product!.macronutrients;
+      _productData['price'] = widget.product!.price;
+      _productData['totalPrice'] = widget.product!.totalPrice;
+      _productData['unitPrice'] = widget.product!.unitPrice;
+      _productData['productId'] = widget.product!.productId;
+      _productData['productName'] = widget.product!.productName;
+      _productData['purchaseDate'] = widget.product!.purchaseDate;
+      _productData['quantity'] = widget.product!.quantity;
+      _productData['supermarket'] = widget.product!.supermarket;
+      _productData['unit'] = widget.product!.unit;
+      _productData['imageUrl'] = widget.product!.imageUrl;
+      _productData['totalWeight'] = widget.product!.totalWeight;
+      _productData['unitWeight'] = widget.product!.unitWeight;
+    } else {
+      _productData['supermarket'] = widget.supermarketName;
+      _productData['unit'] = 'kg';
+      _productData['purchaseDate'] = DateTime.now().toString();
+      _productData['productId'] = UniqueKey().toString();
+    }
     _quantityController.text = _productData['quantity'].toString();
     _imageUrlController.text = _productData['imageUrl'];
-    _productData['supermarket'] = widget.supermarketName;
-    _productData['unit'] = 'kg';
-    _productData['purchaseDate'] = DateTime.now().toString();
-    _productData['productId'] = UniqueKey().toString();
+    _priceController.text = _productData['price'].toString();
+    _totalWeightController.text = _productData['totalWeight'].toString();
+    _nameProductController.text = _productData['productName'];
+    _barcodeController.text = _productData['barcode'];
     _loadCategories();
   }
 
@@ -80,6 +112,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Widget _buildValueInput() {
     return TextFormField(
+        controller: _priceController,
         style: TextStyle(
           color: Theme.of(context).textTheme.bodyLarge?.color,
           fontSize: 24,
@@ -171,8 +204,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
-  Widget _buildTextField(String label, Function(String?) onChange) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      Function(String?) onChange) {
     return TextFormField(
+      controller: controller,
       style: TextStyle(
         color: Theme.of(context).textTheme.bodyLarge?.color,
       ),
@@ -202,7 +237,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
         maxHeight: MediaQuery.of(context).size.height *
             0.5, // Set max height to 50% of screen height
       ),
-      child: MacronutrientTable(_setDynamicMacronutrients),
+      child: MacronutrientTable(_setDynamicMacronutrients,
+          _productData['macronutrients'] as Map<String, double>),
     );
   }
 
@@ -283,11 +319,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            onPressed: _saveProduct,
+            onPressed: widget.product == null ? _saveProduct : _updateProduct,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
-            child: const Text('SALVA'),
+            child: Text(widget.product == null ? 'SALVA' : 'AGGIORNA'),
           ),
         ),
       ],
@@ -341,8 +377,70 @@ class _AddProductScreenState extends State<AddProductScreen> {
     );
   }
 
+  //scrivi _updateProduct per aggiornare il prodotto nel database
+  void _updateProduct() async {
+    //TODO: funziona ma è inefficiente, bisogna ottimizzare
+    User? user;
+    _productData['unitPrice'] =
+        _productData['price'] / _productData['quantity'];
+    _productData['unitWeight'] =
+        _productData['totalWeight'] / _productData['quantity'];
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      user = FirebaseAuth.instance.currentUser;
+      if (_selectedImage != null ||
+          _productData['imageUrl'] != widget.product?.imageUrl) {
+        if (user != null) {
+          final storageRef = FirebaseStorage.instance
+              .ref()
+              .child(user.uid)
+              .child('product_images')
+              .child(
+                  '${_productData['productName']}_${UniqueKey().toString()}.jpg');
+
+          await storageRef.putFile(_selectedImage!);
+          final imageUrl = await storageRef.getDownloadURL();
+          //setta imageUrl in _productData con setState
+          setState(() {
+            _productData['imageUrl'] = imageUrl;
+          });
+        }
+      }
+
+      // Save product to Firestore
+      print("user_uid:${user!.uid}");
+      DocumentReference userDocRef =
+          FirebaseFirestore.instance.collection('products').doc(user?.uid);
+
+      try {
+        // Trova il prodotto con lo stesso id e aggiorna i suoi dati
+        // Leggi il documento corrente
+        DocumentSnapshot userDoc = await userDocRef.get();
+        List<dynamic> products = userDoc['products'];
+
+// Trova il prodotto da rimuovere confrontando il productId
+        products.removeWhere(
+            (product) => product['productId'] == widget.product!.productId);
+        products.insert(0, _productData);
+// Aggiorna il documento con l'array aggiornato
+        await userDocRef.update({
+          "products": products,
+        });
+        print('Prodotto aggiornato con successo!');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      } catch (e) {
+        print('Errore durante l\'aggiornamento del prodotto: $e');
+      }
+    }
+  }
+
   void _saveProduct() async {
     User? user;
+    _productData['unitPrice'] =
+        _productData['price'] / _productData['quantity'];
+    _productData['unitWeight'] =
+        _productData['totalWeight'] / _productData['quantity'];
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       user = FirebaseAuth.instance.currentUser;
@@ -423,7 +521,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     children: [
                       Expanded(
                         flex: 3, // 60% of the row
-                        child: _buildTextField('Nome prodotto',
+                        child: _buildTextField(
+                            'Nome prodotto',
+                            _nameProductController,
                             (value) => _productData['productName'] = value),
                       ),
                       Expanded(
@@ -475,8 +575,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     children: [
                       Expanded(
                         flex: 4, // 30% of the row
-                        child:
-                            _buildTextField('Peso totale (kg/litro)', (value) {
+                        child: _buildTextField(
+                            'Peso totale (kg/litro)', _totalWeightController,
+                            (value) {
                           setState(() {
                             value = value?.replaceAll(',', '.');
                             _productData['totalWeight'] =
@@ -516,7 +617,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                       : 1)),
                           builder: (context, value, child) {
                             return Text(
-                              'Peso unitario: ${(value * 1000).toStringAsFixed(3)} g',
+                              'Peso unitario: ${value > 1 ? value.toStringAsFixed(3) + ' Kg' : (value * 1000).toStringAsFixed(3) + ' g'}',
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -534,7 +635,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   SizedBox(height: 16),
                   _buildMacronutrientTable(),
                   _buildImageUrlInput(),
-                  _buildTextField('Codice a barre',
+                  _buildTextField('Codice a barre', _barcodeController,
                       (value) => _productData['barcode'] = value),
                   _buildBottomButtons(),
                 ],
