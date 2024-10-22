@@ -40,7 +40,7 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) {
     print(json);
     return Product(
-      productId: json['productId'],
+      productId: json['productId'].toString(),
       productName: json['productName'],
       category: json['category'],
       totalPrice: double.parse(json['totalPrice'].toStringAsFixed(2)),
