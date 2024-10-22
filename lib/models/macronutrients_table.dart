@@ -37,6 +37,10 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
     super.initState();
     if (widget.macronutrients != null) {
       macronutrients = widget.macronutrients!;
+      //togli da macronutrientsArray i valori che sono già presenti in macronutrients
+      macronutrients.forEach((key, value) {
+        macronutrientsArray.remove(key);
+      });
     }
     editedName = macronutrientsArray[0];
   }

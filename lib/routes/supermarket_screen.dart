@@ -36,7 +36,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
     super.initState();
     // deleteAllProducts();
     // _checkConnection();
-    uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
+    // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
     _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
         widget.supermarketName); // Recupera i prodotti dal database
   }

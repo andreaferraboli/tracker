@@ -38,6 +38,7 @@ class Product {
 
   // Metodo per la deserializzazione da JSON (fromJson)
   factory Product.fromJson(Map<String, dynamic> json) {
+    print(json);
     return Product(
       productId: json['productId'],
       productName: json['productName'],

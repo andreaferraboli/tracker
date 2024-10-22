@@ -160,8 +160,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ?.map<String>((category) => category['nomeCategoria'])
               .toList() ??
           [];
-      _productData['category'] = categories.isNotEmpty ? categories[0] : null;
-      selectedCategory = categories.isNotEmpty ? categories[0] : null;
+      _productData['category'] = categories.isNotEmpty
+          ? (widget.product?.category ?? categories[0])
+          : null;
+      selectedCategory = categories.isNotEmpty
+          ? (widget.product?.category ?? categories[0])
+          : null;
     });
   }
 
@@ -408,7 +412,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       }
 
       // Save product to Firestore
-      print("user_uid:${user!.uid}");
       DocumentReference userDocRef =
           FirebaseFirestore.instance.collection('products').doc(user?.uid);
 
@@ -419,16 +422,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
         List<dynamic> products = userDoc['products'];
 
 // Trova il prodotto da rimuovere confrontando il productId
-        products.removeWhere(
+        int index = products.indexWhere(
             (product) => product['productId'] == widget.product!.productId);
-        products.insert(0, _productData);
+        if (index != -1) {
+          products[index] = _productData;
+        }
 // Aggiorna il documento con l'array aggiornato
         await userDocRef.update({
           "products": products,
         });
         print('Prodotto aggiornato con successo!');
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+        int count = 0;
+        Navigator.of(context).popUntil((route) {
+          return count++ == 2;
+        });
       } catch (e) {
         print('Errore durante l\'aggiornamento del prodotto: $e');
       }
