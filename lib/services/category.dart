@@ -22,6 +22,15 @@ class CategoryIcon {
   static List<dynamic>? getCategoriesData() {
     return _categoriesData;
   }
+  static Future<List<String>> getCategoryNames() async {
+    await loadCategoriesData();
+    List<String> categoryNames = [];
+    for (var category in _categoriesData!) {
+      categoryNames.add(category['nomeCategoria']);
+    }
+    print(categoryNames);
+    return categoryNames;
+  }
 
   // Restituisci l'icona e il colore della categoria dal file JSON
   static Widget iconFromCategory(String categoryName) {

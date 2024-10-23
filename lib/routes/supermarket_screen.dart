@@ -7,6 +7,8 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 
+import '../services/category.dart';
+
 class SupermarketScreen extends StatefulWidget {
   final String supermarketName;
 
@@ -19,6 +21,7 @@ class SupermarketScreen extends StatefulWidget {
 class _SupermarketScreenState extends State<SupermarketScreen> {
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
+  List<ProductListItem> originalProducts = [];
   bool isConnected = false;
 
   void _updateTotalBalance(double price, bool isAdding) {
@@ -122,6 +125,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
         // Aggiorna lo stato del widget per mostrare la lista dei prodotti
         setState(() {
           purchasedProducts = productWidgets;
+          originalProducts = productWidgets;
         });
       } else {
         print('Nessun documento trovato per l\'utente.');
@@ -142,9 +146,36 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Saldo Totale: €${totalBalance.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 24),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Saldo Totale: €${totalBalance.toStringAsFixed(2)}',
+                  style: const TextStyle(fontSize: 24),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: _showFilterDialog,
+                      icon: const Icon(Icons.filter_list, color: Colors.blue),
+                    ),
+                    IconButton(
+                      onPressed: _showSearchDialog,
+                      icon: const Icon(Icons.search, color: Colors.blue),
+                    ),
+                    //bottone reset filtri e ricerca
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          purchasedProducts = originalProducts;
+                        });
+                      },
+                      icon: const Icon(Icons.refresh, color: Colors.blue),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           Row(
@@ -167,8 +198,35 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
                   backgroundColor:
                       Colors.green, // Imposta il colore di sfondo del bottone
                 ),
-                onPressed: () {
-                  // Logica per salvare la spesa
+                onPressed: () async {
+                  try {
+                    DocumentReference userDocRef = FirebaseFirestore.instance
+                        .collection('expenses')
+                        .doc(FirebaseAuth.instance.currentUser!.uid);
+
+                    List<Map<String, dynamic>> productsToSave =
+                        purchasedProducts.map((product) {
+                      return {
+                        //TODO: Aggiungi solo i prodotti con una quantità positiva
+                        'idProdotto': product.product.productId,
+                        'quantita': product.product.quantity,
+                      };
+                    }).toList();
+
+                    await userDocRef.update({
+                      'expenses': FieldValue.arrayUnion([
+                        {
+                          'saldoTotale': totalBalance,
+                          'prodotti': productsToSave,
+                          'data': Timestamp.now(),
+                        }
+                      ])
+                    });
+
+                    print('Spesa salvata con successo!');
+                  } catch (e) {
+                    print('Errore durante il salvataggio della spesa: $e');
+                  }
                 },
                 child: const Text('Salva Spesa'),
               ),
@@ -192,6 +250,110 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
           )
         ],
       ),
+    );
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FutureBuilder<List<String>>(
+          future: CategoryIcon.getCategoryNames(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              String selectedCategory = '';
+              List<String> categoryNames = snapshot.data ?? [];
+              return AlertDialog(
+                title: const Text('Filter by Category'),
+                content: DropdownButtonFormField<String>(
+                  value: selectedCategory.isEmpty ? null : selectedCategory,
+                  items: categoryNames.map((String category) {
+                    return DropdownMenuItem<String>(
+                      value: category,
+                      child: Text(category),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCategory = newValue!;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Select Category',
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Filter'),
+                    onPressed: () {
+                      // Implement the filter logic here
+                      setState(() {
+                        purchasedProducts = originalProducts
+                            .where((product) =>
+                                product.product.category == selectedCategory)
+                            .toList();
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String searchQuery = '';
+        return AlertDialog(
+          title: const Text('Search by Product Name'),
+          content: TextField(
+            onChanged: (value) {
+              searchQuery = value;
+            },
+            decoration: const InputDecoration(
+              labelText: 'Enter product name',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Search'),
+              onPressed: () {
+                // Implement the search logic here
+                setState(() {
+                  purchasedProducts = originalProducts
+                      .where((product) => product.product.productName
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
+                      .toList();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -30,7 +30,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     'category': '',
     'expirationDate': '',
     'macronutrients': {
-      'calories': 0,
+      'calories': 0.0,
       'carbohydrates': 0.0,
       'fat': 0.0,
       'protein': 0.0,
