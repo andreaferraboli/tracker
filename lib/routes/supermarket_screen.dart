@@ -7,7 +7,7 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 
-import '../services/category.dart';
+import '../services/category_services.dart';
 
 class SupermarketScreen extends StatefulWidget {
   final String supermarketName;
@@ -258,7 +258,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
       context: context,
       builder: (BuildContext context) {
         return FutureBuilder<List<String>>(
-          future: CategoryIcon.getCategoryNames(),
+          future: CategoryServices.getCategoryNames(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());

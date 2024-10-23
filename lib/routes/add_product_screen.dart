@@ -8,7 +8,7 @@ import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
 
 import '../models/product.dart';
-import '../services/category.dart';
+import '../services/category_services.dart';
 
 class AddProductScreen extends StatefulWidget {
   final String? supermarketName;
@@ -93,7 +93,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _totalWeightController.text = _productData['totalWeight'].toString();
     _nameProductController.text = _productData['productName'];
     _barcodeController.text = _productData['barcode'];
-    _loadCategories();
   }
 
   @override
@@ -154,9 +153,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Future<void> _loadCategories() async {
-    await CategoryIcon.loadCategoriesData();
+    await CategoryServices.loadCategoriesData();
     setState(() {
-      categories = CategoryIcon.getCategoriesData()
+      categories = CategoryServices.getCategoriesData()
               ?.map<String>((category) => category['nomeCategoria'])
               .toList() ??
           [];
@@ -183,7 +182,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   SizedBox(
                     width: 50,
                     height: 50,
-                    child: CategoryIcon.iconFromCategory(category),
+                    child: CategoryServices.iconFromCategory(category),
                   ),
                   const SizedBox(width: 10),
                   Text(

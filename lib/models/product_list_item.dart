@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
-import 'package:tracker/services/category.dart';
+import 'package:tracker/services/category_services.dart';
 
 class ProductListItem extends StatefulWidget {
   final Product product; // Singolo oggetto Product
@@ -45,11 +45,11 @@ class _ProductListItemState extends State<ProductListItem> {
                       width: 50,
                       height: 50,
                       errorBuilder: (context, error, stackTrace) {
-                        return CategoryIcon.iconFromCategory(
+                        return CategoryServices.iconFromCategory(
                             widget.product.category);
                       },
                     )
-                  : CategoryIcon.iconFromCategory(widget.product.category),
+                  : CategoryServices.iconFromCategory(widget.product.category),
               const SizedBox(width: 15), // Spaziatura tra immagine e testo
               // Dettagli del prodotto
               Expanded(

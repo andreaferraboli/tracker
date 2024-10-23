@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class CategoryIcon {
+class CategoryServices {
   // Mappa per memorizzare i dati delle categorie
   static List<dynamic>? _categoriesData;
 
@@ -20,6 +20,10 @@ class CategoryIcon {
 
   //funzione che ritorna il json delle categorie
   static List<dynamic>? getCategoriesData() {
+    return _categoriesData;
+  }
+  static Future<List?> getAndLoadCategoriesData() async {
+    await loadCategoriesData();
     return _categoriesData;
   }
   static Future<List<String>> getCategoryNames() async {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/services/category.dart';
+import 'package:tracker/services/category_services.dart';
 
 import '../services/supermarkets.dart';
 import 'supermarket_screen.dart'; // Assicurati di avere questa importazione
@@ -61,7 +61,7 @@ class ShoppingScreen extends StatefulWidget {
           context: context,
           builder: (BuildContext context) {
             return FutureBuilder<List<String>>(
-              future: CategoryIcon.getCategoryNames(),
+              future: CategoryServices.getCategoryNames(),
               // future: supermarket_provider.getSupermarkets(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
