@@ -28,7 +28,6 @@ class CategoryIcon {
     for (var category in _categoriesData!) {
       categoryNames.add(category['nomeCategoria']);
     }
-    print(categoryNames);
     return categoryNames;
   }
 

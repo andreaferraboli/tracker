@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/services/category.dart';
 
+import '../services/supermarkets.dart';
 import 'supermarket_screen.dart'; // Assicurati di avere questa importazione
 
-class ShoppingScreen extends StatelessWidget {
+class ShoppingScreen extends StatefulWidget {
   const ShoppingScreen({super.key});
 
   @override
@@ -55,7 +57,64 @@ class ShoppingScreen extends StatelessWidget {
   Widget _buildAddSupermarketCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Qui puoi implementare la logica per aggiungere un supermercato
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return FutureBuilder<List<String>>(
+              future: CategoryIcon.getCategoryNames(),
+              // future: supermarket_provider.getSupermarkets(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  String selectedSupermarket = '';
+                  List<String> supermarketNames = snapshot.data ?? [];
+                  return AlertDialog(
+                    title: const Text('Filter by Category'),
+                    content: DropdownButtonFormField<String>(
+                      value: selectedSupermarket.isEmpty ? null : selectedSupermarket,
+                      items: supermarketNames.map((String supermarket)  {
+                        return DropdownMenuItem<String>(
+                          value: supermarket,
+                          child: Text(supermarket),
+                          // child: ListTile(leading: await Supermarkets.getSupermarketImage(supermarket),title: Text(supermarket),),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        // setState(() {
+                        //   selectedSupermarket = newValue!;
+                        // });
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Select Supermarket',
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('select'),
+                        onPressed: () {
+                          // Implement the filter logic here
+                          // setState(() {
+                          //   supermarket_provider.add(selectSupermarket);
+                          // });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                }
+              },
+            );
+          },
+        );
       },
       child: const Card(
         elevation: 4,
@@ -90,4 +149,12 @@ class ShoppingScreen extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
+
+
 }
