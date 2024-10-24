@@ -6,7 +6,7 @@ class Category {
   final String icon;
   final String color;
 
-  Category({required this.icon,required this.color, required this.name});
+  Category({required this.icon, required this.color, required this.name});
 
   static Category fromJson(Map<String, dynamic> category) {
     return Category(
@@ -18,7 +18,8 @@ class Category {
 }
 
 // Definizione del provider per le categorie
-final categoriesProvider = StateNotifierProvider<CategoriesNotifier, List<Category>>((ref) {
+final categoriesProvider =
+    StateNotifierProvider<CategoriesNotifier, List<Category>>((ref) {
   return CategoriesNotifier();
 });
 
@@ -29,6 +30,7 @@ class CategoriesNotifier extends StateNotifier<List<Category>> {
   void loadCategories(List<Category> categories) {
     state = categories;
   }
+
   // Metodo per aggiungere una categoria
   void addCategory(Category category) {
     state = [...state, category];

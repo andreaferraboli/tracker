@@ -6,7 +6,7 @@ class MacronutrientTable extends StatefulWidget {
 
   Map<String, double>? macronutrients;
 
-  MacronutrientTable(this.onSave,this.macronutrients);
+  MacronutrientTable(this.onSave, this.macronutrients);
 
   @override
   _MacronutrientTableState createState() => _MacronutrientTableState();

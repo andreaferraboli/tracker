@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';  // Import di Riverpod
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import di Riverpod
 import 'package:tracker/providers/products_provider.dart';
 import 'package:tracker/providers/supermarket_provider.dart';
 import 'package:tracker/providers/category_provider.dart';
@@ -12,14 +12,16 @@ import 'package:tracker/services/category_services.dart';
 import '../models/expense.dart';
 import '../providers/expenses_provider.dart';
 
-class AuthPage extends ConsumerStatefulWidget {  // ConsumerStatefulWidget per Riverpod
+class AuthPage extends ConsumerStatefulWidget {
+  // ConsumerStatefulWidget per Riverpod
   const AuthPage({super.key});
 
   @override
   _AuthPageState createState() => _AuthPageState();
 }
 
-class _AuthPageState extends ConsumerState<AuthPage> {  // ConsumerState per Riverpod
+class _AuthPageState extends ConsumerState<AuthPage> {
+  // ConsumerState per Riverpod
   bool isLogin = true;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -37,7 +39,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {  // ConsumerState per Riv
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        loadUserData();  // Caricamento dati utente
+        loadUserData(); // Caricamento dati utente
       } else {
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
@@ -91,35 +93,39 @@ class _AuthPageState extends ConsumerState<AuthPage> {  // ConsumerState per Riv
   }
 
   Future<void> loadUserData() async {
-  final userId = FirebaseAuth.instance.currentUser!.uid;
-  final productsDocRef = FirebaseFirestore.instance.collection('products').doc(userId);
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final productsDocRef =
+        FirebaseFirestore.instance.collection('products').doc(userId);
 
-  final productsDoc = await productsDocRef.get();
+    final productsDoc = await productsDocRef.get();
     final products = (productsDoc.data()!['products'] as List)
         .map((product) => Product.fromJson(product))
         .toList();
-    final categoriesDocRef = FirebaseFirestore.instance.collection('categories').doc(userId);
+    final categoriesDocRef =
+        FirebaseFirestore.instance.collection('categories').doc(userId);
     final categoriesDoc = await categoriesDocRef.get();
     final categories = (categoriesDoc.data()!['categories'] as List)
         .map((category) => Category.fromJson(category))
         .toList();
-  final expensesDocRef = FirebaseFirestore.instance.collection('expenses').doc(userId);
-  final expensesDoc = await expensesDocRef.get();
-  final expenses = (expensesDoc.data()!['expenses'] as List)
-      .map((expense) => Expense.fromJson(expense))
-      .toList();
-  // final mealsDocRef = FirebaseFirestore.instance.collection('meals').doc(userId);
-  // final mealsDoc = await mealsDocRef.get();
-  // final meals = (mealsDoc.data()!['meals'] as List)
-  //     .map((meal) => Meal.fromJson(meal))
-  //     .toList();
+    final expensesDocRef =
+        FirebaseFirestore.instance.collection('expenses').doc(userId);
+    final expensesDoc = await expensesDocRef.get();
+    final expenses = (expensesDoc.data()!['expenses'] as List)
+        .map((expense) => Expense.fromJson(expense))
+        .toList();
+    // final mealsDocRef = FirebaseFirestore.instance.collection('meals').doc(userId);
+    // final mealsDoc = await mealsDocRef.get();
+    // final meals = (mealsDoc.data()!['meals'] as List)
+    //     .map((meal) => Meal.fromJson(meal))
+    //     .toList();
 
-  ref.read(productsProvider.notifier).loadProducts(products);  // ref.read per Riverpod
-  ref.read(categoriesProvider.notifier).loadCategories(categories);
-  ref.read(expensesProvider.notifier).loadExpenses(expenses);
-  // ref.read(mealsProvider.notifier).state = meals;
-
-}
+    ref
+        .read(productsProvider.notifier)
+        .loadProducts(products); // ref.read per Riverpod
+    ref.read(categoriesProvider.notifier).loadCategories(categories);
+    ref.read(expensesProvider.notifier).loadExpenses(expenses);
+    // ref.read(mealsProvider.notifier).state = meals;
+  }
 
   @override
   void dispose() {
@@ -185,7 +191,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {  // ConsumerState per Riv
                 TextFormField(
                   controller: _confirmPasswordController,
                   decoration:
-                  const InputDecoration(labelText: 'Confirm Password'),
+                      const InputDecoration(labelText: 'Confirm Password'),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {

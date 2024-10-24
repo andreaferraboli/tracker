@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/product.dart';
 
-
 class ProductsNotifier extends StateNotifier<List<Product>> {
   ProductsNotifier() : super([]);
 
@@ -16,14 +15,18 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
 
   void updateProduct(Product updatedProduct) {
     state = state.map((product) {
-      return product.productId == updatedProduct.productId ? updatedProduct : product;
+      return product.productId == updatedProduct.productId
+          ? updatedProduct
+          : product;
     }).toList();
   }
+
   void loadProducts(List<Product> products) {
     state = products;
   }
 }
 
-final productsProvider = StateNotifierProvider<ProductsNotifier, List<Product>>((ref) {
+final productsProvider =
+    StateNotifierProvider<ProductsNotifier, List<Product>>((ref) {
   return ProductsNotifier();
 });

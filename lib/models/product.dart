@@ -4,7 +4,9 @@ class Product {
   String category;
   double totalPrice; // Rinominato da priceTotal
   double price; // Prezzo unitario
-  int quantity; // Rinominato da quantityOwned
+  int quantity;
+  int buyQuantity;
+  int quantityOwned;// Rinominato da quantityOwned
   String unit; // Unità di misura
   Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
   String expirationDate;
@@ -30,6 +32,8 @@ class Product {
     required this.supermarket,
     required this.purchaseDate,
     required this.barcode,
+    required this.buyQuantity,
+    required this.quantityOwned,
     this.imageUrl = '',
     this.totalWeight = 0,
     this.unitWeight = 0,
@@ -38,7 +42,6 @@ class Product {
 
   // Metodo per la deserializzazione da JSON (fromJson)
   factory Product.fromJson(Map<String, dynamic> json) {
-    print(json);
     return Product(
       productId: json['productId'].toString(),
       productName: json['productName'],
@@ -54,6 +57,8 @@ class Product {
       purchaseDate: json['purchaseDate'],
       barcode: json['barcode'],
       imageUrl: json['imageUrl'],
+      buyQuantity: json['buyQuantity'],
+      quantityOwned: json['quantityOwned'],
       totalWeight: double.parse(json['totalWeight'].toString()),
       unitWeight: double.parse(json['unitWeight'].toString()),
       unitPrice: double.parse(json['unitPrice'].toString()),
@@ -76,6 +81,8 @@ class Product {
       'purchaseDate': purchaseDate,
       'barcode': barcode,
       'imageUrl': imageUrl,
+      'buyQuantity': buyQuantity,
+      'quantityOwned': quantityOwned,
       'totalWeight': totalWeight,
       'unitWeight': unitWeight,
       'unitPrice': unitPrice,

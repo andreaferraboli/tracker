@@ -4,7 +4,7 @@ import 'package:tracker/services/category_services.dart';
 import '../services/supermarkets.dart';
 import 'supermarket_screen.dart'; // Assicurati di avere questa importazione
 
-class ShoppingScreen extends StatefulWidget {
+class ShoppingScreen extends StatelessWidget {
   const ShoppingScreen({super.key});
 
   @override
@@ -74,8 +74,10 @@ class ShoppingScreen extends StatefulWidget {
                   return AlertDialog(
                     title: const Text('Filter by Category'),
                     content: DropdownButtonFormField<String>(
-                      value: selectedSupermarket.isEmpty ? null : selectedSupermarket,
-                      items: supermarketNames.map((String supermarket)  {
+                      value: selectedSupermarket.isEmpty
+                          ? null
+                          : selectedSupermarket,
+                      items: supermarketNames.map((String supermarket) {
                         return DropdownMenuItem<String>(
                           value: supermarket,
                           child: Text(supermarket),
@@ -150,11 +152,9 @@ class ShoppingScreen extends StatefulWidget {
     );
   }
 
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
-  }
-
-
+  // @override
+  // State<StatefulWidget> createState() {
+  //   // TODO: implement createState
+  //   throw UnimplementedError();
+  // }
 }

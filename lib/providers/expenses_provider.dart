@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/expense.dart';
 
-
 class ExpensesNotifier extends StateNotifier<List<Expense>> {
   ExpensesNotifier() : super([]);
 
@@ -18,6 +17,7 @@ class ExpensesNotifier extends StateNotifier<List<Expense>> {
   }
 }
 
-final expensesProvider = StateNotifierProvider<ExpensesNotifier, List<Expense>>((ref) {
+final expensesProvider =
+    StateNotifierProvider<ExpensesNotifier, List<Expense>>((ref) {
   return ExpensesNotifier();
 });

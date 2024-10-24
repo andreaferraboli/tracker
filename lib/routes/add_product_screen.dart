@@ -26,27 +26,31 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   // Aggiornamento della mappa _productData per includere i nuovi parametri
   final Map<String, dynamic> _productData = {
-    'barcode': '',
-    'category': '',
-    'expirationDate': '',
-    'macronutrients': {
-      'calories': 0.0,
-      'carbohydrates': 0.0,
-      'fat': 0.0,
-      'protein': 0.0,
-    },
-    'price': 0.0,
-    'totalPrice': 0.0,
-    'unitPrice': 0.0,
     'productId': '',
     'productName': '',
-    'purchaseDate': '',
+    'category': '',
+    'totalPrice': 0.0,
+    'price': 0.0,
     'quantity': 0,
-    'supermarket': '',
+    'buyQuantity': 0,
+    'quantityOwned': 0,
     'unit': '',
+    'macronutrients': {
+      'Proteins': 0.0,
+      'Carbohydrates': 0.0,
+      'Energy': 0.0,
+      'Fiber': 0.0,
+      'Fats': 0.0,
+      'Sugars': 0.0,
+    },
+    'expirationDate': '',
+    'supermarket': '',
+    'purchaseDate': '',
+    'barcode': '',
     'imageUrl': '',
-    'totalWeight': 0.0, // Peso totale articolo
-    'unitWeight': 0.0, // Peso del singolo articolo
+    'totalWeight': 0.0,
+    'unitWeight': 0.0,
+    'unitPrice': 0.0,
   };
 
   List<String> categories = [];
@@ -64,6 +68,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   void initState() {
     super.initState();
+    _loadCategories();
     if (widget.product != null) {
       _productData['barcode'] = widget.product!.barcode;
       _productData['category'] = widget.product!.category;
@@ -81,6 +86,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
       _productData['imageUrl'] = widget.product!.imageUrl;
       _productData['totalWeight'] = widget.product!.totalWeight;
       _productData['unitWeight'] = widget.product!.unitWeight;
+      _productData['buyQuantity'] = widget.product!.buyQuantity;
+      _productData['quantityOwned'] = widget.product!.quantityOwned;
     } else {
       _productData['supermarket'] = widget.supermarketName;
       _productData['unit'] = 'kg';
@@ -469,7 +476,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       }
 
       // Save product to Firestore
-      print("user_uid:${user!.uid}");
       DocumentReference userDocRef =
           FirebaseFirestore.instance.collection('products').doc(user?.uid);
 

@@ -1,5 +1,7 @@
 import 'dart:convert';
-
+import 'package:tracker/routes/home_screen.dart';
+import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,8 @@ import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 
 import '../services/category_services.dart';
+
+var uuid = Uuid();
 
 class SupermarketScreen extends StatefulWidget {
   final String supermarketName;
@@ -158,11 +162,13 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
                   children: [
                     IconButton(
                       onPressed: _showFilterDialog,
-                      icon: const Icon(Icons.filter_list, color: Colors.blue),
+                      icon: Icon(Icons.filter_list,
+                          color: Theme.of(context).iconTheme.color),
                     ),
                     IconButton(
                       onPressed: _showSearchDialog,
-                      icon: const Icon(Icons.search, color: Colors.blue),
+                      icon: Icon(Icons.search,
+                          color: Theme.of(context).iconTheme.color),
                     ),
                     //bottone reset filtri e ricerca
                     IconButton(
@@ -171,7 +177,8 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
                           purchasedProducts = originalProducts;
                         });
                       },
-                      icon: const Icon(Icons.refresh, color: Colors.blue),
+                      icon: Icon(Icons.refresh,
+                          color: Theme.of(context).iconTheme.color),
                     ),
                   ],
                 ),
@@ -195,8 +202,8 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Colors.green, // Imposta il colore di sfondo del bottone
+                  backgroundColor: Color.fromARGB(255, 33, 78,
+                      52), // Imposta il colore di sfondo del bottone
                 ),
                 onPressed: () async {
                   try {
@@ -205,25 +212,77 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
                         .doc(FirebaseAuth.instance.currentUser!.uid);
 
                     List<Map<String, dynamic>> productsToSave =
-                        purchasedProducts.map((product) {
+                        purchasedProducts
+                            .where((product) => product.product.buyQuantity > 0)
+                            .map((product) {
                       return {
-                        //TODO: Aggiungi solo i prodotti con una quantità positiva
                         'idProdotto': product.product.productId,
-                        'quantita': product.product.quantity,
+                        'productName': product.product.productName,
+                        'pricePerKg': (product.product.price /
+                                product.product.totalWeight)
+                            .toStringAsFixed(3),
+                        'category': product.product.category,
+                        'quantita': product.product.buyQuantity,
                       };
                     }).toList();
+
+                    // Passo 1: Scarica l'array di prodotti
+                    DocumentReference productDocRef = FirebaseFirestore.instance
+                        .collection('products')
+                        .doc(FirebaseAuth.instance.currentUser!.uid);
+
+                    // Recupera il documento
+                    DocumentSnapshot snapshot = await productDocRef.get();
+
+                    if (snapshot.exists) {
+                      // Recupera l'array "products" dal documento
+                      final List<dynamic> productsList =
+                          snapshot['products'] ?? [];
+
+                      // Passo 2: Modifica l'array localmente
+                      for (var product in purchasedProducts) {
+                        if (product.product.buyQuantity > 0) {
+                          // Trova il prodotto corrispondente nell'array locale
+                          var existingProduct = productsList.firstWhere(
+                              (p) =>
+                                  p['productId'] == product.product.productId,
+                              orElse: () => null);
+
+                          // Se esiste, aggiorna la quantità
+                          if (existingProduct != null) {
+                            existingProduct['quantityOwned'] +=
+                                product.product.buyQuantity;
+                          } else {
+                            // Se non esiste, aggiungi il nuovo prodotto
+                            productsList.add(product.product.toJson());
+                          }
+
+                          // Reset della buyQuantity
+                          product.product.buyQuantity = 0;
+                        }
+                      }
+
+// Passo 3: Carica l'array modificato in Firestore
+                      await productDocRef.update({
+                        'products': productsList,
+                      });
+                    }
 
                     await userDocRef.update({
                       'expenses': FieldValue.arrayUnion([
                         {
-                          'saldoTotale': totalBalance,
-                          'prodotti': productsToSave,
-                          'data': Timestamp.now(),
+                          'id': uuid.v4(),
+                          'supermarket': widget.supermarketName,
+                          'totalAmount': totalBalance,
+                          'products': productsToSave,
+                          'date':
+                              DateFormat('dd-MM-yyyy').format(DateTime.now()),
                         }
                       ])
                     });
 
                     print('Spesa salvata con successo!');
+                    Navigator.pop(context);
                   } catch (e) {
                     print('Errore durante il salvataggio della spesa: $e');
                   }

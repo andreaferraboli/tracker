@@ -22,7 +22,8 @@ def convert_product(product):
         "unitWeight": float(product["displayableProduct"]["unitValue"]) / 1000,  # Convertiamo i grammi in chilogrammi
         "purchaseDate": datetime.now().strftime('%Y-%m-%d'),  # Data di acquisto attuale,  # Da compilare successivamente
         "quantity": product["displayableProduct"]["quantity"],
-        "quantityOwned": product["displayableProduct"]["quantity"],  # Usando la stessa quantità come proprietà "possieduta"
+        "buyQuantity": 0,
+        "quantityOwned": 0,
         "productId": str(product["displayableProduct"]["productId"]),
         "totalPrice": product["displayableProduct"]["price"],
         "productName": product["displayableProduct"]["description"],

@@ -9,24 +9,23 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(product.toJson());
     return Scaffold(
       appBar: AppBar(
-  title: Text(product.productName),
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.edit),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddProductScreen(product: product),
+        title: Text(product.productName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddProductScreen(product: product),
+                ),
+              );
+            },
           ),
-        );
-      },
-    ),
-  ],
-),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -112,7 +111,6 @@ class ProductScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Table(
-
               border: TableBorder.all(
                   color: Theme.of(context).textTheme.bodyLarge!.color ??
                       Colors.black,

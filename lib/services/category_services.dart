@@ -22,10 +22,12 @@ class CategoryServices {
   static List<dynamic>? getCategoriesData() {
     return _categoriesData;
   }
+
   static Future<List?> getAndLoadCategoriesData() async {
     await loadCategoriesData();
     return _categoriesData;
   }
+
   static Future<List<String>> getCategoryNames() async {
     await loadCategoriesData();
     List<String> categoryNames = [];

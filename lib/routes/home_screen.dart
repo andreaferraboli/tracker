@@ -11,11 +11,29 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(user);
-    print("user_id${user!.uid}");
+    final shoppingColor = Theme.of(context).brightness == Brightness.light
+        ? const Color.fromARGB(255, 34, 65, 98)
+        : const Color.fromARGB(255, 41, 36, 36);
+    final addMealColor = Theme.of(context).brightness == Brightness.light
+        ? const Color.fromARGB(255, 97, 3, 3)
+        : const Color.fromARGB(255, 97, 3, 3);
+    final viewExpensesColor = Theme.of(context).brightness == Brightness.light
+        ? const Color.fromARGB(255, 89, 100, 117)
+        : const Color.fromARGB(255, 100, 100, 100);
+    final inventoryColor = Theme.of(context).brightness == Brightness.light
+        ? const Color.fromARGB(255, 0, 126, 167)
+        : const Color.fromARGB(255, 150, 150, 150);
+    final viewMealsColor = Theme.of(context).brightness == Brightness.light
+        ? const Color.fromARGB(255, 45, 49, 66)
+        : const Color.fromARGB(255, 50, 50, 50);
+    final recipeTipsColor = Theme.of(context).brightness == Brightness.light
+        ? const Color.fromARGB(255, 66, 12, 20)
+        : const Color.fromARGB(255, 66, 12, 20);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text('Home',
+            style: TextStyle(
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color)),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -103,28 +121,25 @@ class HomeScreen extends StatelessWidget {
       ),
       body: GridView.count(
         crossAxisCount: 2,
-        childAspectRatio: 0.8, // Regola l'aspetto dei pulsanti per occupare più spazio
+        childAspectRatio:
+            0.8, // Regola l'aspetto dei pulsanti per occupare più spazio
         // Definisce due pulsanti per riga
         padding: const EdgeInsets.all(16),
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: <Widget>[
           _buildMenuButton(context, 'Fare la spesa', Icons.shopping_cart,
-              '/shopping', const Color.fromARGB(255, 34, 83, 9)),
+              '/shopping', shoppingColor),
           _buildMenuButton(context, 'Inserire un pasto', Icons.restaurant,
-              '/addMeal', const Color.fromARGB(255, 154, 135, 0)),
+              '/addMeal', addMealColor),
           _buildMenuButton(context, 'Visualizzare spese', Icons.receipt_long,
-              '/viewExpenses', const Color.fromARGB(255, 97, 3, 3)),
+              '/viewExpenses', viewExpensesColor),
           _buildMenuButton(context, 'Vedere inventario', Icons.inventory,
-              '/inventory', const Color.fromARGB(255, 34, 65, 98)),
+              '/inventory', inventoryColor),
           _buildMenuButton(context, 'Visualizzare pasti', Icons.fastfood,
-              '/viewMeals', const Color.fromARGB(255, 94, 34, 98)),
-          _buildMenuButton(
-              context,
-              'Suggerisci ricette',
-              Icons.food_bank_outlined,
-              '/recipeTips',
-              const Color.fromARGB(255, 182, 81, 0)),
+              '/viewMeals', viewMealsColor),
+          _buildMenuButton(context, 'Suggerisci ricette',
+              Icons.food_bank_outlined, '/recipeTips', recipeTipsColor),
         ],
       ),
     );

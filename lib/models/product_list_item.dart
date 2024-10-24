@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
+import 'package:tracker/services/api_client.dart';
 import 'package:tracker/services/category_services.dart';
 
 class ProductListItem extends StatefulWidget {
-  final Product product; // Singolo oggetto Product
-  final void Function(double, bool)
-      onTotalPriceChange; // Funzione per aggiornare il prezzo totale
+  final Product product;
+  final void Function(double, bool) onTotalPriceChange;
 
   const ProductListItem(
       {super.key, required this.product, required this.onTotalPriceChange});
@@ -16,7 +16,7 @@ class ProductListItem extends StatefulWidget {
 }
 
 class _ProductListItemState extends State<ProductListItem> {
-  int buyQuantity = 0; // Quantità del prodotto da gestire nello stato
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,25 +33,38 @@ class _ProductListItemState extends State<ProductListItem> {
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
         elevation: 3,
         child: Container(
-          width: 300, // Larghezza fissa per la card
+          width: 300,
           padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
-              // Usa l'icona caricata direttamente dalla categoria
-              widget.product.imageUrl != null &&
-                      widget.product.imageUrl.isNotEmpty
-                  ? Image.network(
-                      widget.product.imageUrl,
-                      width: 50,
-                      height: 50,
-                      errorBuilder: (context, error, stackTrace) {
-                        return CategoryServices.iconFromCategory(
-                            widget.product.category);
-                      },
-                    )
-                  : CategoryServices.iconFromCategory(widget.product.category),
-              const SizedBox(width: 15), // Spaziatura tra immagine e testo
-              // Dettagli del prodotto
+              if (widget.product.imageUrl != null && widget.product.imageUrl.isNotEmpty)
+                if (Theme.of(context).brightness == Brightness.dark)
+                  FutureBuilder<Widget>(
+                    future: ApiClient.getImageWithRemovedBackground(widget.product.imageUrl),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasData) {
+                          return snapshot.data!;
+                        } else {
+                          return CategoryServices.iconFromCategory(widget.product.category);
+                        }
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    },
+                  )
+                else
+                  Image.network(
+                    widget.product.imageUrl,
+                    width: 100,
+                    height: 100,
+                    errorBuilder: (context, error, stackTrace) {
+                      return CategoryServices.iconFromCategory(widget.product.category);
+                    },
+                  )
+              else
+                CategoryServices.iconFromCategory(widget.product.category),
+              const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,16 +87,15 @@ class _ProductListItemState extends State<ProductListItem> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '€${widget.product.price.toStringAsFixed(2)}, Totale €${(widget.product.price * buyQuantity).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        color: Colors.black87,
+                      '€${widget.product.price.toStringAsFixed(2)}, Totale €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 14,
                       ),
                     ),
                   ],
                 ),
               ),
-              // Controlli per aggiungere/rimuovere quantità
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -94,56 +106,51 @@ class _ProductListItemState extends State<ProductListItem> {
                         children: [
                           Material(
                             shape: const CircleBorder(),
-                            // Forma a cerchio
-                            color: Theme.of(context).primaryColor,
-                            // Colore di sfondo primary del tema
+                            color: Theme.of(context)
+                                .elevatedButtonTheme
+                                .style
+                                ?.backgroundColor
+                                ?.resolve({}),
                             child: IconButton(
-                              icon:
-                                  const Icon(Icons.remove, color: Colors.white),
+                              icon: const Icon(Icons.remove, color: Colors.white),
                               iconSize: 30.0,
-                              // Aumenta dimensione icona
                               padding: const EdgeInsets.all(10.0),
-                              // Padding per rendere il bottone circolare
                               onPressed: () {
-                                if (buyQuantity > 0) {
+                                if (widget.product.buyQuantity > 0) {
                                   setState(() {
-                                    buyQuantity--;
+                                    widget.product.buyQuantity--;
                                   });
-                                  widget.onTotalPriceChange(
-                                      widget.product.price, false);
+                                  widget.onTotalPriceChange(widget.product.price, false);
                                 }
                               },
                             ),
                           ),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Text('$buyQuantity',
-                                style: const TextStyle(fontSize: 20.0)),
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Text('${widget.product.buyQuantity}', style: const TextStyle(fontSize: 20.0)),
                           ),
                           Material(
                             shape: const CircleBorder(),
-                            // Forma a cerchio
-                            color: Theme.of(context).primaryColor,
-                            // Colore di sfondo primary del tema
+                            color: Theme.of(context)
+                                .elevatedButtonTheme
+                                .style
+                                ?.backgroundColor
+                                ?.resolve({}),
                             child: IconButton(
                               icon: const Icon(Icons.add, color: Colors.white),
                               iconSize: 30.0,
-                              // Aumenta dimensione icona
                               padding: const EdgeInsets.all(10.0),
-                              // Padding per rendere il bottone circolare
                               onPressed: () {
                                 setState(() {
-                                  buyQuantity++;
+                                  widget.product.buyQuantity++;
                                 });
-                                widget.onTotalPriceChange(
-                                    widget.product.price, true);
+                                widget.onTotalPriceChange(widget.product.price, true);
                               },
                             ),
                           ),
                         ],
                       ),
-                      Text('Posseduto: ${widget.product.quantity}'),
+                      Text('Posseduto: ${widget.product.quantityOwned}'),
                     ],
                   ),
                 ],

@@ -23,7 +23,8 @@ def transform_product(item):
         "unitWeight": float(product["productInfos"]["WEIGHT_SELLING"])/1000,
         "purchaseDate": "",  # Inserisci qui la data di acquisto se disponibile
         "quantity": item["quantity"],
-        "quantityOwned": item["quantity"],
+        "buyQuantity": 0,
+        "quantityOwned": 0,
         "productId": str(product["productId"]),
         "totalPrice": round(product["price"] * item["quantity"], 2),  # Prezzo totale calcolato
         "productName": product["name"],
@@ -32,7 +33,7 @@ def transform_product(item):
         "price": product["price"],
         "unitPrice": product["price"],
         "imageUrl": product["mediaURLMedium"],
-        "totalWeight": round(float(product["productInfos"]["WEIGHT_SELLING"]) * item["quantity"], 2),
+        "totalWeight": round(float(product["productInfos"]["WEIGHT_SELLING"]) * item["quantity"] / 1000, 3),
         "macronutrients": {
             "Proteins": 6.9,  # Valori ipotetici, inserisci i macronutrienti corretti se disponibili
             "Carbohydrates": 71,

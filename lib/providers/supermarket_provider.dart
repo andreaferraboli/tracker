@@ -1,4 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';class SupermarketNotifier extends StateNotifier<String> {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class SupermarketNotifier extends StateNotifier<String> {
   SupermarketNotifier() : super('');
 
   void setSupermarket(String supermarket) {
@@ -6,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';class SupermarketNotifie
   }
 }
 
-final supermarketProvider = StateNotifierProvider<SupermarketNotifier, String>((ref) {
+final supermarketProvider =
+    StateNotifierProvider<SupermarketNotifier, String>((ref) {
   return SupermarketNotifier();
 });

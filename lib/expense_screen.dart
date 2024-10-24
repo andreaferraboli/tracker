@@ -9,7 +9,7 @@ class ExpenseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text("Totale 60 €"),
         actions: [
           IconButton(

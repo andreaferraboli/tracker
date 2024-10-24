@@ -42,7 +42,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isDarkTheme = false;
-
   // Cambiato il metodo _toggleTheme per poter essere passato alla HomeScreen
   void _toggleTheme() {
     setState(() {
@@ -50,6 +49,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  bool get isDarkTheme => _isDarkTheme;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -89,19 +89,25 @@ final ThemeData _lightTheme = ThemeData(
   brightness: Brightness.light,
   primarySwatch: Colors.blue,
   colorScheme: const ColorScheme.light(
-    primary: Colors.blue,
+    primary: Color.fromARGB(255, 45, 49, 66),
     secondary: Colors.orange,
   ),
   appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.blue,
-    foregroundColor: Colors.white,
+    backgroundColor: Color.fromARGB(255, 234, 232, 255),
+    foregroundColor: Color.fromARGB(255, 45, 49, 66),
     elevation: 4,
+    titleTextStyle: TextStyle(
+        color: Color.fromARGB(255, 45, 49, 66),
+        fontWeight: FontWeight.bold,
+        fontSize: 20),
   ),
+  //aggiungi tema per icone
+  iconTheme: const IconThemeData(color: Color.fromARGB(255, 45, 49, 66)),
   scaffoldBackgroundColor: Colors.white,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.blue,
-      foregroundColor: Colors.white,
+      backgroundColor: Color.fromARGB(255, 45, 49, 66),
+      foregroundColor: Color.fromARGB(255, 234, 232, 255),
     ),
   ),
   textTheme: const TextTheme(
@@ -111,28 +117,28 @@ final ThemeData _lightTheme = ThemeData(
   ),
   cardColor: Colors.grey[100],
   dividerColor: Colors.grey,
-  iconTheme: const IconThemeData(color: Colors.blue),
 );
 
 final ThemeData _darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.deepPurple,
   colorScheme: const ColorScheme.dark(
-    primary: Colors.deepPurple,
-    secondary: Colors.pinkAccent,
+    primary: Color.fromARGB(255, 97, 3, 3),
+    secondary: Color.fromARGB(255, 66, 12, 20),
   ),
   appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.deepPurple,
+    backgroundColor: Color.fromARGB(255, 97, 3, 3),
     foregroundColor: Colors.white,
     elevation: 4,
   ),
   scaffoldBackgroundColor: Colors.black,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: const Color.fromARGB(255, 97, 3, 3),
       foregroundColor: Colors.white,
     ),
   ),
+  iconTheme: const IconThemeData(color: Color.fromARGB(255, 97, 3, 3)),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Colors.white),
     bodyMedium: TextStyle(color: Colors.white70),
@@ -140,5 +146,4 @@ final ThemeData _darkTheme = ThemeData(
   ),
   cardColor: Colors.grey[850],
   dividerColor: Colors.grey[700],
-  iconTheme: const IconThemeData(color: Colors.pinkAccent),
 );
