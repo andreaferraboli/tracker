@@ -40,7 +40,7 @@ class _ProductListItemState extends State<ProductListItem> {
               if (widget.product.imageUrl != null && widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
                   FutureBuilder<Widget>(
-                    future: ApiClient.getImageWithRemovedBackground(widget.product.imageUrl),
+                    future: ApiClient.getImageWithRemovedBackground(widget.product.imageUrl, widget.product.category),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {

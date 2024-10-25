@@ -29,6 +29,7 @@ class HomeScreen extends StatelessWidget {
     final recipeTipsColor = Theme.of(context).brightness == Brightness.light
         ? const Color.fromARGB(255, 66, 12, 20)
         : const Color.fromARGB(255, 66, 12, 20);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Home',
