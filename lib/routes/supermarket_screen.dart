@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/routes/home_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
@@ -9,20 +10,19 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 
+import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
 var uuid = Uuid();
 
-class SupermarketScreen extends StatefulWidget {
-  final String supermarketName;
-
-  const SupermarketScreen({super.key, required this.supermarketName});
+class SupermarketScreen extends ConsumerStatefulWidget {
+  const SupermarketScreen({super.key});
 
   @override
   _SupermarketScreenState createState() => _SupermarketScreenState();
 }
 
-class _SupermarketScreenState extends State<SupermarketScreen> {
+class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
   List<ProductListItem> originalProducts = [];
@@ -45,8 +45,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
     // _checkConnection();
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/esselunga_output.json');
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
-    _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
-        widget.supermarketName); // Recupera i prodotti dal database
+    _fetchProducts(FirebaseAuth.instance.currentUser!.uid, ref); // Recupera i prodotti dal database
   }
 
   Future<void> uploadProductsFromJsonToFirestore(
@@ -101,7 +100,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
     });
   }
 
-  Future<void> _fetchProducts(String userId, String supermarketName) async {
+  Future<void> _fetchProducts(String userId, WidgetRef ref) async {
     // Riferimento al documento dell'utente basato sul suo id
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
@@ -116,7 +115,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
         if (productsArray.isNotEmpty &&
             productsArray[0]['productName'] != null) {
           for (var product in productsArray) {
-            if (product['supermarket'] == supermarketName) {
+            if (product['supermarket'] == ref.read(supermarketProvider)) {
               productWidgets.add(
                 ProductListItem(
                     product: Product.fromJson(product),
@@ -143,8 +142,10 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.supermarketName),
-      ),
+        title: Center(
+              child: Text(ref.watch(supermarketProvider))
+            ),
+        ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -193,9 +194,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AddProductScreen(
-                              supermarketName: widget.supermarketName,
-                            )),
+                        builder: (context) => AddProductScreen()),
                   );
                 },
                 child: const Text('Aggiungi Prodotto'),
@@ -272,7 +271,7 @@ class _SupermarketScreenState extends State<SupermarketScreen> {
                       'expenses': FieldValue.arrayUnion([
                         {
                           'id': uuid.v4(),
-                          'supermarket': widget.supermarketName,
+                          'supermarket': ref.read(supermarketProvider),
                           'totalAmount': totalBalance,
                           'products': productsToSave,
                           'date':

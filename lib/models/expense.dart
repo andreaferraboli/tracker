@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:tracker/models/product_bought.dart';
 
 class Expense {

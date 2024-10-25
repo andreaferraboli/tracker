@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/services/category_services.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/supermarkets.dart';
-import 'supermarket_screen.dart'; // Assicurati di avere questa importazione
+import 'supermarket_screen.dart';
+import '../providers/supermarkets_list_provider.dart';
+import '../providers/supermarket_provider.dart';
 
-class ShoppingScreen extends StatelessWidget {
+class ShoppingScreen extends ConsumerWidget {
   const ShoppingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedSupermarkets = ref.watch(supermarketsListProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Fare la spesa'),
@@ -17,22 +20,16 @@ class ShoppingScreen extends StatelessWidget {
         crossAxisCount: 2, // Numero di colonne
         padding: const EdgeInsets.all(16.0),
         children: [
-          _buildSupermarketCard(
-              context, 'Eurospin', 'assets/images/Eurospin.png'),
-          // Assicurati di avere l'immagine nel percorso corretto
-          _buildSupermarketCard(context, 'Lidl', 'assets/images/Lidl.png'),
-          _buildSupermarketCard(
-              context, 'Esselunga', 'assets/images/Esselunga.png'),
-          _buildAddSupermarketCard(context),
+          ...selectedSupermarkets.map((name) => _buildSupermarketCard(context, name, 'assets/images/$name.png', ref)).toList(),
+          _buildAddSupermarketCard(context, ref),
         ],
       ),
     );
   }
 
-  Widget _buildSupermarketCard(
-      BuildContext context, String name, String imagePath) {
+  Widget _buildSupermarketCard(BuildContext context, String name, String imagePath, WidgetRef ref) {
     return GestureDetector(
-      onTap: () => _navigateToSupermarket(context, name),
+      onTap: () => _navigateToSupermarket(context, name, ref),
       child: Card(
         elevation: 4,
         child: Column(
@@ -54,66 +51,68 @@ class ShoppingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddSupermarketCard(BuildContext context) {
+  Widget _buildAddSupermarketCard(BuildContext context, WidgetRef ref) {
+    final supermarkets = [
+      "Coop",
+      "Conad",
+      "Esselunga",
+      "Carrefour",
+      "Lidl",
+      "Penny Market",
+      "Eurospin",
+      "Aldi",
+      "Simply Market",
+      "Auchan",
+      "Bennet",
+      "Pam",
+      "Crai",
+      "Selex",
+      "MD",
+      "Tigre",
+      "Eataly"
+    ];
+    final selectedSupermarkets = ref.watch(supermarketsListProvider);
+    final addSupermarketArray = supermarkets.where((element) => !selectedSupermarkets.contains(element)).toList();
+
     return GestureDetector(
       onTap: () {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return FutureBuilder<List<String>>(
-              future: CategoryServices.getCategoryNames(),
-              // future: supermarket_provider.getSupermarkets(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                  String selectedSupermarket = '';
-                  List<String> supermarketNames = snapshot.data ?? [];
-                  return AlertDialog(
-                    title: const Text('Filter by Category'),
-                    content: DropdownButtonFormField<String>(
-                      value: selectedSupermarket.isEmpty
-                          ? null
-                          : selectedSupermarket,
-                      items: supermarketNames.map((String supermarket) {
-                        return DropdownMenuItem<String>(
-                          value: supermarket,
-                          child: Text(supermarket),
-                          // child: ListTile(leading: await Supermarkets.getSupermarketImage(supermarket),title: Text(supermarket),),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        // setState(() {
-                        //   selectedSupermarket = newValue!;
-                        // });
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Select Supermarket',
+            return Dialog(
+              child: Container(
+                height: 400,
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('Seleziona un supermercato', style: TextStyle(fontSize: 20)),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: addSupermarketArray.length,
+                        itemBuilder: (context, index) {
+                          final name = addSupermarketArray[index];
+                          return ListTile(
+                            leading: Image.asset('assets/images/$name.png', width: 50, height: 50),
+                            title: Text(name),
+                            onTap: () {
+                              ref.read(supermarketsListProvider.notifier).addSupermarket(name);
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        },
                       ),
                     ),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('select'),
-                        onPressed: () {
-                          // Implement the filter logic here
-                          // setState(() {
-                          //   supermarket_provider.add(selectSupermarket);
-                          // });
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                }
-              },
+                    TextButton(
+                      child: const Text('Chiudi'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
             );
           },
         );
@@ -142,19 +141,13 @@ class ShoppingScreen extends StatelessWidget {
   }
 
   // Naviga alla schermata del supermercato selezionato
-  void _navigateToSupermarket(BuildContext context, String supermarketName) {
+  void _navigateToSupermarket(BuildContext context, String supermarketName, WidgetRef ref) {
+    ref.read(supermarketProvider.notifier).setSupermarket(supermarketName);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            SupermarketScreen(supermarketName: supermarketName),
+        builder: (context) => SupermarketScreen(),
       ),
     );
   }
-
-  // @override
-  // State<StatefulWidget> createState() {
-  //   // TODO: implement createState
-  //   throw UnimplementedError();
-  // }
 }
