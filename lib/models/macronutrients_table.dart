@@ -6,7 +6,7 @@ class MacronutrientTable extends StatefulWidget {
 
   Map<String, double>? macronutrients;
 
-  MacronutrientTable(this.onSave, this.macronutrients);
+  MacronutrientTable(this.onSave, [this.macronutrients]);
 
   @override
   _MacronutrientTableState createState() => _MacronutrientTableState();
@@ -137,6 +137,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                 children: [
                   Expanded(
                     flex: 2, // Aumenta la larghezza del DropdownButtonFormField
+                    //todo: qua per me l'errore è che ho due dropdown che vanno in conflitto con le value
                     child: DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: 'Name',

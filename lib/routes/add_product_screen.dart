@@ -35,14 +35,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
     'buyQuantity': 0,
     'quantityOwned': 0,
     'unit': '',
-    'macronutrients': {
-      'Proteins': 0.0,
-      'Carbohydrates': 0.0,
-      'Energy': 0.0,
-      'Fiber': 0.0,
-      'Fats': 0.0,
-      'Sugars': 0.0,
-    },
+    'macronutrients': {},
+    // {
+    //   'Proteins': 0.0,
+    //   'Carbohydrates': 0.0,
+    //   'Energy': 0.0,
+    //   'Fiber': 0.0,
+    //   'Fats': 0.0,
+    //   'Sugars': 0.0,
+    // },
     'expirationDate': '',
     'supermarket': '',
     'purchaseDate': '',
@@ -106,6 +107,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void dispose() {
     _quantityController.dispose();
     _imageUrlController.dispose();
+    _priceController.dispose();
+    _totalWeightController.dispose();
+    _nameProductController.dispose();
+    _barcodeController.dispose();
     super.dispose();
   }
 
@@ -247,8 +252,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
         maxHeight: MediaQuery.of(context).size.height *
             0.5, // Set max height to 50% of screen height
       ),
-      child: MacronutrientTable(_setDynamicMacronutrients,
-          _productData['macronutrients'] as Map<String, double>),
+      child: widget.product != null
+          ? MacronutrientTable(_setDynamicMacronutrients, widget.product!.macronutrients)
+          : MacronutrientTable(_setDynamicMacronutrients),
     );
   }
 

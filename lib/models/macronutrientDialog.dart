@@ -21,12 +21,20 @@ class MacronutrientDialog extends StatefulWidget {
 class _MacronutrientDialogState extends State<MacronutrientDialog> {
   late String editedName;
   late String editedValue;
+  late TextEditingController _valueController;
 
   @override
   void initState() {
     super.initState();
     editedName = widget.initialName;
     editedValue = widget.initialValue;
+    _valueController = TextEditingController(text: editedValue);
+  }
+
+  @override
+  void dispose() {
+    _valueController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,7 +48,9 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
             decoration: InputDecoration(
               labelText: 'Name',
             ),
-            value: editedName,
+            value: widget.macronutrientsArray.contains(editedName)
+                ? editedName
+                : widget.macronutrientsArray[0],
             items: widget.macronutrientsArray.map((nutrient) {
               return DropdownMenuItem<String>(
                 value: nutrient,
@@ -55,9 +65,9 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
           ),
           TextField(
             decoration: InputDecoration(
-              labelText: 'Value(100g)',
+              labelText: 'Value (100g)',
             ),
-            controller: TextEditingController(text: editedValue),
+            controller: _valueController,
             keyboardType: TextInputType.number,
             onChanged: (value) {
               editedValue = value;
