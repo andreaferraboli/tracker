@@ -16,6 +16,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
   bool _isEditing = false;
   String editedValue = "";
   late String editedName;
+  late TextEditingController valueController;
+
   List<String> macronutrientsArray = [
     "Energy",
     "Fats",
@@ -37,38 +39,52 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
     super.initState();
     if (widget.macronutrients != null) {
       macronutrients = widget.macronutrients!;
-      //togli da macronutrientsArray i valori che sono già presenti in macronutrients
+      // Rimuove i valori già presenti in macronutrients da macronutrientsArray
       macronutrients.forEach((key, value) {
         macronutrientsArray.remove(key);
       });
     }
-    editedName = macronutrientsArray[0];
+    editedName = macronutrientsArray.isNotEmpty ? macronutrientsArray[0] : '';
+    valueController = TextEditingController(text: editedValue);
   }
 
-  // Add a new row
+  @override
+  void dispose() {
+    valueController.dispose();
+    super.dispose();
+  }
+
   void _addRow() {
-    setState(() {
-      macronutrients[editedName] =
-          editedValue.isNotEmpty ? double.parse(editedValue) : 0.0;
-      macronutrientsArray.remove(editedName);
-      editedName = macronutrientsArray[0];
-    });
+    if (editedName.isNotEmpty && editedValue.isNotEmpty) {
+      setState(() {
+        macronutrients[editedName] = double.tryParse(editedValue) ?? 0.0;
+        macronutrientsArray.remove(editedName);
+        if (macronutrientsArray.isNotEmpty) {
+          editedName = macronutrientsArray[0];
+        }
+        editedValue = '';
+        valueController.clear();
+      });
+    }
   }
 
-  // Edit a specific row
   void _editRow(String key, String newName, double newValue) {
     setState(() {
       macronutrients.remove(key);
       macronutrients[newName] = newValue;
+      macronutrientsArray.add(key); // Raggiunge key alla lista dei disponibili
+      macronutrientsArray.remove(newName); // Rimuove newName se già presente
+      editedName = macronutrientsArray.isNotEmpty ? macronutrientsArray[0] : '';
     });
   }
 
-  // Delete a specific row
   void _deleteRow(String key) {
     setState(() {
       macronutrients.remove(key);
       macronutrientsArray.add(key);
-      editedName = macronutrientsArray[0];
+      if (macronutrientsArray.isNotEmpty) {
+        editedName = macronutrientsArray[0];
+      }
     });
   }
 
@@ -78,20 +94,20 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            // Bottone per aggiungere una riga
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: DataTable(
+                columnSpacing: 5,
                 columns: [
-                  DataColumn(label: Text('Macronutrient')),
-                  DataColumn(label: Text('Value(100g)')),
-                  if (_isEditing) DataColumn(label: Text('Actions')),
+                  DataColumn(label: Center(child: Text('Macronutrient'))),
+                  DataColumn(label: Center(child: Text('Value(100g)'))),
+                  if (_isEditing) DataColumn(label: Center(child: Text('Actions'))),
                 ],
                 rows: macronutrients.entries.map((entry) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(entry.key)),
-                      DataCell(Text(entry.value.toString())),
+                      DataCell(Center(child: Text(entry.key))),
+                      DataCell(Center(child: Text(entry.value.toString()))),
                       if (_isEditing)
                         DataCell(
                           Row(
@@ -99,16 +115,13 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                               IconButton(
                                 icon: Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () {
-                                  // Funzionalità di modifica con dialogo
                                   showDialog(
                                     context: context,
                                     builder: (context) {
                                       return MacronutrientDialog(
                                         initialName: entry.key,
                                         initialValue: entry.value.toString(),
-                                        macronutrientsArray:
-                                            macronutrientsArray,
-                                        // L'array di macronutrienti
+                                        macronutrientsArray: macronutrientsArray,
                                         onSave: (oldName, newName, newValue) {
                                           _editRow(oldName, newName, newValue);
                                         },
@@ -136,13 +149,10 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 2, // Aumenta la larghezza del DropdownButtonFormField
-                    //todo: qua per me l'errore è che ho due dropdown che vanno in conflitto con le value
+                    flex: 2,
                     child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                      ),
-                      value: editedName,
+                      decoration: InputDecoration(labelText: 'Name'),
+                      value: macronutrientsArray.contains(editedName) ? editedName : null,
                       items: macronutrientsArray.map((nutrient) {
                         return DropdownMenuItem<String>(
                           value: nutrient,
@@ -155,7 +165,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
-                          editedName = newValue!;
+                          editedName = newValue ?? '';
                         });
                       },
                     ),
@@ -165,16 +175,13 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                     child: TextField(
                       decoration: InputDecoration(
                         labelText: 'Value(100g)',
-                        labelStyle: TextStyle(
-                            fontSize: 14), // Diminuisce la dimensione del font
+                        labelStyle: TextStyle(fontSize: 14),
                       ),
-                      controller: TextEditingController(text: editedValue),
+                      controller: valueController,
                       keyboardType: TextInputType.number,
                       style: TextStyle(fontSize: 18),
-                      // Diminuisce la dimensione del font
                       onChanged: (value) {
-                        value = value.replaceAll(",", ".");
-                        editedValue = value;
+                        editedValue = value.replaceAll(",", ".");
                       },
                     ),
                   ),

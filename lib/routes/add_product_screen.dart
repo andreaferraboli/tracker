@@ -4,13 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
 
 import '../models/product.dart';
+import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
-class AddProductScreen extends StatefulWidget {
+class AddProductScreen extends ConsumerStatefulWidget {
   final String? supermarketName;
 
   final Product? product;
@@ -21,7 +23,7 @@ class AddProductScreen extends StatefulWidget {
   _AddProductScreenState createState() => _AddProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Aggiornamento della mappa _productData per includere i nuovi parametri
@@ -90,7 +92,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       _productData['buyQuantity'] = widget.product!.buyQuantity;
       _productData['quantityOwned'] = widget.product!.quantityOwned;
     } else {
-      _productData['supermarket'] = widget.supermarketName;
+      _productData['supermarket'] = widget.supermarketName ?? ref.read(supermarketProvider);
       _productData['unit'] = 'kg';
       _productData['purchaseDate'] = DateTime.now().toString();
       _productData['productId'] = UniqueKey().toString();

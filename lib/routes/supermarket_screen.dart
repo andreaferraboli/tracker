@@ -196,6 +196,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
                     MaterialPageRoute(
                         builder: (context) => AddProductScreen()),
                   );
+                  // _fetchProducts(FirebaseAuth.instance.currentUser!.uid, ref);
                 },
                 child: const Text('Aggiungi Prodotto'),
               ),
@@ -217,6 +218,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
                       return {
                         'idProdotto': product.product.productId,
                         'productName': product.product.productName,
+                        'price': product.product.price,
                         'pricePerKg': (product.product.price /
                                 product.product.totalWeight)
                             .toStringAsFixed(3),

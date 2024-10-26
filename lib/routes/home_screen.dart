@@ -122,8 +122,8 @@ class HomeScreen extends StatelessWidget {
       ),
       body: GridView.count(
         crossAxisCount: 2,
-        childAspectRatio:
-            0.8, // Regola l'aspetto dei pulsanti per occupare più spazio
+        childAspectRatio: 0.8,
+        // Regola l'aspetto dei pulsanti per occupare più spazio
         // Definisce due pulsanti per riga
         padding: const EdgeInsets.all(16),
         mainAxisSpacing: 16,

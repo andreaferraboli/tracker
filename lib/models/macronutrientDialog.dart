@@ -46,7 +46,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
         children: [
           DropdownButtonFormField<String>(
             decoration: InputDecoration(
-              labelText: 'Name',
+              labelText: 'cambia nome in',
             ),
             value: widget.macronutrientsArray.contains(editedName)
                 ? editedName
@@ -65,7 +65,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
           ),
           TextField(
             decoration: InputDecoration(
-              labelText: 'Value (100g)',
+              labelText: 'modifica value (100g)',
             ),
             controller: _valueController,
             keyboardType: TextInputType.number,
