@@ -4,8 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
+import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
 import 'package:tracker/models/product_bought.dart';
+
+import '../models/period_selector.dart';
 
 class ViewExpensesScreen extends StatefulWidget {
   const ViewExpensesScreen({super.key});
@@ -14,122 +17,196 @@ class ViewExpensesScreen extends StatefulWidget {
   _ViewExpensesScreenState createState() => _ViewExpensesScreenState();
 }
 
-
 class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
-  String selectedPeriod = 'week'; // default view
+  String selectedPeriod = 'week';
+
   DateTime currentDate = DateTime.now();
-  // Funzione per cambiare periodo visualizzato
+
+  // Cambia periodo visualizzato
   void _changePeriod(int delta) {
     setState(() {
-      if (selectedPeriod == 'week') {
-        currentDate = currentDate.add(Duration(days: 7 * delta));
-      } else if (selectedPeriod == 'month') {
-        currentDate = DateTime(currentDate.year, currentDate.month + delta, currentDate.day);
-      } else if (selectedPeriod == 'year') {
-        currentDate = DateTime(currentDate.year + delta, currentDate.month, currentDate.day);
+      switch (selectedPeriod) {
+        case 'week':
+          currentDate = currentDate.add(Duration(days: 7 * delta));
+          break;
+        case 'month':
+          currentDate = DateTime(
+              currentDate.year, currentDate.month + delta, currentDate.day);
+          break;
+        case 'year':
+          currentDate = DateTime(
+              currentDate.year + delta, currentDate.month, currentDate.day);
+          break;
       }
     });
   }
 
-  Map<String, double> _filterExpensesByPeriod(List<Expense> expenses) {
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != currentDate) {
+      setState(() {
+        currentDate = picked;
+      });
+    }
+  }
+
+  // Filtra le spese in base al periodo selezionato
+  List<Expense> _filterExpensesByPeriod(List<Expense> expenses) {
+    List<Expense> filteredExpenses = [];
+
+    if (selectedPeriod == 'week') {
+      final startOfWeek =
+          currentDate.subtract(Duration(days: currentDate.weekday - 1));
+      final endOfWeek = startOfWeek.add(const Duration(days: 6));
+      filteredExpenses = expenses.where((expense) {
+        final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
+        return expenseDate
+                .isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+            expenseDate.isBefore(endOfWeek.add(const Duration(days: 1)));
+      }).toList();
+    } else if (selectedPeriod == 'month') {
+      filteredExpenses = expenses.where((expense) {
+        final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
+        return expenseDate.month == currentDate.month &&
+            expenseDate.year == currentDate.year;
+      }).toList();
+    } else if (selectedPeriod == 'year') {
+      filteredExpenses = expenses.where((expense) {
+        final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
+        return expenseDate.year == currentDate.year;
+      }).toList();
+    }
+
+    return filteredExpenses;
+  }
+
+  // Aggrega le spese per categoria nel periodo filtrato
+  Map<String, double> _calculateCategoryExpenses(
+      List<Expense> filteredExpenses) {
+    final Map<String, double> categoryData = {};
+
+    for (var expense in filteredExpenses) {
+      for (var product in expense.products) {
+        categoryData[product.category] =
+            (categoryData[product.category] ?? 0) + product.price;
+      }
+    }
+
+    return categoryData.map((category, total) {
+      return MapEntry('$category - €${total.toStringAsFixed(2)}', total);
+    });
+  }
+
+  // Prepara i dati per il grafico a barre
+  Map<String, double> _prepareBarChartData(List<Expense> filteredExpenses) {
     final Map<String, double> periodData = {};
 
     if (selectedPeriod == 'week') {
-      final startOfWeek = currentDate.subtract(Duration(days: currentDate.weekday - 1));
-      final endOfWeek = startOfWeek.add(const Duration(days: 6));
+      final startOfWeek =
+          currentDate.subtract(Duration(days: currentDate.weekday - 1));
 
       for (var i = 0; i < 7; i++) {
         final day = startOfWeek.add(Duration(days: i));
-        final formattedDate = DateFormat('yyyy-MM-dd').format(day);
-        periodData[formattedDate] = 0;
+        periodData[DateFormat('MM-dd').format(day)] = 0;
       }
 
-      for (var expense in expenses) {
+      for (var expense in filteredExpenses) {
         final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
-        if (expenseDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
-            expenseDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
-          final formattedDate = DateFormat('yyyy-MM-dd').format(expenseDate);
-          periodData[formattedDate] = (periodData[formattedDate] ?? 0) + expense.totalAmount;
-        }
+        final formattedDate = DateFormat('MM-dd').format(expenseDate);
+        periodData[formattedDate] =
+            (periodData[formattedDate] ?? 0) + expense.totalAmount;
       }
     } else if (selectedPeriod == 'month') {
       for (var i = 1; i <= 4; i++) {
-        periodData['Settimana $i'] = 0;
+        periodData['$i'] = 0;
       }
 
-      for (var expense in expenses) {
+      for (var expense in filteredExpenses) {
         final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
-        if (expenseDate.month == currentDate.month && expenseDate.year == currentDate.year) {
-          final weekOfMonth = ((expenseDate.day - 1) ~/ 7) + 1;
-          periodData['Settimana $weekOfMonth'] = (periodData['Settimana $weekOfMonth'] ?? 0) + expense.totalAmount;
-        }
+        final weekOfMonth = ((expenseDate.day - 1) ~/ 7) + 1;
+        periodData['$weekOfMonth'] =
+            (periodData['$weekOfMonth'] ?? 0) + expense.totalAmount;
       }
     } else if (selectedPeriod == 'year') {
       for (var i = 1; i <= 12; i++) {
-        periodData[DateFormat.MMMM().format(DateTime(currentDate.year, i))] = 0;
+        periodData[DateFormat.MMM().format(DateTime(currentDate.year, i))] = 0;
       }
 
-      for (var expense in expenses) {
+      for (var expense in filteredExpenses) {
         final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
-        if (expenseDate.year == currentDate.year) {
-          final monthName = DateFormat.MMMM().format(expenseDate);
-          periodData[monthName] = (periodData[monthName] ?? 0) + expense.totalAmount;
-        }
+        final monthName = DateFormat.MMM().format(expenseDate);
+        periodData[monthName] =
+            (periodData[monthName] ?? 0) + expense.totalAmount;
       }
     }
     return periodData;
   }
 
-  // Recupera la lista di spese dal documento dell'utente su Firestore
+  Map<String, double> _calculateSupermarketExpenses(
+      List<Expense> filteredExpenses) {
+    final Map<String, double> supermarketData = {};
+
+    for (var expense in filteredExpenses) {
+      if (supermarketData.containsKey(expense.supermarket)) {
+        supermarketData[expense.supermarket] =
+            supermarketData[expense.supermarket]! + expense.totalAmount;
+      } else {
+        supermarketData[expense.supermarket] = expense.totalAmount;
+      }
+    }
+
+    // Mappare i dati per includere il totale della spesa con il formato desiderato
+    return supermarketData.map((supermarket, total) {
+      return MapEntry('$supermarket - €${total.toStringAsFixed(2)}', total);
+    });
+  }
+
   Future<List<Expense>> _fetchExpenses() async {
     try {
       final userId = FirebaseAuth.instance.currentUser!.uid;
-      final expensesDocRef = FirebaseFirestore.instance.collection('expenses').doc(userId);
+      final expensesDocRef =
+          FirebaseFirestore.instance.collection('expenses').doc(userId);
       final expensesDoc = await expensesDocRef.get();
 
-      if (expensesDoc.data() == null || !expensesDoc.exists) {
-        return [];
-      }
-
-      final expenses = (expensesDoc.data()!['expenses'] as List)
+      if (expensesDoc.data() == null || !expensesDoc.exists) return [];
+      return (expensesDoc.data()!['expenses'] as List)
           .map((expense) => Expense.fromJson(expense))
           .toList();
-      return expenses;
     } catch (e) {
       print('Errore durante il recupero delle spese: $e');
       return [];
     }
   }
 
-  // Aggrega le spese per categoria, formattando il nome della categoria con il totale speso
-  Map<String, double> _calculateCategoryExpenses(List<Expense> expenses) {
-    final Map<String, double> categoryData = {};
-
-    for (var expense in expenses) {
-      for (var product in expense.products) {
-        if (categoryData.containsKey(product.category)) {
-          categoryData[product.category] = categoryData[product.category]! + product.price;
-        } else {
-          categoryData[product.category] = product.price;
-        }
-      }
-    }
-
-    // Crea una nuova mappa con il nome della categoria e il totale formattati
-    final Map<String, double> formattedCategoryData = categoryData.map((category, total) {
-      final formattedCategory = '$category - €${total.toStringAsFixed(2)}';
-      return MapEntry(formattedCategory, total);
-    });
-
-    return formattedCategoryData;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final List<Color> colors = [
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 34, 65, 98)
+          : const Color.fromARGB(255, 41, 36, 36),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 97, 3, 3)
+          : const Color.fromARGB(255, 97, 3, 3),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 89, 100, 117)
+          : const Color.fromARGB(255, 100, 100, 100),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 0, 126, 167)
+          : const Color.fromARGB(255, 150, 150, 150),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 45, 49, 66)
+          : const Color.fromARGB(255, 50, 50, 50),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 66, 12, 20)
+          : const Color.fromARGB(255, 66, 12, 20),
+    ];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Visualizzare spese'),
-      ),
+      appBar: AppBar(title: const Text('Visualizzare spese')),
       body: FutureBuilder<List<Expense>>(
         future: _fetchExpenses(),
         builder: (context, snapshot) {
@@ -141,116 +218,144 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
             return const Center(child: Text('Nessuna spesa trovata'));
           } else {
             final expenses = snapshot.data!;
-            final periodData = _filterExpensesByPeriod(expenses);
+            final filteredExpenses = _filterExpensesByPeriod(expenses);
 
-            final categoryData = _calculateCategoryExpenses(expenses);
-
-            return Column(
-              children: [
-                // Grafico a torta per le categorie di spesa
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: pie_chart.PieChart(
-                    dataMap: categoryData,
-                    chartRadius: MediaQuery.of(context).size.width / 2.2,
-                    legendOptions: const pie_chart.LegendOptions(
-                      legendPosition: pie_chart.LegendPosition.right,
-                      showLegendsInRow: false,
-                    ),
-                    chartValuesOptions: const pie_chart.ChartValuesOptions(
-                      showChartValuesInPercentage: true,
-                      decimalPlaces: 1,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => _changePeriod(-1),
-                      ),
-                      DropdownButton<String>(
-                        value: selectedPeriod,
-                        items: const [
-                          DropdownMenuItem(value: 'week', child: Text('Settimana')),
-                          DropdownMenuItem(value: 'month', child: Text('Mese')),
-                          DropdownMenuItem(value: 'year', child: Text('Anno')),
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            selectedPeriod = value!;
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward),
-                        onPressed: () => _changePeriod(1),
-                      ),
-                    ],
-                  ),
-                ),
-                // Grafico a barre
-                Expanded(
-                  child: BarChart(
-                    BarChartData(
-                      barGroups: periodData.entries
-                          .map(
-                            (entry) => BarChartGroupData(
-                          x: periodData.keys.toList().indexOf(entry.key),
-                          barRods: [
-                            BarChartRodData(toY: entry.value, color: Colors.blue),
-                          ],
-                        ),
-                      )
-                          .toList(),
-                      titlesData: FlTitlesData(
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              return Text(periodData.keys.toList()[value.toInt()]);
+            // Aggiunta della condizione per controllare se ci sono spese filtrate
+            if (filteredExpenses.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Nessuna spesa trovata per il periodo selezionato'),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          PeriodSelector(
+                            selectedPeriod: selectedPeriod,
+                            onPeriodChanged: (value) {
+                              setState(() {
+                                selectedPeriod = value!;
+                              });
                             },
+                            onPreviousPeriod: () => _changePeriod(-1),
+                            onNextPeriod: () => _changePeriod(1),
+                            onSelectDate: () => _selectDate(context),
                           ),
-                        ),
+                          const SizedBox(height: 8),
+                          Text(
+                            selectedPeriod == 'week'
+                                ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                                : selectedPeriod == 'month'
+                                ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                : '${currentDate.year}',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                      gridData: FlGridData(show: true),
-                      borderData: FlBorderData(show: false),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final categoryData = _calculateCategoryExpenses(filteredExpenses);
+            final supermarketData = _calculateSupermarketExpenses(filteredExpenses);
+            final periodData = _prepareBarChartData(filteredExpenses);
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Controlli del periodo
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        PeriodSelector(
+                          selectedPeriod: selectedPeriod,
+                          onPeriodChanged: (value) {
+                            setState(() {
+                              selectedPeriod = value!;
+                            });
+                          },
+                          onPreviousPeriod: () => _changePeriod(-1),
+                          onNextPeriod: () => _changePeriod(1),
+                          onSelectDate: () => _selectDate(context),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          selectedPeriod == 'week'
+                              ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                              : selectedPeriod == 'month'
+                              ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                              : '${currentDate.year}',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const Divider(),
-                // Lista di spese
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: expenses.length,
+                  // Grafico a barre per le spese nel periodo
+                  Container(
+                    height: 150, // Specifica un'altezza fissa
+                    child: CustomBarChart(periodData: periodData),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: pie_chart.PieChart(
+                      dataMap: categoryData,
+                      colorList: colors,
+                      chartRadius: MediaQuery.of(context).size.width / 2.2,
+                      legendOptions: const pie_chart.LegendOptions(
+                        legendPosition: pie_chart.LegendPosition.right,
+                      ),
+                      chartValuesOptions: const pie_chart.ChartValuesOptions(
+                        showChartValuesInPercentage: true,
+                        decimalPlaces: 1,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: pie_chart.PieChart(
+                      dataMap: supermarketData,
+                      colorList: colors,
+                      chartRadius: MediaQuery.of(context).size.width / 2.2,
+                      legendOptions: const pie_chart.LegendOptions(
+                        legendPosition: pie_chart.LegendPosition.right,
+                      ),
+                      chartValuesOptions: const pie_chart.ChartValuesOptions(
+                        showChartValuesInPercentage: true,
+                        decimalPlaces: 1,
+                      ),
+                    ),
+                  ),
+                  // Lista delle spese filtrate
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(), // Disabilita lo scorrimento interno
+                    shrinkWrap: true, // Consente alla lista di adattarsi al contenuto
+                    itemCount: filteredExpenses.length,
                     itemBuilder: (context, index) {
-                      final expense = expenses[index];
+                      final expense = filteredExpenses[index];
                       return Card(
-                        margin: const EdgeInsets.all(8.0),
                         child: ListTile(
                           title: Text('Supermercato: ${expense.supermarket}'),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Data: ${expense.date}'),
-                              Text('Totale: €${expense.totalAmount.toStringAsFixed(2)}'),
-                              const SizedBox(height: 5),
-                              Text('Prodotti:'),
-                              ...expense.products.map((product) => Text(
-                                '- ${product.productName} (x${product.quantita}): €${product.price.toStringAsFixed(2)}',
-                                style: TextStyle(color: Colors.grey[700]),
-                              )),
+                              Text(
+                                'Totale: €${expense.totalAmount.toStringAsFixed(2)}',
+                              ),
                             ],
                           ),
                         ),
                       );
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }
         },

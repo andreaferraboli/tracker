@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/routes/home_screen.dart';
 import 'package:uuid/uuid.dart';
@@ -22,10 +23,11 @@ class SupermarketScreen extends ConsumerStatefulWidget {
   _SupermarketScreenState createState() => _SupermarketScreenState();
 }
 
-class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
+class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
   List<ProductListItem> originalProducts = [];
+  DateTime selectedDate = DateTime.now();
   bool isConnected = false;
 
   void _updateTotalBalance(double price, bool isAdding) {
@@ -45,7 +47,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
     // _checkConnection();
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/esselunga_output.json');
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
-    _fetchProducts(FirebaseAuth.instance.currentUser!.uid, ref); // Recupera i prodotti dal database
+    _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
+        ref); // Recupera i prodotti dal database
   }
 
   Future<void> uploadProductsFromJsonToFirestore(
@@ -142,48 +145,55 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-              child: Text(ref.watch(supermarketProvider))
-            ),
-        ),
+        title: Center(child: Text(ref.watch(supermarketProvider))),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Saldo Totale: €${totalBalance.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 24),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                double fontSize = 24.0; // Dimensione font di base
+                String totalText = 'Saldo Totale: €${totalBalance.toStringAsFixed(2)}';
+                double textWidth = (totalText.length * fontSize) * 0.99; // Stima della larghezza del testo
+
+                // Se il testo supera la larghezza disponibile, riduci la dimensione del font
+                if (textWidth > constraints.maxWidth) {
+                  fontSize=fontSize-2; // Riduci in proporzione
+                }
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Posiziona i pulsanti alla fine
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Utilizza il font size calcolato
+                    Text(
+                      totalText,
+                      style: TextStyle(fontSize: fontSize),
+                    ),
+                    // Pulsante filtro
                     IconButton(
                       onPressed: _showFilterDialog,
-                      icon: Icon(Icons.filter_list,
-                          color: Theme.of(context).iconTheme.color),
+                      icon: Icon(Icons.filter_list, color: Theme.of(context).iconTheme.color),
                     ),
+                    // Pulsante ricerca
                     IconButton(
                       onPressed: _showSearchDialog,
-                      icon: Icon(Icons.search,
-                          color: Theme.of(context).iconTheme.color),
+                      icon: Icon(Icons.search, color: Theme.of(context).iconTheme.color),
                     ),
-                    //bottone reset filtri e ricerca
+                    // Pulsante reset filtri e ricerca
                     IconButton(
                       onPressed: () {
                         setState(() {
                           purchasedProducts = originalProducts;
                         });
                       },
-                      icon: Icon(Icons.refresh,
-                          color: Theme.of(context).iconTheme.color),
+                      icon: Icon(Icons.refresh, color: Theme.of(context).iconTheme.color),
                     ),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
           Row(
@@ -193,8 +203,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => AddProductScreen()),
+                    MaterialPageRoute(builder: (context) => AddProductScreen()),
                   );
                   // _fetchProducts(FirebaseAuth.instance.currentUser!.uid, ref);
                 },
@@ -276,19 +285,39 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen>{
                           'supermarket': ref.read(supermarketProvider),
                           'totalAmount': totalBalance,
                           'products': productsToSave,
-                          'date':
-                              DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                          'date': DateFormat('dd-MM-yyyy').format(selectedDate),
                         }
                       ])
                     });
 
-                    print('Spesa salvata con successo!');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Spesa salvata con successo!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
                     Navigator.pop(context);
                   } catch (e) {
                     print('Errore durante il salvataggio della spesa: $e');
                   }
                 },
                 child: const Text('Salva Spesa'),
+              ),
+              IconButton(
+                icon: const Icon(Icons.calendar_today),
+                onPressed: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime(2015, 8),
+                    lastDate: DateTime(2101),
+                  );
+                  if (picked != null && picked != selectedDate) {
+                    setState(() {
+                      selectedDate = picked;
+                    });
+                  }
+                },
               ),
             ],
           ),
