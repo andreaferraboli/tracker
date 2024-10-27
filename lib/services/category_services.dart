@@ -152,8 +152,14 @@ class CategoryServices {
         return Icons.water_drop;
       case 'dessert':
         return FontAwesomeIcons.cookieBite;
+      case 'sauces':
+        return Icons.kitchen; // Icona per "Sughi e Condimenti"
+      case 'salty_snacks':
+        return HugeIcons.strokeRoundedFrenchFries01; // Icona per "Snack Salati"
       default:
         return Icons.category; // Icona di default
     }
   }
+
 }
+

@@ -183,6 +183,11 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Widget _buildCategorySelector() {
+    // Ensure selectedCategory has a valid initial value
+    if (!categories.contains(selectedCategory)) {
+      selectedCategory = categories.isNotEmpty ? categories[0] : '';
+    }
+
     return Center(
       child: DropdownButton<String>(
         value: selectedCategory,
@@ -211,12 +216,14 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           );
         }).toList(),
         onChanged: (value) {
-          setState(() {
-            selectedCategory = value;
-            _productData['category'] = selectedCategory;
-          });
+          if (value != null) {  // Add null check
+            setState(() {
+              selectedCategory = value;
+              _productData['category'] = selectedCategory;
+            });
+          }
         },
-        underline: SizedBox(),
+        underline: const SizedBox(),  // Add const
       ),
     );
   }
@@ -492,13 +499,19 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         await userDocRef.update({
           "products": FieldValue.arrayUnion([_productData])
         });
-        print('Prodotto aggiunto con successo!');
+        ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: Text('Prodotto aggiunto con successo!'),
+    backgroundColor: Colors.green,
+  ),
+);
         Navigator.of(context).pop();
       } catch (e) {
         print('Errore durante l\'aggiunta del prodotto: $e');
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
