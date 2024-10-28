@@ -77,7 +77,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/shopping': (context) => const ShoppingScreen(),
         '/user': (context) => UserScreen(),
-        '/addMeal': (context) => const AddMealScreen(),
+        '/addMeal': (context) => AddMealScreen(),
         '/viewExpenses': (context) => const ViewExpensesScreen(),
         '/inventory': (context) => const InventoryScreen(),
         '/viewMeals': (context) => const ViewMealsScreen(),
