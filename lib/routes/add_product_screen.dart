@@ -271,7 +271,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.remove),
+          icon: const Icon(Icons.remove),
           onPressed: () {
             setState(() {
               _productData['quantity'] = (_productData['quantity'] as int) > 0
@@ -304,7 +304,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: () {
             setState(() {
               _productData['quantity'] = (_productData['quantity'] as int) + 1;
@@ -500,7 +500,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           "products": FieldValue.arrayUnion([_productData])
         });
         ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
+  const SnackBar(
     content: Text('Prodotto aggiunto con successo!'),
     backgroundColor: Colors.green,
   ),
@@ -568,19 +568,19 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
                         flex: 4, // 30% of the row
                         child: _buildQuantityInput(),
                       ),
-                      Spacer(flex: 1), // 10% of the row
+                      const Spacer(flex: 1), // 10% of the row
                       Expanded(
                         flex: 2, // 30% of the row
                         child: _buildValueInput(),
                       ),
-                      Spacer(flex: 1), // 10% of the row
+                      const Spacer(flex: 1), // 10% of the row
                       Expanded(
                         flex: 2, // 20% of the row
                         child: ValueListenableBuilder(
@@ -603,7 +603,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
@@ -618,7 +618,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                           });
                         }),
                       ),
-                      Spacer(flex: 1), // 10% of the row
+                      const Spacer(flex: 1), // 10% of the row
                       Expanded(
                         flex: 2, // 30% of the row
                         child: ValueListenableBuilder(
@@ -639,7 +639,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                           },
                         ),
                       ),
-                      Spacer(flex: 1), // 10% of the row
+                      const Spacer(flex: 1), // 10% of the row
                       Expanded(
                         flex: 2, // 20% of the row
                         child: ValueListenableBuilder(
@@ -663,9 +663,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   _buildCategorySelector(),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   _buildMacronutrientTable(),
                   _buildImageUrlInput(),
                   _buildTextField('Codice a barre', _barcodeController,

@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
-import 'package:tracker/models/product_bought.dart';
 
 import '../models/period_selector.dart';
 

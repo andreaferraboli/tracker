@@ -29,8 +29,8 @@ class AddMealScreen extends StatelessWidget {
         icon: Icons.breakfast_dining,
         color: colazioneColor,
       ),
-      MealType.empty(),
-      MealType.empty(),
+      const MealType.empty(),
+      const MealType.empty(),
       MealType(
         name: 'Lunch',
         icon: Icons.lunch_dining,
@@ -41,8 +41,8 @@ class AddMealScreen extends StatelessWidget {
         icon: Icons.cookie,
         color: merendaColor,
       ),
-      MealType.empty(),
-      MealType.empty(),
+      const MealType.empty(),
+      const MealType.empty(),
       MealType(
         name: 'Dinner',
         icon: Icons.dinner_dining,

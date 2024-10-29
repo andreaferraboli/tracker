@@ -3,8 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
-import 'package:tracker/routes/supermarket_screen.dart';
-import 'package:tracker/services/category_services.dart';
 
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';

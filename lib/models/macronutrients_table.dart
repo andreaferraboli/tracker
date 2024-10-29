@@ -99,9 +99,9 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
               child: DataTable(
                 columnSpacing: 5,
                 columns: [
-                  DataColumn(label: Center(child: Text('Macronutrient'))),
-                  DataColumn(label: Center(child: Text('Value(100g)'))),
-                  if (_isEditing) DataColumn(label: Center(child: Text('Actions'))),
+                  const DataColumn(label: Center(child: Text('Macronutrient'))),
+                  const DataColumn(label: Center(child: Text('Value(100g)'))),
+                  if (_isEditing) const DataColumn(label: Center(child: Text('Actions'))),
                 ],
                 rows: macronutrients.entries.map((entry) {
                   return DataRow(
@@ -113,7 +113,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                           Row(
                             children: [
                               IconButton(
-                                icon: Icon(Icons.edit, color: Colors.blue),
+                                icon: const Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () {
                                   showDialog(
                                     context: context,
@@ -131,7 +131,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _deleteRow(entry.key);
                                 },
@@ -151,14 +151,14 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   Expanded(
                     flex: 2,
                     child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(labelText: 'Name'),
+                      decoration: const InputDecoration(labelText: 'Name'),
                       value: macronutrientsArray.contains(editedName) ? editedName : null,
                       items: macronutrientsArray.map((nutrient) {
                         return DropdownMenuItem<String>(
                           value: nutrient,
                           child: Text(
                             nutrient,
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                             overflow: TextOverflow.ellipsis,
                           ),
                         );
@@ -173,13 +173,13 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Value(100g)',
                         labelStyle: TextStyle(fontSize: 14),
                       ),
                       controller: valueController,
                       keyboardType: TextInputType.number,
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                       onChanged: (value) {
                         editedValue = value.replaceAll(",", ".");
                       },
@@ -195,7 +195,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                       ),
                       child: IconButton(
                         onPressed: _addRow,
-                        icon: Icon(Icons.add, color: Colors.white, size: 20),
+                        icon: const Icon(Icons.add, color: Colors.white, size: 20),
                       ),
                     ),
                   Container(

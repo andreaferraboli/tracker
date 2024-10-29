@@ -89,7 +89,7 @@ class Product {
       'totalWeight': totalWeight,
       'unitWeight': unitWeight,
       'unitPrice': unitPrice,
-      'selectedQuantity': selectedQuantity ?? 0,
+      'selectedQuantity': selectedQuantity,
     };
   }
 

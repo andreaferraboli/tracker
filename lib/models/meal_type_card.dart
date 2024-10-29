@@ -6,13 +6,13 @@ class MealTypeCard extends StatelessWidget {
   final MealType? mealType;
   final VoidCallback? onTap;
 
-  const MealTypeCard({
+  const MealTypeCard({super.key,
     required this.mealType,
     required this.onTap,
   });
 
   // Costruttore per una Card vuota e trasparente
-  const MealTypeCard.empty()
+  const MealTypeCard.empty({super.key})
       : mealType = null,
         onTap = null;
 

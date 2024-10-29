@@ -76,11 +76,11 @@ class _MyAppState extends State<MyApp> {
       ),
       routes: {
         '/shopping': (context) => const ShoppingScreen(),
-        '/user': (context) => UserScreen(),
+        '/user': (context) => const UserScreen(),
         '/addMeal': (context) => AddMealScreen(),
         '/viewExpenses': (context) => const ViewExpensesScreen(),
         '/inventory': (context) => const InventoryScreen(),
-        '/viewMeals': (context) => ViewMealsScreen(),
+        '/viewMeals': (context) => const ViewMealsScreen(),
         '/recipeTips': (context) => const RecipeTipsScreen(),
       },
     );
@@ -108,8 +108,8 @@ final ThemeData _lightTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Color.fromARGB(255, 45, 49, 66),
-      foregroundColor: Color.fromARGB(255, 234, 232, 255),
+      backgroundColor: const Color.fromARGB(255, 45, 49, 66),
+      foregroundColor: const Color.fromARGB(255, 234, 232, 255),
     ),
   ),
   textTheme: const TextTheme(

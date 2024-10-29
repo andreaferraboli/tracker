@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/supermarkets.dart';
 import 'supermarket_screen.dart';
 import '../providers/supermarkets_list_provider.dart';
 import '../providers/supermarket_provider.dart';
@@ -20,7 +19,7 @@ class ShoppingScreen extends ConsumerWidget {
         crossAxisCount: 2, // Numero di colonne
         padding: const EdgeInsets.all(16.0),
         children: [
-          ...selectedSupermarkets.map((name) => _buildSupermarketCard(context, name, 'assets/images/$name.png', ref)).toList(),
+          ...selectedSupermarkets.map((name) => _buildSupermarketCard(context, name, 'assets/images/$name.png', ref)),
           _buildAddSupermarketCard(context, ref),
         ],
       ),

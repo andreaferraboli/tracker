@@ -3,7 +3,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
-import 'dart:io';
 
 import 'category_services.dart';
 

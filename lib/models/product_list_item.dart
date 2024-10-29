@@ -37,7 +37,7 @@ class _ProductListItemState extends State<ProductListItem> {
           padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
-              if (widget.product.imageUrl != null && widget.product.imageUrl.isNotEmpty)
+              if (widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
                   FutureBuilder<Widget>(
                     future: ApiClient.getImageWithRemovedBackground(widget.product.imageUrl, widget.product.category),

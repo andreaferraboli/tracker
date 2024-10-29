@@ -8,11 +8,11 @@ class CategorySelectionRow extends StatefulWidget {
   final Function(List<String>)? onCategoriesUpdated;
 
   const CategorySelectionRow({
-    Key? key,
+    super.key,
     required this.mealType,
     required this.onCategoriesUpdated,
     required this.categories,
-  }) : super(key: key);
+  });
 
   @override
   _CategorySelectionRowState createState() => _CategorySelectionRowState();

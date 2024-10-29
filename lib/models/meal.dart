@@ -1,20 +1,19 @@
-import 'package:tracker/models/product.dart';
 
 class Meal {
-  final String date;
+  final String date; // Formato stringa della data (es. "2024-10-29")
   final String mealType;
-  final Map<String, dynamic> macronutrients;
+  final Map<String, double> macronutrients;
   final String id;
   final double totalExpense;
-  final List<Product> products;
+  final List<Map<String, dynamic>> products;
 
   Meal({
-    this.date = '',
-    this.mealType = '',
-    this.macronutrients = const <String, dynamic>{},
-    this.id = '',
-    this.totalExpense = 0.0,
-    this.products = const [],
+    required this.date,
+    required this.mealType,
+    required this.macronutrients,
+    required this.id,
+    required this.totalExpense,
+    required this.products,
   });
 
   // Metodo per convertire un'istanza di Meal in JSON
@@ -24,8 +23,8 @@ class Meal {
       'mealType': mealType,
       'macronutrients': macronutrients,
       'id': id,
-      'totalExpense': totalExpense,
-      'products': products.map((product) => product.toJson()).toList(),
+      'totalExpense': totalExpense.toStringAsFixed(3),
+      'products': products,
     };
   }
 
@@ -34,13 +33,29 @@ class Meal {
     return Meal(
       date: json['date'] ?? '',
       mealType: json['mealType'] ?? '',
-      macronutrients: json['macronutrients'] ?? <String, dynamic>{},
+      macronutrients: Map<String, double>.from(json['macronutrients'] ?? {}),
       id: json['id'] ?? '',
-      totalExpense: (json['totalExpense'] ?? 0.0).toDouble(),
-      products: (json['products'] as List<dynamic>?)
-          ?.map((item) => Product.fromJson(item as Map<String, dynamic>))
-          .toList() ??
-          [],
+      totalExpense: double.tryParse(json['totalExpense']?.toString() ?? '0.0') ?? 0.0,
+      products: List<Map<String, dynamic>>.from(json['products'] ?? []),
     );
   }
+
+  // Getter per ottenere l'anno dalla data
+  int get year {
+    List<String> parts = date.split('-'); // Divide la stringa in parti
+    return int.parse(parts[2]); // Anno è la terza parte
+  }
+
+// Getter per ottenere il mese dalla data
+  int get month {
+    List<String> parts = date.split('-'); // Divide la stringa in parti
+    return int.parse(parts[1]); // Mese è la seconda parte
+  }
+
+// Getter per ottenere il giorno dalla data
+  int get day {
+    List<String> parts = date.split('-'); // Divide la stringa in parti
+    return int.parse(parts[0]); // Giorno è la prima parte
+  }
+
 }

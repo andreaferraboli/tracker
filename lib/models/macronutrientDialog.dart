@@ -7,12 +7,12 @@ class MacronutrientDialog extends StatefulWidget {
   final Function(String oldName, String newName, double newValue) onSave;
 
   const MacronutrientDialog({
-    Key? key,
+    super.key,
     required this.initialName,
     required this.initialValue,
     required this.macronutrientsArray,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   _MacronutrientDialogState createState() => _MacronutrientDialogState();
@@ -40,12 +40,12 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Edit Macronutrient"),
+      title: const Text("Edit Macronutrient"),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           DropdownButtonFormField<String>(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'cambia nome in',
             ),
             value: widget.macronutrientsArray.contains(editedName)
@@ -64,7 +64,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
             },
           ),
           TextField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'modifica value (100g)',
             ),
             controller: _valueController,
@@ -80,7 +80,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
         ),
         ElevatedButton(
           onPressed: () {
@@ -91,7 +91,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
             );
             Navigator.of(context).pop();
           },
-          child: Text("Save"),
+          child: const Text("Save"),
         ),
       ],
     );

@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import di Riverpod
 import 'package:tracker/providers/products_provider.dart';
-import 'package:tracker/providers/supermarket_provider.dart';
 import 'package:tracker/providers/category_provider.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/services/category_services.dart';

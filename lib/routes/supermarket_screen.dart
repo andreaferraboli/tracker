@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tracker/routes/home_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +12,7 @@ import 'package:tracker/routes/add_product_screen.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
-var uuid = Uuid();
+var uuid = const Uuid();
 
 class SupermarketScreen extends ConsumerStatefulWidget {
   const SupermarketScreen({super.key});
@@ -230,7 +227,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddProductScreen()),
+                    MaterialPageRoute(builder: (context) => const AddProductScreen()),
                   );
                   // _fetchProducts(FirebaseAuth.instance.currentUser!.uid, ref);
                 },
@@ -238,7 +235,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 33, 78,
+                  backgroundColor: const Color.fromARGB(255, 33, 78,
                       52), // Imposta il colore di sfondo del bottone
                 ),
                 onPressed: () async {
@@ -357,7 +354,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                           index]; // Corretto il ritorno del widget
                     },
                   )
-                : Center(
+                : const Center(
                     child: Text(
                       'Non ci sono prodotti salvati disponibili',
                       style: TextStyle(fontSize: 18),
@@ -377,7 +374,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           future: CategoryServices.getCategoryNames(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
