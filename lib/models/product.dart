@@ -6,6 +6,7 @@ class Product {
   double price; // Prezzo unitario
   int quantity;
   int buyQuantity;
+  double selectedQuantity;
   int quantityOwned;// Rinominato da quantityOwned
   String unit; // Unità di misura
   Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
@@ -38,6 +39,7 @@ class Product {
     this.totalWeight = 0,
     this.unitWeight = 0,
     this.unitPrice = 0,
+    this.selectedQuantity = 0,
   });
 
   // Metodo per la deserializzazione da JSON (fromJson)
@@ -62,6 +64,7 @@ class Product {
       totalWeight: double.parse(json['totalWeight'].toString()),
       unitWeight: double.parse(json['unitWeight'].toString()),
       unitPrice: double.parse(json['unitPrice'].toString()),
+      selectedQuantity: json['selectedQuantity'] ?? 0,
     );
   }
 
@@ -86,6 +89,32 @@ class Product {
       'totalWeight': totalWeight,
       'unitWeight': unitWeight,
       'unitPrice': unitPrice,
+      'selectedQuantity': selectedQuantity ?? 0,
     };
+  }
+
+  Product copyWith({required double selectedQuantity}) {
+    return Product(
+      productId: productId,
+      productName: productName,
+      category: category,
+      totalPrice: totalPrice,
+      price: price,
+      quantity: quantity,
+      unit: unit,
+      macronutrients: macronutrients,
+      expirationDate: expirationDate,
+      supermarket: supermarket,
+      purchaseDate: purchaseDate,
+      barcode: barcode,
+      buyQuantity: buyQuantity,
+      quantityOwned: quantityOwned,
+      imageUrl: imageUrl,
+      totalWeight: totalWeight,
+      unitWeight: unitWeight,
+      unitPrice: unitPrice,
+      selectedQuantity: selectedQuantity,
+    );
+
   }
 }

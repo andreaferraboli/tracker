@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
-
 class ProductAddedToMeal extends StatefulWidget {
   final Product product;
   final double selectedQuantity;
@@ -98,16 +97,9 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${widget.product.quantityOwned * widget.product.totalWeight} kg disponibili',
-                    style: TextStyle(
-                      color: Colors.grey[300],
-                    ),
-                  ),
                   const SizedBox(height: 8),
                   Text(
-                    'Quantità selezionata: ${widget.selectedQuantity.toStringAsFixed(2)} kg',
+                    'Quantità selezionata: ${widget.selectedQuantity.toStringAsFixed(3)} kg',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white,

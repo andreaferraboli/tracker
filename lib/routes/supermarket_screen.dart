@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/routes/home_screen.dart';
@@ -47,10 +48,36 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     // _checkConnection();
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/esselunga_output.json');
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
+    saveMealsToJson(FirebaseAuth.instance.currentUser!.uid, 'assets/json/meals.json');
     _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
         ref); // Recupera i prodotti dal database
   }
+  Future<void> saveMealsToJson(String userId, String jsonFilePath) async {
+    // Riferimento al documento dell'utente basato sul suo id
+    DocumentReference userDocRef = FirebaseFirestore.instance.collection('meals').doc(userId);
 
+    try {
+      // Recupera il documento
+      DocumentSnapshot snapshot = await userDocRef.get();
+
+      if (snapshot.exists) {
+        // Recupera l'array "meals" dal documento
+        final List<dynamic> mealsArray = snapshot['meals'] ?? [];
+
+        // Converti l'array in una stringa JSON
+        String jsonString = json.encode(mealsArray);
+
+        // Salva la stringa JSON nel file specificato
+        debugPrint(jsonString);
+
+        print('Dati salvati con successo in $jsonFilePath');
+      } else {
+        print('Nessun documento trovato per l\'utente.');
+      }
+    } catch (e) {
+      print('Errore durante il salvataggio dei dati: $e');
+    }
+  }
   Future<void> uploadProductsFromJsonToFirestore(
       String userId, String jsonFilePath) async {
     // Leggi il file JSON

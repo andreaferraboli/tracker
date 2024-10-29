@@ -67,7 +67,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
               List.from(loadedProducts); // Backup della lista originale
           filteredProducts = loadedProducts
               .where((product) => selectedCategories.contains(product.category))
-              .toList(); // Lista filtrata; // Lista filtrata
+              .toList(); // Lista filtrata
         });
       } else {
         print('Nessun documento trovato per l\'utente.');
@@ -82,14 +82,22 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
       DocumentReference userDocRef = FirebaseFirestore.instance
           .collection('meals')
           .doc(FirebaseAuth.instance.currentUser!.uid);
-
+      Map<String, double> macronutrients = {};
+      double totalExpense = 0;
       List<Map<String, dynamic>> productsToSave = mealProducts.map((product) {
+        product.macronutrients.forEach((key, value) {
+          macronutrients[key] = (macronutrients[key] ?? 0) +
+              value * (product.selectedQuantity * 10);
+        });
+        double pricePerKg = product.price / product.totalWeight;
+        double productExpense = pricePerKg * product.selectedQuantity;
+        totalExpense += productExpense;
         return {
           'idProdotto': product.productId,
           'productName': product.productName,
-          'price': product.price,
+          'price': productExpense.toStringAsFixed(3),
           'category': product.category,
-          'quantityOwned': product.quantityOwned,
+          'quantitySelected': product.selectedQuantity,
         };
       }).toList();
 
@@ -98,7 +106,9 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
           {
             'id': DateTime.now().toIso8601String(),
             'mealType': widget.mealType.name,
+            'totalExpense': totalExpense.toStringAsFixed(3),
             'products': productsToSave,
+            'macronutrients': macronutrients,
             'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
           }
         ])
@@ -110,6 +120,10 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
           backgroundColor: Colors.green,
         ),
       );
+      int count = 0;
+      Navigator.of(context).popUntil((route) {
+        return count++ == 2;
+      });
     } catch (e) {
       print('Errore durante il salvataggio del pasto: $e');
     }
@@ -224,35 +238,33 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             child: mealProducts.isEmpty
                 ? const Center(child: Text('Nessun prodotto selezionato'))
                 : Column(
-              children: [
-                Text(
-                  'Prodotti selezionati',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                Expanded( // Per evitare overflow
-                  child: Container(
-                    color: Theme.of(context).colorScheme.primary, // Colore di sfondo
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: mealProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = mealProducts[index];
-                        return ProductAddedToMeal(
-                          product: product,
-                          onQuantityUpdated: (product) {
-                            setState(() {
-                              mealProducts.add(product as Product);
-                              originalProducts.remove(product);
-                              filteredProducts.remove(product);
-                            });
-                          }, selectedQuantity: 0.7,
-                        );
-                      },
-                    ),
+                    children: [
+                      Text(
+                        'Prodotti selezionati',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: mealProducts.length,
+                          itemBuilder: (context, index) {
+                            final product = mealProducts[index];
+                            return ProductAddedToMeal(
+                              product: product,
+                              selectedQuantity: product
+                                  .selectedQuantity, // Passa la quantità selezionata
+                              onQuantityUpdated: (quantity) {
+                                setState(() {
+                                  mealProducts[index] = product.copyWith(
+                                      selectedQuantity: quantity);
+                                });
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ),
 
           // Spazio dedicato ai prodotti filtrati
@@ -267,9 +279,10 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                       final product = filteredProducts[index];
                       return ProductCard(
                         product: product,
-                        addProductToMeal: (product) {
+                        addProductToMeal: (product, quantity) {
                           setState(() {
-                            mealProducts.add(product);
+                            mealProducts.add(
+                                product.copyWith(selectedQuantity: quantity));
                             originalProducts.remove(product);
                             filteredProducts.remove(product);
                           });

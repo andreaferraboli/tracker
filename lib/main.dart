@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
         '/addMeal': (context) => AddMealScreen(),
         '/viewExpenses': (context) => const ViewExpensesScreen(),
         '/inventory': (context) => const InventoryScreen(),
-        '/viewMeals': (context) => const ViewMealsScreen(),
+        '/viewMeals': (context) => ViewMealsScreen(),
         '/recipeTips': (context) => const RecipeTipsScreen(),
       },
     );

@@ -3,7 +3,7 @@ import 'package:tracker/models/product.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
-  final Function(Product)? addProductToMeal;
+  final Function(Product, double)? addProductToMeal;
 
   const ProductCard({
     Key? key,
@@ -94,7 +94,7 @@ class _ProductCardState extends State<ProductCard> {
                       hintText: 'Peso (kg)',
                     ),
                     controller: TextEditingController(
-                      text: _quantityInWeight.toStringAsFixed(2),
+                      text: _quantityInWeight.toStringAsFixed(3),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -125,13 +125,11 @@ class _ProductCardState extends State<ProductCard> {
             ),
             const SizedBox(width: 8),
 
-            // Slider per selezionare la quantità
-
             // Pulsante per aggiungere il prodotto al pasto
             ElevatedButton(
               onPressed: () {
                 if (widget.addProductToMeal != null) {
-                  widget.addProductToMeal!(widget.product);
+                  widget.addProductToMeal!(widget.product, _quantityInWeight);
                 }
               },
               style: ElevatedButton.styleFrom(
