@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tracker/models/product_added_to_meal.dart';
 import 'package:tracker/routes/supermarket_screen.dart';
 import 'package:tracker/services/category_services.dart';
 
@@ -32,12 +33,14 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   List<Product> mealProducts = [];
   List<String> selectedCategories = [];
   List<Product> filteredProducts = [];
-  List<Product> originalProducts = []; // Per mantenere la lista originale dei prodotti
+  List<Product> originalProducts =
+      []; // Per mantenere la lista originale dei prodotti
 
   @override
   void initState() {
     super.initState();
-    selectedCategories = List<String>.from(defaultCategories[widget.mealType.name]!);
+    selectedCategories =
+        List<String>.from(defaultCategories[widget.mealType.name]!);
     _loadAvailableProducts(); // Carica i prodotti quando viene inizializzato lo stato
   }
 
@@ -60,8 +63,11 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         }
 
         setState(() {
-          originalProducts = List.from(loadedProducts); // Backup della lista originale
-          filteredProducts = loadedProducts.where((product) => selectedCategories.contains(product.category)).toList(); // Lista filtrata; // Lista filtrata
+          originalProducts =
+              List.from(loadedProducts); // Backup della lista originale
+          filteredProducts = loadedProducts
+              .where((product) => selectedCategories.contains(product.category))
+              .toList(); // Lista filtrata; // Lista filtrata
         });
       } else {
         print('Nessun documento trovato per l\'utente.');
@@ -113,58 +119,12 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
-        return FutureBuilder<List<String>>(
-          future: CategoryServices.getCategoryNames(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Errore: ${snapshot.error}'));
-            } else {
-              List<String> categoryNames = snapshot.data ?? [];
-              return AlertDialog(
-                title: const Text('Filtra per categoria'),
-                content: DropdownButtonFormField<String>(
-                  value: selectedCategories.isEmpty ? null : selectedCategories[0],
-                  items: categoryNames.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategories = [newValue!];
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Seleziona Categoria',
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('Annulla'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: const Text('Filtra'),
-                    onPressed: () {
-                      setState(() {
-                        filteredProducts = originalProducts
-                            .where((product) =>
-                        selectedCategories.contains(product.category))
-                            .toList();
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            }
-          },
+        return Dialog(
+          child: CategorySelectionRow(
+            mealType: widget.mealType,
+            categories: selectedCategories,
+            onCategoriesUpdated: updateCategories,
+          ),
         );
       },
     );
@@ -198,8 +158,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                 setState(() {
                   filteredProducts = originalProducts
                       .where((product) => product.productName
-                      .toLowerCase()
-                      .contains(searchQuery.toLowerCase()))
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
                       .toList();
                 });
                 Navigator.of(context).pop();
@@ -210,12 +170,20 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
       },
     );
   }
+
   updateCategories(List<String> categories) {
     setState(() {
       selectedCategories = categories;
-      filteredProducts = originalProducts.where((product) => selectedCategories.contains(product.category)).toList();
+      if (selectedCategories.isEmpty) {
+        filteredProducts = originalProducts;
+      } else {
+        filteredProducts = originalProducts
+            .where((product) => selectedCategories.contains(product.category))
+            .toList();
+      }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -250,23 +218,68 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
               ),
             ],
           ),
-          CategorySelectionRow(mealType: widget.mealType,categories:selectedCategories, onCategoriesUpdated: updateCategories),
-          Expanded(
+          // Spazio dedicato ai prodotti selezionati
+          Flexible(
+            flex: mealProducts.isEmpty ? 1 : 3, // 10% se vuoto, 30% se pieno
+            child: mealProducts.isEmpty
+                ? const Center(child: Text('Nessun prodotto selezionato'))
+                : Column(
+              children: [
+                Text(
+                  'Prodotti selezionati',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Expanded( // Per evitare overflow
+                  child: Container(
+                    color: Theme.of(context).colorScheme.primary, // Colore di sfondo
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: mealProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = mealProducts[index];
+                        return ProductAddedToMeal(
+                          product: product,
+                          onQuantityUpdated: (product) {
+                            setState(() {
+                              mealProducts.add(product as Product);
+                              originalProducts.remove(product);
+                              filteredProducts.remove(product);
+                            });
+                          }, selectedQuantity: 0.7,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Spazio dedicato ai prodotti filtrati
+          Flexible(
+            flex: mealProducts.isEmpty ? 9 : 7, // 90% se vuoto, 70% se pieno
             child: filteredProducts.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: filteredProducts.length,
-              itemBuilder: (context, index) {
-                final product = filteredProducts[index];
-                return ProductCard(product: product);
-              },
-            ),
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filteredProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
+                      return ProductCard(
+                        product: product,
+                        addProductToMeal: (product) {
+                          setState(() {
+                            mealProducts.add(product);
+                            originalProducts.remove(product);
+                            filteredProducts.remove(product);
+                          });
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
-
-
 }

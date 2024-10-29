@@ -3,17 +3,28 @@ import 'package:tracker/models/product.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
+  final Function(Product)? addProductToMeal;
 
   const ProductCard({
+    Key? key,
     required this.product,
-  });
+    required this.addProductToMeal,
+  }) : super(key: key);
 
   @override
   State<ProductCard> createState() => _ProductCardState();
 }
 
 class _ProductCardState extends State<ProductCard> {
-  double _quantity = 0;
+  double _quantityInWeight = 0;
+  int _quantityInUnits = 0;
+
+  void _updateQuantities(double value) {
+    setState(() {
+      _quantityInWeight = value * widget.product.totalWeight;
+      _quantityInUnits = value.toInt();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +48,8 @@ class _ProductCardState extends State<ProductCard> {
             else
               const SizedBox(width: 80, height: 80),
             const SizedBox(width: 16),
-            // Nome del prodotto
+
+            // Nome e quantità disponibile del prodotto
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,29 +63,82 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${widget.product.quantity} ${widget.product.unit} disponibili',
+                    '${widget.product.quantityOwned * widget.product.totalWeight} kg disponibili',
                     style: TextStyle(
                       color: Colors.grey[600],
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Slider senza Expanded
+                  Slider(
+                    value: _quantityInUnits.toDouble(),
+                    min: 0,
+                    max: widget.product.quantityOwned.toDouble(),
+                    divisions: widget.product.quantityOwned,
+                    label: '$_quantityInUnits',
+                    onChanged: (value) => _updateQuantities(value),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 16),
-            // Campo di testo per inserire la quantità
-            SizedBox(
-              width: 80,
-              child: TextField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  hintText: 'Quantità',
+
+            // TextField per la quantità in peso
+            Column(
+              children: [
+                SizedBox(
+                  width: 40,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Peso (kg)',
+                    ),
+                    controller: TextEditingController(
+                      text: _quantityInWeight.toStringAsFixed(2),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _quantityInWeight = double.tryParse(value) ?? 0;
+                      });
+                    },
+                  ),
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    _quantity = double.tryParse(value) ?? 0;
-                  });
-                },
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 40,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Unità',
+                    ),
+                    controller: TextEditingController(
+                      text: _quantityInUnits.toString(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _quantityInUnits = int.tryParse(value) ?? 0;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 8),
+
+            // Slider per selezionare la quantità
+
+            // Pulsante per aggiungere il prodotto al pasto
+            ElevatedButton(
+              onPressed: () {
+                if (widget.addProductToMeal != null) {
+                  widget.addProductToMeal!(widget.product);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(8),
+                minimumSize: const Size(16, 16),
               ),
+              child: const Icon(Icons.add, size: 16),
             ),
           ],
         ),
