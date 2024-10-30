@@ -1,4 +1,3 @@
-
 class Meal {
   final String date; // Formato stringa della data (es. "2024-10-29")
   final String mealType;
@@ -33,9 +32,13 @@ class Meal {
     return Meal(
       date: json['date'] ?? '',
       mealType: json['mealType'] ?? '',
-      macronutrients: Map<String, double>.from(json['macronutrients'] ?? {}),
+      macronutrients: json['macronutrients'] != null
+    ? (json['macronutrients'] as Map<String, dynamic>).map<String, double>((key, value) =>
+        MapEntry(key, value is int ? value.toDouble() : value))
+    : {},
       id: json['id'] ?? '',
-      totalExpense: double.tryParse(json['totalExpense']?.toString() ?? '0.0') ?? 0.0,
+      totalExpense:
+          double.tryParse(json['totalExpense']?.toString() ?? '0.0') ?? 0.0,
       products: List<Map<String, dynamic>>.from(json['products'] ?? []),
     );
   }
@@ -58,4 +61,7 @@ class Meal {
     return int.parse(parts[0]); // Giorno è la prima parte
   }
 
+  num get totalCalories {
+    return macronutrients['calories'] ?? 0;
+  }
 }

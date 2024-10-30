@@ -53,49 +53,157 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
   List<Meal> _filterMealsByPeriod(List<Meal> meals) {
     DateTime now = DateTime.now();
     DateTime startDate;
+    int rangeDays = 0;
 
     switch (selectedPeriod) {
-      case 'settimanale':
-        startDate = now.subtract(const Duration(days: 7));
+      case 'week':
+        startDate = now.subtract(const Duration(days: 6)); // Ultimi 7 giorni
         break;
-      case 'mensile':
-        startDate = DateTime(now.year, now.month - 1, now.day);
+      case 'month':
+        startDate = now.subtract(const Duration(days: 28)); // Ultime 4 settimane
         break;
-      case 'annuale':
-        startDate = DateTime(now.year - 1, now.month, now.day);
+      case 'year':
+        startDate = DateTime(now.year - 1, now.month, now.day); // Ultimi 12 mesi
         break;
       default:
-        return meals; // Restituisci tutti i pasti se il periodo non è valido
+        return meals; // Restituisce tutti i pasti se il periodo non è valido
     }
 
-    // Filtra i pasti che rientrano nell'intervallo temporale
     return meals.where((meal) {
-      // Converti la stringa `date` in un oggetto DateTime
-      List<String> parts = meal.date.split('-');
-      DateTime mealDate = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
-      return mealDate.isAfter(startDate); // Confronta le date
+      DateTime mealDate = DateTime.parse(meal.date); // Modifica in base al tuo formato data
+      return mealDate.isAfter(startDate) && mealDate.isBefore(now);
     }).toList();
   }
 
 
 
 
+
   // Funzione per preparare i dati del grafico a barre con i costi giornalieri
   Map<String, double> _prepareBarChartData(List<Meal> filteredMeals) {
-    Map<String, double> dailyCosts = {};
+    Map<String, double> periodData = {};
+    const months = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+    switch (selectedPeriod) {
+      case 'week':
+      // Aggiungi i 7 giorni della settimana con valore iniziale 0
+        for (int i = 0; i < 7; i++) {
+          DateTime day = currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
+          String dayLabel = '${day.day}-${day.month}';
+          periodData[dayLabel] = 0.0;
+        }
+        break;
 
+      case 'month':
+      // Aggiungi le 4 settimane con valore iniziale 0
+        for (int i = 1; i <= 4; i++) {
+          periodData['Settimana $i'] = 0.0;
+        }
+        break;
+
+      case 'year':
+      // Aggiungi i 12 mesi con valore iniziale 0
+
+        for (int i = 0; i < 12; i++) {
+          periodData[months[i]] = 0.0;
+        }
+        break;
+    }
+
+    // Aggiorna il valore di `periodData` con le spese effettive
     for (Meal meal in filteredMeals) {
-      String day = '${meal.year}-${meal.month}-${meal.day}';
+      String key;
+      switch (selectedPeriod) {
+        case 'week':
+          DateTime mealDate = DateTime.parse(meal.date);
+          key = '${mealDate.day}-${mealDate.month}';
+          break;
+        case 'month':
+          int weekOfMonth = (DateTime.parse(meal.date).day - 1) ~/ 7 + 1;
+          key = 'Settimana $weekOfMonth';
+          break;
+        case 'year':
+          int month = DateTime.parse(meal.date).month - 1;
+          key = months[month];
+          break;
+        default:
+          key = '';
+      }
 
-      if (dailyCosts.containsKey(day)) {
-        dailyCosts[day] = dailyCosts[day]! + meal.totalExpense;
-      } else {
-        dailyCosts[day] = meal.totalExpense;
+      // Aggiorna solo se `key` è valida
+      if (key.isNotEmpty) {
+        periodData[key] = (periodData[key] ?? 0) + meal.totalExpense;
       }
     }
 
-    return dailyCosts;
+    return periodData;
   }
+  Map<String, double> _prepareCaloriesData(List<Meal> filteredMeals) {
+    Map<String, double> caloriesData = {};
+    const months = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+
+    switch (selectedPeriod) {
+      case 'week':
+      // Aggiungi i 7 giorni della settimana con valore iniziale 0 kcal
+        for (int i = 0; i < 7; i++) {
+          DateTime day = currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
+          String dayLabel = '${day.day}-${day.month}';
+          caloriesData[dayLabel] = 0.0;
+        }
+        break;
+
+      case 'month':
+      // Aggiungi le 4 settimane del mese con valore iniziale 0 kcal
+        for (int i = 1; i <= 4; i++) {
+          caloriesData['Settimana $i'] = 0.0;
+        }
+        break;
+
+      case 'year':
+      // Aggiungi i 12 mesi con valore iniziale 0 kcal
+        for (int i = 0; i < 12; i++) {
+          caloriesData[months[i]] = 0.0;
+        }
+        break;
+    }
+
+    // Calcola le kilocalorie effettive per ogni periodo
+    Map<String, int> counts = {}; // Mappa per tenere conto del numero di pasti per calcolare le medie
+    for (Meal meal in filteredMeals) {
+      String key;
+      DateTime mealDate = DateTime.parse(meal.date);
+
+      switch (selectedPeriod) {
+        case 'week':
+          key = '${mealDate.day}-${mealDate.month}';
+          break;
+        case 'month':
+          int weekOfMonth = (mealDate.day - 1) ~/ 7 + 1;
+          key = 'Settimana $weekOfMonth';
+          break;
+        case 'year':
+          key = months[mealDate.month - 1];
+          break;
+        default:
+          key = '';
+      }
+
+      if (key.isNotEmpty) {
+        // Somma le calorie
+        caloriesData[key] = (caloriesData[key] ?? 0) + meal.totalCalories;
+        counts[key] = (counts[key] ?? 0) + 1;
+      }
+    }
+
+    // Se necessario, calcola la media settimanale o mensile
+    if (selectedPeriod == 'month' || selectedPeriod == 'year') {
+      caloriesData.updateAll((key, value) => value / (counts[key] ?? 1));
+    }
+
+    return caloriesData;
+  }
+
+
+
 
 
   // Funzione per calcolare il totale speso per ogni tipo di pasto
@@ -149,6 +257,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
 
             final mealTypeData = _calculateMealTypeExpenses(filteredMeals);
             final periodData = _prepareBarChartData(filteredMeals);
+            final caloriesData = _prepareCaloriesData(filteredMeals);
 
             return SingleChildScrollView(
               child: Column(
@@ -170,6 +279,12 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                   Container(
                     height: 150,
                     child: CustomBarChart(periodData: periodData),
+                  ),
+                  const SizedBox(height: 8),
+                  // Grafico a barre per le calorie giornaliere
+                  Container(
+                    height: 150,
+                    child: CustomBarChart(periodData: caloriesData),
                   ),
                   // Grafico a torta per il totale speso per tipo di pasto
                   Padding(

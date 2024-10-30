@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +109,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             'totalExpense': totalExpense.toStringAsFixed(3),
             'products': productsToSave,
             'macronutrients': macronutrients,
-            'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
+            'date': DateFormat('yyyy-MM-dd').format(DateTime(2024, Random().nextInt(12) + 1, Random().nextInt(28) + 1)),
           }
         ])
       });
