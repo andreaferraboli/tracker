@@ -112,14 +112,17 @@ class CustomBarChart extends StatelessWidget {
 
               // Nuovo calcolo per l'altezza che garantisce che anche il valore massimo sia corretto
               final heightPercentage = value / maxValue;
+
               final availableHeight = constraints.maxHeight * 0.80;
               final verticalPosition = availableHeight * (1 - heightPercentage) == 0
                   ? availableHeight * (1 - heightPercentage) + 25
                   : availableHeight * (1 - heightPercentage);
+              double safeBarCenter = barCenter.isNaN ? 0 : barCenter;
+              double safeVerticalPosition = verticalPosition.isNaN ? 0 : verticalPosition;
 
               return Positioned(
-                left: barCenter - 15,
-                top: verticalPosition - 25, // aumentato lo spazio sopra la barra
+                left: (barCenter.isNaN ? 0 : barCenter) - 15,
+                top: (verticalPosition.isNaN ? 0 : verticalPosition) - 25,// aumentato lo spazio sopra la barra
                 child: Text(
                   value.toStringAsFixed(1),
                   style: TextStyle(

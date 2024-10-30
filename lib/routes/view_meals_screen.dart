@@ -257,6 +257,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
 
             final mealTypeData = _calculateMealTypeExpenses(filteredMeals);
             final periodData = _prepareBarChartData(filteredMeals);
+            //todo::fix questo bug non ha i pasti giusti
             final caloriesData = _prepareCaloriesData(filteredMeals);
 
             return SingleChildScrollView(
