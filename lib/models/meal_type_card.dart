@@ -50,13 +50,13 @@ class MealTypeCard extends StatelessWidget {
               Icon(
                 mealType!.icon,
                 size: 48,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 8),
               Text(
                 mealType!.name,
-                style: const TextStyle(
-                  color: Colors.white,
+                style:  TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
