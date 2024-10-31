@@ -33,8 +33,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   List<Product> mealProducts = [];
   List<String> selectedCategories = [];
   List<Product> filteredProducts = [];
-  List<Product> originalProducts =
-      []; // Per mantenere la lista originale dei prodotti
+  List<Product> originalProducts =[]; // Per mantenere la lista originale dei prodotti
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -109,7 +109,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             'totalExpense': totalExpense.toStringAsFixed(3),
             'products': productsToSave,
             'macronutrients': macronutrients,
-            'date': DateFormat('yyyy-MM-dd').format(DateTime(2024, Random().nextInt(12) + 1, Random().nextInt(28) + 1)),
+            'date': DateFormat('yyyy-MM-dd').format(selectedDate),
           }
         ])
       });
@@ -221,6 +221,22 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
               IconButton(
                 onPressed: _showSearchDialog,
                 icon: const Icon(Icons.search),
+              ),
+              IconButton(
+                icon: const Icon(Icons.calendar_today),
+                onPressed: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime(2015, 8),
+                    lastDate: DateTime(2101),
+                  );
+                  if (picked != null && picked != selectedDate) {
+                    setState(() {
+                      selectedDate = picked;
+                    });
+                  }
+                },
               ),
               IconButton(
                 onPressed: () {
