@@ -62,6 +62,6 @@ class Meal {
   }
 
   num get totalCalories {
-    return macronutrients['calories'] ?? 0;
+    return this.macronutrients['Energy'] ?? 0;
   }
 }
