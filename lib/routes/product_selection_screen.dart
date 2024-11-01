@@ -33,7 +33,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   List<Product> mealProducts = [];
   List<String> selectedCategories = [];
   List<Product> filteredProducts = [];
-  List<Product> originalProducts =[]; // Per mantenere la lista originale dei prodotti
+  List<Product> originalProducts =
+      []; // Per mantenere la lista originale dei prodotti
   DateTime selectedDate = DateTime.now();
 
   @override
@@ -248,64 +249,80 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
               ),
             ],
           ),
-          // Spazio dedicato ai prodotti selezionati
-          Flexible(
-            flex: mealProducts.isEmpty ? 1 : 3, // 10% se vuoto, 30% se pieno
-            child: mealProducts.isEmpty
-                ? const Center(child: Text('Nessun prodotto selezionato'))
-                : Column(
-                    children: [
-                      Text(
-                        'Prodotti selezionati',
-                        style: Theme.of(context).textTheme.bodyLarge,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ExpansionTile(
+                    title: Text(
+                      'Prodotti selezionati',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    initiallyExpanded: mealProducts.isNotEmpty,
+                    leading: Icon(Icons.food_bank),
+                    children: mealProducts.isEmpty
+                        ? [
+                      Center(
+                        child: Text('Nessun prodotto selezionato'),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: mealProducts.length,
-                          itemBuilder: (context, index) {
-                            final product = mealProducts[index];
-                            return ProductAddedToMeal(
-                              product: product,
-                              selectedQuantity: product
-                                  .selectedQuantity, // Passa la quantità selezionata
-                              onQuantityUpdated: (quantity) {
-                                setState(() {
-                                  mealProducts[index] = product.copyWith(
-                                      selectedQuantity: quantity);
-                                });
-                              },
-                            );
-                          },
-                        ),
+                    ]
+                        : [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(16),
+                        itemCount: mealProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = mealProducts[index];
+                          return ProductAddedToMeal(
+                            product: product,
+                            selectedQuantity: product.selectedQuantity,
+                            onQuantityUpdated: (quantity) {
+                              setState(() {
+                                mealProducts[index] =
+                                    product.copyWith(selectedQuantity: quantity);
+                              });
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),
-          ),
-
-          // Spazio dedicato ai prodotti filtrati
-          Flexible(
-            flex: mealProducts.isEmpty ? 9 : 7, // 90% se vuoto, 70% se pieno
-            child: filteredProducts.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredProducts.length,
-                    itemBuilder: (context, index) {
-                      final product = filteredProducts[index];
-                      return ProductCard(
-                        product: product,
-                        addProductToMeal: (product, quantity) {
-                          setState(() {
-                            mealProducts.add(
-                                product.copyWith(selectedQuantity: quantity));
-                            originalProducts.remove(product);
-                            filteredProducts.remove(product);
-                          });
+                  ExpansionTile(
+                    title: Text(
+                      'Elenco Prodotti',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    initiallyExpanded: true,
+                    leading: Icon(Icons.list),
+                    children: filteredProducts.isEmpty
+                        ? [const Center(child: CircularProgressIndicator())]
+                        : [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = filteredProducts[index];
+                          return ProductCard(
+                            product: product,
+                            addProductToMeal: (product, quantity) {
+                              setState(() {
+                                mealProducts.add(
+                                    product.copyWith(selectedQuantity: quantity));
+                                originalProducts.remove(product);
+                                filteredProducts.remove(product);
+                              });
+                            },
+                          );
                         },
-                      );
-                    },
+                      ),
+                    ],
                   ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

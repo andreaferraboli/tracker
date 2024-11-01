@@ -18,11 +18,13 @@ class MealTypeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (mealType == null) {
+      return SizedBox.shrink(); // Non mostra nulla se mealType è null
+    }
+
     return Card(
-      elevation: mealType == null ? 0 : 4, // Nessuna ombra se vuota
-      shape: mealType == null
-          ? null
-          : RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -31,20 +33,16 @@ class MealTypeCard extends StatelessWidget {
           height: 80,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            gradient: mealType != null
-                ? LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
                 mealType!.color.withOpacity(0.7),
                 mealType!.color,
               ],
-            )
-                : null, // Nessun gradiente se vuoto
-            color: mealType == null ? Colors.transparent : null, // Sfondo trasparente se vuoto
+            ),
           ),
-          child: mealType != null
-              ? Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
@@ -55,15 +53,14 @@ class MealTypeCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 mealType!.name,
-                style:  TextStyle(
+                style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
-          )
-              : null, // Nessun contenuto se vuoto
+          ),
         ),
       ),
     );
