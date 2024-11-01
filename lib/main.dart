@@ -92,6 +92,7 @@ final ThemeData _lightTheme = ThemeData(
   primarySwatch: Colors.blue,
   colorScheme: const ColorScheme.light(
     primary: Color.fromARGB(255, 45, 49, 66),
+    onPrimary: Color.fromARGB(255, 234, 232, 255),
     secondary: Colors.orange,
   ),
   appBarTheme: const AppBarTheme(
@@ -126,6 +127,7 @@ final ThemeData _darkTheme = ThemeData(
   primarySwatch: Colors.deepPurple,
   colorScheme: const ColorScheme.dark(
     primary: Color.fromARGB(255, 97, 3, 3),
+    onPrimary: Colors.white,
     secondary: Color.fromARGB(255, 66, 12, 20),
   ),
   appBarTheme: const AppBarTheme(

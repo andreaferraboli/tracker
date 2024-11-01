@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
+import 'package:tracker/routes/expense_detail_screen.dart';
 
 import '../models/period_selector.dart';
 
@@ -218,7 +219,6 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
             final expenses = snapshot.data!;
             final filteredExpenses = _filterExpensesByPeriod(expenses);
 
-            // Aggiunta della condizione per controllare se ci sono spese filtrate
             if (filteredExpenses.isEmpty) {
               return Center(
                 child: Column(
@@ -265,7 +265,6 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  // Controlli del periodo
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -294,9 +293,8 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                       ],
                     ),
                   ),
-                  // Grafico a barre per le spese nel periodo
                   Container(
-                    height: 150, // Specifica un'altezza fissa
+                    height: 150,
                     child: CustomBarChart(periodData: periodData),
                   ),
                   Padding(
@@ -329,24 +327,51 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                       ),
                     ),
                   ),
-                  // Lista delle spese filtrate
                   ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(), // Disabilita lo scorrimento interno
-                    shrinkWrap: true, // Consente alla lista di adattarsi al contenuto
-                    itemCount: filteredExpenses.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: expenses.length,
                     itemBuilder: (context, index) {
-                      final expense = filteredExpenses[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text('Supermercato: ${expense.supermarket}'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Data: ${expense.date}'),
-                              Text(
-                                'Totale: €${expense.totalAmount.toStringAsFixed(2)}',
+                      final expense = expenses[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ExpenseDetailScreen(expense: expense),
                               ),
-                            ],
+                            );
+                          },
+                          child: Card(
+                            color: Theme.of(context).primaryColor,
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                              child: ListTile(
+                                textColor: Theme.of(context).colorScheme.onPrimary,
+                                title: Text(
+                                  'Supermercato: ${expense.supermarket}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 4),
+                                    Text('Data: ${expense.date}'),
+                                    Text('Totale: €${expense.totalAmount.toStringAsFixed(2)}'),
+                                  ],
+                                ),
+                                trailing: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       );
@@ -361,3 +386,5 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
     );
   }
 }
+
+

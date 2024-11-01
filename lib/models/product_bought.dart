@@ -1,7 +1,7 @@
 class ProductBought {
   final String idProdotto;
   final String productName;
-  final int quantita;
+  final int quantity;
   final double price;
   final String category;
   final String pricePerKg;
@@ -9,7 +9,7 @@ class ProductBought {
   ProductBought({
     required this.idProdotto,
     required this.productName,
-    required this.quantita,
+    required this.quantity,
     required this.category,
     required this.pricePerKg,
     required this.price,
@@ -19,7 +19,7 @@ class ProductBought {
     return ProductBought(
       idProdotto: json['idProdotto'],
       productName: json['productName'],
-      quantita: json['quantita'],
+      quantity: json['quantita'],
       category: json['category'],
       pricePerKg: json['pricePerKg'],
       price: json['price'],
@@ -30,7 +30,7 @@ class ProductBought {
     return {
       'idProdotto': idProdotto,
       'productName': productName,
-      'quantita': quantita,
+      'quantita': quantity,
       'category': category,
       'pricePerKg': pricePerKg,
       'price': price,

@@ -66,6 +66,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final TextEditingController _barcodeController = TextEditingController();
 
   final TextEditingController _imageUrlController = TextEditingController();
+
   //aggiungi i controller per ogni campo di testo
 
   @override
@@ -92,7 +93,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['buyQuantity'] = widget.product!.buyQuantity;
       _productData['quantityOwned'] = widget.product!.quantityOwned;
     } else {
-      _productData['supermarket'] = widget.supermarketName ?? ref.read(supermarketProvider);
+      _productData['supermarket'] =
+          widget.supermarketName ?? ref.read(supermarketProvider);
       _productData['unit'] = 'kg';
       _productData['purchaseDate'] = DateTime.now().toString();
       _productData['productId'] = UniqueKey().toString();
@@ -216,14 +218,15 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           );
         }).toList(),
         onChanged: (value) {
-          if (value != null) {  // Add null check
+          if (value != null) {
+            // Add null check
             setState(() {
               selectedCategory = value;
               _productData['category'] = selectedCategory;
             });
           }
         },
-        underline: const SizedBox(),  // Add const
+        underline: const SizedBox(), // Add const
       ),
     );
   }
@@ -262,7 +265,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
             0.5, // Set max height to 50% of screen height
       ),
       child: widget.product != null
-          ? MacronutrientTable(_setDynamicMacronutrients, widget.product!.macronutrients)
+          ? MacronutrientTable(
+              _setDynamicMacronutrients, widget.product!.macronutrients)
           : MacronutrientTable(_setDynamicMacronutrients),
     );
   }
@@ -500,18 +504,17 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           "products": FieldValue.arrayUnion([_productData])
         });
         ScaffoldMessenger.of(context).showSnackBar(
-  const SnackBar(
-    content: Text('Prodotto aggiunto con successo!'),
-    backgroundColor: Colors.green,
-  ),
-);
+          const SnackBar(
+            content: Text('Prodotto aggiunto con successo!'),
+            backgroundColor: Colors.green,
+          ),
+        );
         Navigator.of(context).pop();
       } catch (e) {
         print('Errore durante l\'aggiunta del prodotto: $e');
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

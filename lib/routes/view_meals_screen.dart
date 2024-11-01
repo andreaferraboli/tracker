@@ -7,6 +7,7 @@ import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
 import '../models/period_selector.dart';
+import 'meal_details_screen.dart';
 
 class ViewMealsScreen extends StatefulWidget {
   const ViewMealsScreen({super.key});
@@ -17,7 +18,31 @@ class ViewMealsScreen extends StatefulWidget {
 
 class _ViewMealsScreenState extends State<ViewMealsScreen> {
   String selectedPeriod = 'week';
+  String selectedMealType = 'All';
+  String selectedMacronutrient = 'Energy';
   DateTime currentDate = DateTime.now();
+
+  // Liste di opzioni per tipo di pasto e macronutrienti
+  final List<String> mealTypes = [
+    'All',
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Snack'
+  ];
+  final List<String> macronutrients = [
+    "Energy",
+    "Fats",
+    "Proteins",
+    "Carbohydrates",
+    "Sugars",
+    "Fiber",
+    "Saturated Fats",
+    "Monounsaturated Fats",
+    "Polyunsaturated Fats",
+    "Cholesterol",
+    "Sodium"
+  ];
 
   // Cambia il periodo visualizzato
   void _changePeriod(int delta) {
@@ -165,8 +190,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return periodData;
   }
 
-  Map<String, double> _prepareCaloriesData(List<Meal> filteredMeals) {
-    Map<String, double> caloriesData = {};
+  Map<String, double> _prepareMacronutrientData(List<Meal> filteredMeals) {
+    Map<String, double> macronutrientData = {};
     const months = [
       "Gen",
       "Feb",
@@ -189,21 +214,21 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           DateTime day =
               currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
           String dayLabel = '${day.day}-${day.month}';
-          caloriesData[dayLabel] = 0.0;
+          macronutrientData[dayLabel] = 0.0;
         }
         break;
 
       case 'month':
         // Aggiungi le 4 settimane del mese con valore iniziale 0 kcal
         for (int i = 1; i <= 4; i++) {
-          caloriesData['Settimana $i'] = 0.0;
+          macronutrientData['Settimana $i'] = 0.0;
         }
         break;
 
       case 'year':
         // Aggiungi i 12 mesi con valore iniziale 0 kcal
         for (int i = 0; i < 12; i++) {
-          caloriesData[months[i]] = 0.0;
+          macronutrientData[months[i]] = 0.0;
         }
         break;
     }
@@ -232,18 +257,19 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
       }
 
       if (key.isNotEmpty) {
-        // Somma le calorie
-        caloriesData[key] = (caloriesData[key] ?? 0) + meal.totalCalories;
+        // Somma i macronutrienti selezionati
+        macronutrientData[key] = (macronutrientData[key] ?? 0) +
+            (meal.macronutrients[selectedMacronutrient] ?? 0);
         counts[key] = (counts[key] ?? 0) + 1;
       }
     }
 
     // Se necessario, calcola la media settimanale o mensile
     if (selectedPeriod == 'month' || selectedPeriod == 'year') {
-      caloriesData.updateAll((key, value) => value / (counts[key] ?? 1));
+      macronutrientData.updateAll((key, value) => value / (counts[key] ?? 1));
     }
 
-    return caloriesData;
+    return macronutrientData;
   }
 
   // Funzione per calcolare il totale speso per ogni tipo di pasto
@@ -256,6 +282,18 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return mealTypeData.map((type, total) {
       return MapEntry('$type - €${total.toStringAsFixed(2)}', total);
     });
+  }
+
+  List<Meal> _filterMeals(List<Meal> meals) {
+    List<Meal> filteredMeals = _filterMealsByPeriod(meals);
+
+    if (selectedMealType != 'All') {
+      filteredMeals = filteredMeals
+          .where((meal) => meal.mealType == selectedMealType)
+          .toList();
+    }
+
+    return filteredMeals;
   }
 
   Future<List<Meal>> _fetchMeals() async {
@@ -310,7 +348,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
             return const Center(child: Text('Nessun pasto trovato'));
           } else {
             final meals = snapshot.data!;
-            final filteredMeals = _filterMealsByPeriod(meals);
+            final filteredMeals = _filterMeals(meals);
 
             if (filteredMeals.isEmpty) {
               return Center(
@@ -341,8 +379,43 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                                 : selectedPeriod == 'month'
                                     ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
                                     : '${currentDate.year}',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              // Dropdown per il tipo di pasto
+                              DropdownButton<String>(
+                                value: selectedMealType,
+                                items: mealTypes.map((String type) {
+                                  return DropdownMenuItem<String>(
+                                    value: type,
+                                    child: Text(type),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedMealType = value!;
+                                  });
+                                },
+                              ),
+                              // Dropdown per il macronutriente
+                              DropdownButton<String>(
+                                value: selectedMacronutrient,
+                                items: macronutrients.map((String nutrient) {
+                                  return DropdownMenuItem<String>(
+                                    value: nutrient,
+                                    child: Text(nutrient),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedMacronutrient = value!;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -354,8 +427,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
 
             final mealTypeData = _calculateMealTypeExpenses(filteredMeals);
             final periodData = _prepareBarChartData(filteredMeals);
-            //todo::fix questo bug non ha i pasti giusti
-            final caloriesData = _prepareCaloriesData(filteredMeals);
+            final macronutrientData = _prepareMacronutrientData(filteredMeals);
 
             return SingleChildScrollView(
               child: Column(
@@ -373,6 +445,50 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                     onSelectDate: () => _selectDate(context),
                   ),
                   const SizedBox(height: 8),
+                  Text(
+                    selectedPeriod == 'week'
+                        ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                        : selectedPeriod == 'month'
+                        ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                        : '${currentDate.year}',
+                    style: TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // Dropdown per il tipo di pasto
+                      DropdownButton<String>(
+                        value: selectedMealType,
+                        items: mealTypes.map((String type) {
+                          return DropdownMenuItem<String>(
+                            value: type,
+                            child: Text(type),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMealType = value!;
+                          });
+                        },
+                      ),
+                      // Dropdown per il macronutriente
+                      DropdownButton<String>(
+                        value: selectedMacronutrient,
+                        items: macronutrients.map((String nutrient) {
+                          return DropdownMenuItem<String>(
+                            value: nutrient,
+                            child: Text(nutrient),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMacronutrient = value!;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                   // Grafico a barre per le spese giornaliere
                   Container(
                     height: 150,
@@ -382,7 +498,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                   // Grafico a barre per le calorie giornaliere
                   Container(
                     height: 150,
-                    child: CustomBarChart(periodData: caloriesData),
+                    child: CustomBarChart(periodData: macronutrientData),
                   ),
                   // Grafico a torta per il totale speso per tipo di pasto
                   Padding(
@@ -405,10 +521,39 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: filteredMeals.map((meal) {
-                        return ListTile(
-                          title: Text(
-                              '${meal.mealType} - €${meal.totalExpense.toStringAsFixed(2)}'),
-                          trailing: Text(meal.date),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                '${meal.mealType} - €${meal.totalExpense.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
+                              ),
+                              trailing: Text(
+                                meal.date,
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        MealDetailScreen(meal: meal),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         );
                       }).toList(),
                     ),
