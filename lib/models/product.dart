@@ -9,6 +9,7 @@ class Product {
   double selectedQuantity;
   int quantityOwned;// Rinominato da quantityOwned
   String unit; // Unità di misura
+  String store;
   Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
   String expirationDate;
   String supermarket;
@@ -35,6 +36,7 @@ class Product {
     required this.barcode,
     required this.buyQuantity,
     required this.quantityOwned,
+    this.store = '',
     this.imageUrl = '',
     this.totalWeight = 0,
     this.unitWeight = 0,
@@ -59,6 +61,7 @@ class Product {
       purchaseDate: json['purchaseDate'],
       barcode: json['barcode'],
       imageUrl: json['imageUrl'],
+      store: json['store'] ?? 'other',
       buyQuantity: json['buyQuantity'],
       quantityOwned: json['quantityOwned'],
       totalWeight: double.parse(json['totalWeight'].toString()),
@@ -78,6 +81,7 @@ class Product {
       'price': price,
       'quantity': quantity,
       'unit': unit,
+      'store': store,
       'macronutrients': macronutrients,
       'expirationDate': expirationDate,
       'supermarket': supermarket,
@@ -102,6 +106,7 @@ class Product {
       price: price,
       quantity: quantity,
       unit: unit,
+      store: store,
       macronutrients: macronutrients,
       expirationDate: expirationDate,
       supermarket: supermarket,

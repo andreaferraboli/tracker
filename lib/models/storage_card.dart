@@ -30,7 +30,7 @@ class StorageCard extends StatelessWidget {
             Icon(
               icon,
               size: 48,
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(height: 8),
             Text(

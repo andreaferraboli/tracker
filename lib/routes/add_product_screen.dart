@@ -57,7 +57,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   };
 
   List<String> categories = [];
-  String? selectedCategory = 'Latticini';
+  List<String> stores = [];
+  String? selectedCategory;
+  String? selectedStore;
   File? _selectedImage;
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -73,6 +75,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   void initState() {
     super.initState();
     _loadCategories();
+
+    stores=["fridge","pantry","freezer","other"];
     if (widget.product != null) {
       _productData['barcode'] = widget.product!.barcode;
       _productData['category'] = widget.product!.category;
@@ -82,6 +86,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['totalPrice'] = widget.product!.totalPrice;
       _productData['unitPrice'] = widget.product!.unitPrice;
       _productData['productId'] = widget.product!.productId;
+      _productData['store'] = widget.product!.store;
       _productData['productName'] = widget.product!.productName;
       _productData['purchaseDate'] = widget.product!.purchaseDate;
       _productData['quantity'] = widget.product!.quantity;
@@ -92,6 +97,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['unitWeight'] = widget.product!.unitWeight;
       _productData['buyQuantity'] = widget.product!.buyQuantity;
       _productData['quantityOwned'] = widget.product!.quantityOwned;
+      selectedCategory = widget.product!.category;
+      selectedStore = widget.product!.store;
     } else {
       _productData['supermarket'] =
           widget.supermarketName ?? ref.read(supermarketProvider);
@@ -223,6 +230,52 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
             setState(() {
               selectedCategory = value;
               _productData['category'] = selectedCategory;
+            });
+          }
+        },
+        underline: const SizedBox(), // Add const
+      ),
+    );
+  }
+  Widget _buildStoreSelector() {
+    // Ensure selectedStore has a valid initial value
+    if (!stores.contains(selectedStore)) {
+      selectedStore = stores.isNotEmpty ? stores[0] : '';
+    }
+
+    return Center(
+      child: DropdownButton<String>(
+        value: selectedStore,
+        dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+        items: stores.map((store) {
+          return DropdownMenuItem<String>(
+            value: store,
+            child: Center(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Icon(Icons.store), // Replace with appropriate icon if needed
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    store,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (value) {
+          if (value != null) {
+            // Add null check
+            setState(() {
+              selectedStore = value;
+              _productData['store'] = selectedStore;
             });
           }
         },
@@ -667,7 +720,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  _buildCategorySelector(),
+                  Row(
+                    children: [
+                      _buildCategorySelector(),
+                      _buildStoreSelector(),
+                    ],
+                  ),
                   const SizedBox(height: 16),
                   _buildMacronutrientTable(),
                   _buildImageUrlInput(),
