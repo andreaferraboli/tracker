@@ -143,9 +143,18 @@ class ProductScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              'Category: ${product.category}',
-              style: Theme.of(context).textTheme.bodyLarge,
+            Row(
+              children: [
+                Text(
+                  'Category: ${product.category}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  'Store: ${product.store}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text("quantityOwned: ${product.quantityOwned}",style: Theme.of(context).textTheme.bodyLarge),
+              ],
             ),
             const SizedBox(height: 16),
             Table(

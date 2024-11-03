@@ -20,13 +20,13 @@ class ProductStoreCard extends StatelessWidget {
       },
       child: Card(
         child: SizedBox(
-          height: 100, // Adjust as needed
+          height: 150, // Adjust as needed
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 60,
+                  height: 80,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(product.imageUrl),
@@ -37,7 +37,7 @@ class ProductStoreCard extends StatelessWidget {
                 Center(
                   child: Text(
                     product.productName,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

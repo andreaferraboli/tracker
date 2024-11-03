@@ -81,27 +81,41 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   void _saveMeal() async {
     try {
       DocumentReference userDocRef = FirebaseFirestore.instance
-          .collection('meals')
-          .doc(FirebaseAuth.instance.currentUser!.uid);
+          .collection('products')
+          .doc(FirebaseAuth.instance.currentUser?.uid);
+      DocumentSnapshot userDoc = await userDocRef.get();
+      List<dynamic> products = userDoc['products'];
       Map<String, double> macronutrients = {};
       double totalExpense = 0;
-      List<Map<String, dynamic>> productsToSave = mealProducts.map((product) {
-        product.macronutrients.forEach((key, value) {
+      List<Map<String, dynamic>> productsToSave =
+          mealProducts.map((mealProduct) {
+        mealProduct.macronutrients.forEach((key, value) {
           macronutrients[key] = (macronutrients[key] ?? 0) +
-              value * (product.selectedQuantity * 10);
+              value * (mealProduct.selectedQuantity * 10);
         });
-        double pricePerKg = product.price / product.totalWeight;
-        double productExpense = pricePerKg * product.selectedQuantity;
+        double pricePerKg = mealProduct.price / mealProduct.totalWeight;
+        double productExpense = pricePerKg * mealProduct.selectedQuantity;
         totalExpense += productExpense;
+        int index = products.indexWhere(
+            (product) => product['productId'] == mealProduct.productId);
+        if (index != -1) {
+          products[index]['quantityOwned'] = products[index]['quantityOwned'] -
+              mealProduct.selectedQuantity / mealProduct.totalWeight;
+        }
         return {
-          'idProdotto': product.productId,
-          'productName': product.productName,
+          'idProdotto': mealProduct.productId,
+          'productName': mealProduct.productName,
           'price': productExpense.toStringAsFixed(3),
-          'category': product.category,
-          'quantitySelected': product.selectedQuantity,
+          'category': mealProduct.category,
+          'quantitySelected': mealProduct.selectedQuantity,
         };
       }).toList();
-
+      await userDocRef.update({
+        "products": products,
+      });
+      userDocRef = FirebaseFirestore.instance
+          .collection('meals')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
       await userDocRef.update({
         'meals': FieldValue.arrayUnion([
           {
@@ -262,31 +276,31 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     leading: Icon(Icons.food_bank),
                     children: mealProducts.isEmpty
                         ? [
-                      Center(
-                        child: Text('Nessun prodotto selezionato'),
-                      ),
-                    ]
+                            Center(
+                              child: Text('Nessun prodotto selezionato'),
+                            ),
+                          ]
                         : [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.all(16),
-                        itemCount: mealProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = mealProducts[index];
-                          return ProductAddedToMeal(
-                            product: product,
-                            selectedQuantity: product.selectedQuantity,
-                            onQuantityUpdated: (quantity) {
-                              setState(() {
-                                mealProducts[index] =
-                                    product.copyWith(selectedQuantity: quantity);
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(16),
+                              itemCount: mealProducts.length,
+                              itemBuilder: (context, index) {
+                                final product = mealProducts[index];
+                                return ProductAddedToMeal(
+                                  product: product,
+                                  selectedQuantity: product.selectedQuantity,
+                                  onQuantityUpdated: (quantity) {
+                                    setState(() {
+                                      mealProducts[index] = product.copyWith(
+                                          selectedQuantity: quantity);
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                   ),
                   ExpansionTile(
                     title: Text(
@@ -298,27 +312,27 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     children: filteredProducts.isEmpty
                         ? [const Center(child: CircularProgressIndicator())]
                         : [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.all(16),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          return ProductCard(
-                            product: product,
-                            addProductToMeal: (product, quantity) {
-                              setState(() {
-                                mealProducts.add(
-                                    product.copyWith(selectedQuantity: quantity));
-                                originalProducts.remove(product);
-                                filteredProducts.remove(product);
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(16),
+                              itemCount: filteredProducts.length,
+                              itemBuilder: (context, index) {
+                                final product = filteredProducts[index];
+                                return ProductCard(
+                                  product: product,
+                                  addProductToMeal: (product, quantity) {
+                                    setState(() {
+                                      mealProducts.add(product.copyWith(
+                                          selectedQuantity: quantity));
+                                      originalProducts.remove(product);
+                                      filteredProducts.remove(product);
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                   ),
                 ],
               ),

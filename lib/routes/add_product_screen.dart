@@ -62,11 +62,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   String? selectedStore;
   File? _selectedImage;
   final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _quantityOwnedController =
+      TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _totalWeightController = TextEditingController();
   final TextEditingController _nameProductController = TextEditingController();
   final TextEditingController _barcodeController = TextEditingController();
-
   final TextEditingController _imageUrlController = TextEditingController();
 
   //aggiungi i controller per ogni campo di testo
@@ -76,7 +77,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     super.initState();
     _loadCategories();
 
-    stores=["fridge","pantry","freezer","other"];
+    stores = ["fridge", "pantry", "freezer", "other"];
     if (widget.product != null) {
       _productData['barcode'] = widget.product!.barcode;
       _productData['category'] = widget.product!.category;
@@ -107,6 +108,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['productId'] = UniqueKey().toString();
     }
     _quantityController.text = _productData['quantity'].toString();
+    _quantityOwnedController.text = _productData['quantityOwned'].toString();
     _imageUrlController.text = _productData['imageUrl'];
     _priceController.text = _productData['price'].toString();
     _totalWeightController.text = _productData['totalWeight'].toString();
@@ -117,6 +119,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   @override
   void dispose() {
     _quantityController.dispose();
+    _quantityOwnedController.dispose();
     _imageUrlController.dispose();
     _priceController.dispose();
     _totalWeightController.dispose();
@@ -237,6 +240,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       ),
     );
   }
+
   Widget _buildStoreSelector() {
     // Ensure selectedStore has a valid initial value
     if (!stores.contains(selectedStore)) {
@@ -256,7 +260,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   SizedBox(
                     width: 50,
                     height: 50,
-                    child: Icon(Icons.store), // Replace with appropriate icon if needed
+                    child: Icon(
+                        Icons.store), // Replace with appropriate icon if needed
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -720,6 +725,19 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  Row(children: [
+                    Expanded(
+                      child: _buildTextField(
+                          'quantità posseduta:', _quantityOwnedController,
+                          (value) {
+                        setState(() {
+                          value = value?.replaceAll(',', '.');
+                          _productData['quantityOwned'] =
+                              double.tryParse(value ?? '0') ?? 0.0;
+                        });
+                      }),
+                    ),
+                  ]),
                   Row(
                     children: [
                       _buildCategorySelector(),

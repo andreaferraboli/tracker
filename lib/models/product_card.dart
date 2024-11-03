@@ -74,7 +74,7 @@ class _ProductCardState extends State<ProductCard> {
                     value: _quantityInUnits.toDouble(),
                     min: 0,
                     max: widget.product.quantityOwned.toDouble(),
-                    divisions: widget.product.quantityOwned,
+                    divisions: widget.product.quantityOwned.toInt(),
                     label: '$_quantityInUnits',
                     onChanged: (value) => _updateQuantities(value),
                   ),

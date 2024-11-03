@@ -7,7 +7,7 @@ class Product {
   int quantity;
   int buyQuantity;
   double selectedQuantity;
-  int quantityOwned;// Rinominato da quantityOwned
+  double quantityOwned;// Rinominato da quantityOwned
   String unit; // Unità di misura
   String store;
   Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
@@ -63,7 +63,7 @@ class Product {
       imageUrl: json['imageUrl'],
       store: json['store'] ?? 'other',
       buyQuantity: json['buyQuantity'],
-      quantityOwned: json['quantityOwned'],
+      quantityOwned: double.parse(json['quantityOwned'].toString()),
       totalWeight: double.parse(json['totalWeight'].toString()),
       unitWeight: double.parse(json['unitWeight'].toString()),
       unitPrice: double.parse(json['unitPrice'].toString()),

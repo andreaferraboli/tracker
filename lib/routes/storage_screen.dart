@@ -42,7 +42,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
         if (productsArray.isNotEmpty &&
             productsArray[0]['productName'] != null) {
           for (var product in productsArray) {
-            if (product['store'] == widget.name.toLowerCase()) {
+            if (product['store'] == widget.name.toLowerCase() && product['quantityOwned'] > 0) {
               productWidgets.add(
                 ProductStoreCard(product: Product.fromJson(product)),
               );
