@@ -1,0 +1,12 @@
+{
+  "meal_type_breakfast": "Breakfast",
+  "meal_type_lunch": "Lunch",
+  "meal_type_dinner": "Dinner",
+  "meal_type_snack": "Snack",
+  "shopping": "Shopping",
+  "addMeal": "Add Meal",
+  "viewExpenses": "View Expenses",
+  "inventory": "Inventory",
+  "viewMeals": "View Meals",
+  "recipeTips": "Recipe Tips"
+}

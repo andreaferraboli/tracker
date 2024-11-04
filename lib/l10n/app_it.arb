@@ -1,0 +1,12 @@
+{
+  "meal_type_breakfast": "Colazione",
+  "meal_type_lunch": "Pranzo",
+  "meal_type_dinner": "Cena",
+  "meal_type_snack": "Merenda",
+  "shopping": "Fai la spesa",
+  "addMeal": "Aggiungi pasto",
+  "viewExpenses": "Visualizza spese",
+  "inventory": "Inventario",
+  "viewMeals": "Visualizza pasti",
+  "recipeTips": "Consigli per la ricetta"
+}

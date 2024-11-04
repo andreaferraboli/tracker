@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/main.dart';  // Supponendo che MyApp sia definito in main.dart
 
 class HomeScreen extends StatelessWidget {
   final VoidCallback toggleTheme;
@@ -102,6 +104,17 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             ListTile(
+              leading: const Icon(Icons.language),
+              title: const Text('Cambia lingua'),
+              onTap: () {
+                Locale newLocale = Localizations.localeOf(context).languageCode == 'it'
+                    ? const Locale('en')
+                    : const Locale('it');
+                MyApp.setLocale(context, newLocale);
+                Navigator.pop(context); // Chiude il drawer
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.brightness_6),
               title: const Text('Cambia tema'),
               onTap: () {
@@ -129,17 +142,17 @@ class HomeScreen extends StatelessWidget {
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: <Widget>[
-          _buildMenuButton(context, 'Fare la spesa', Icons.shopping_cart,
-              '/shopping', shoppingColor),
-          _buildMenuButton(context, 'Inserire un pasto', Icons.restaurant,
-              '/addMeal', addMealColor),
-          _buildMenuButton(context, 'Visualizzare spese', Icons.receipt_long,
-              '/viewExpenses', viewExpensesColor),
-          _buildMenuButton(context, 'Vedere inventario', Icons.inventory,
-              '/inventory', inventoryColor),
-          _buildMenuButton(context, 'Visualizzare pasti', Icons.fastfood,
-              '/viewMeals', viewMealsColor),
-          _buildMenuButton(context, 'Suggerisci ricette',
+          _buildMenuButton(context, AppLocalizations.of(context)!.shopping,
+              Icons.shopping_cart, '/shopping', shoppingColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.addMeal,
+              Icons.restaurant, '/addMeal', addMealColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.viewExpenses,
+              Icons.receipt_long, '/viewExpenses', viewExpensesColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.inventory,
+              Icons.inventory, '/inventory', inventoryColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.viewMeals,
+              Icons.fastfood, '/viewMeals', viewMealsColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.recipeTips,
               Icons.food_bank_outlined, '/recipeTips', recipeTipsColor),
         ],
       ),
