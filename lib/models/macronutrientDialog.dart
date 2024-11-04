@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MacronutrientDialog extends StatefulWidget {
   final String initialName;
@@ -39,14 +40,16 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text("Edit Macronutrient"),
+      title: Text(localizations.edit_macronutrient),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'cambia nome in',
+            decoration: InputDecoration(
+              labelText: localizations.change_name_to,
             ),
             value: widget.macronutrientsArray.contains(editedName)
                 ? editedName
@@ -64,8 +67,8 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
             },
           ),
           TextField(
-            decoration: const InputDecoration(
-              labelText: 'modifica value (100g)',
+            decoration: InputDecoration(
+              labelText: localizations.edit_value_100g,
             ),
             controller: _valueController,
             keyboardType: TextInputType.number,
@@ -80,7 +83,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text("Cancel"),
+          child: Text(localizations.cancel),
         ),
         ElevatedButton(
           onPressed: () {
@@ -91,7 +94,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
             );
             Navigator.of(context).pop();
           },
-          child: const Text("Save"),
+          child: Text(localizations.save),
         ),
       ],
     );

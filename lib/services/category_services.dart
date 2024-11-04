@@ -34,6 +34,7 @@ class CategoryServices {
     for (var category in _categoriesData!) {
       categoryNames.add(category['nomeCategoria']);
     }
+    categoryNames=['meat','fish','pasta_bread_rice','sauces_condiments','vegetables','fruit','dairy_products','water','dessert','salty_snacks','drinks'];
     return categoryNames;
   }
 

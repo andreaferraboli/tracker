@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:tracker/routes/product_selection_screen.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/meal_type.dart';
 import '../models/meal_type_card.dart';
 
@@ -44,7 +45,7 @@ class AddMealScreen extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inserisci un pasto'),
+        title:Text(AppLocalizations.of(context)!.insertMealType),
         elevation: 0,
       ),
       body: Padding(
@@ -52,9 +53,9 @@ class AddMealScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Seleziona il tipo di pasto',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.selectMealType,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),

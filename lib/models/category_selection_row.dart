@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import '../models/meal_type.dart';
 
 class CategorySelectionRow extends StatefulWidget {
@@ -44,14 +47,14 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Personalizza categorie'),
+          title: Text(AppLocalizations.of(context)!.customizeCategories),
           content: StatefulBuilder(
             builder: (context, setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: availableCategories.map((category) {
                   return CheckboxListTile(
-                    title: Text(category),
+                    title: Text(AppLocalizations.of(context)!.translateCategory(category)),
                     value: selectedCategories.contains(category),
                     onChanged: (bool? value) {
                       setState(() {
@@ -76,7 +79,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Annulla'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
@@ -85,7 +88,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
                 });
                 Navigator.of(context).pop();
               },
-              child: const Text('Salva'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         );
@@ -113,7 +116,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
             runAlignment: WrapAlignment.center,
             children: selectedCategories.map((category) {
               return Chip(
-                label: Text(category),
+                label: Text(AppLocalizations.of(context)!.translateCategory(category)),
                 backgroundColor: Colors.blueAccent.withOpacity(0.2),
                 onDeleted: () => _removeCategory(category),
               );
@@ -126,12 +129,12 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
             IconButton(
               icon: Icon(Icons.edit, color: Theme.of(context).iconTheme.color),
               onPressed: _openCustomizeCategoriesDialog,
-              tooltip: 'Personalizza Categorie',
+              tooltip: AppLocalizations.of(context)!.customizeCategories,
             ),
             IconButton(
               icon: Icon(Icons.delete, color: Colors.redAccent),
               onPressed: _clearCategories,
-              tooltip: 'Rimuovi tutte le categorie',
+              tooltip: AppLocalizations.of(context)!.removeAllCategories,
             ),
           ],
         ),
@@ -139,3 +142,5 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
     );
   }
 }
+
+

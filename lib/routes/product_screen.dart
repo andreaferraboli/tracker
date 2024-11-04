@@ -144,6 +144,8 @@ class ProductScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Category: ${product.category}',
@@ -153,9 +155,10 @@ class ProductScreen extends StatelessWidget {
                   'Store: ${product.store}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                Text("quantityOwned: ${product.quantityOwned}",style: Theme.of(context).textTheme.bodyLarge),
+
               ],
             ),
+            Center(child: Text("quantityOwned: ${product.quantityOwned}",style: Theme.of(context).textTheme.bodyLarge)),
             const SizedBox(height: 16),
             Table(
               border: TableBorder.all(

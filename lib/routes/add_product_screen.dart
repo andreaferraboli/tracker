@@ -503,6 +503,44 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         // Leggi il documento corrente
         DocumentSnapshot userDoc = await userDocRef.get();
         List<dynamic> products = userDoc['products'];
+        //
+        // for (Map<String, dynamic> product in products) {
+        //   switch (product['category']) {
+        //     case 'Carne':
+        //       product['category'] = 'meat';
+        //       break;
+        //     case 'Pesce':
+        //       product['category'] = 'fish';
+        //       break;
+        //     case 'Pasta, Pane e Riso':
+        //       product['category'] = 'pasta_bread_rice';
+        //       break;
+        //     case 'Sughi e Condimenti':
+        //       product['category'] = 'sauces_condiments';
+        //       break;
+        //     case 'Verdura':
+        //       product['category'] = 'vegetables';
+        //       break;
+        //     case 'Frutta':
+        //       product['category'] = 'fruit';
+        //       break;
+        //     case 'Latticini':
+        //       product['category'] = 'dairy_products';
+        //       break;
+        //     case 'Acqua':
+        //       product['category'] = 'water';
+        //       break;
+        //     case 'Dolci':
+        //       product['category'] = 'dessert';
+        //       break;
+        //     case 'Snack Salati':
+        //       product['category'] = 'salty_snacks';
+        //       break;
+        //     case 'Bevande':
+        //       product['category'] = 'drinks';
+        //       break;
+        //   }
+        // }
 
 // Trova il prodotto da rimuovere confrontando il productId
         int index = products.indexWhere(

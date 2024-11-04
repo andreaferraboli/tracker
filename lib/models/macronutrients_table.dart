@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/macronutrientDialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa AppLocalizations
 
 class MacronutrientTable extends StatefulWidget {
   final void Function(Map<String, double>) onSave;
@@ -39,7 +40,6 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
     super.initState();
     if (widget.macronutrients != null) {
       macronutrients = widget.macronutrients!;
-      // Rimuove i valori già presenti in macronutrients da macronutrientsArray
       macronutrients.forEach((key, value) {
         macronutrientsArray.remove(key);
       });
@@ -72,8 +72,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
     setState(() {
       macronutrients.remove(key);
       macronutrients[newName] = newValue;
-      macronutrientsArray.add(key); // Raggiunge key alla lista dei disponibili
-      macronutrientsArray.remove(newName); // Rimuove newName se già presente
+      macronutrientsArray.add(key);
+      macronutrientsArray.remove(newName);
       editedName = macronutrientsArray.isNotEmpty ? macronutrientsArray[0] : '';
     });
   }
@@ -90,6 +90,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context); // Carica le stringhe localizzate
+
     return SizedBox(
       child: SingleChildScrollView(
         child: Column(
@@ -99,9 +101,9 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
               child: DataTable(
                 columnSpacing: 5,
                 columns: [
-                  const DataColumn(label: Center(child: Text('Macronutrient'))),
-                  const DataColumn(label: Center(child: Text('Value(100g)'))),
-                  if (_isEditing) const DataColumn(label: Center(child: Text('Actions'))),
+                  DataColumn(label: Center(child: Text(localizations!.macronutrient))),
+                  DataColumn(label: Center(child: Text(localizations.valueLabel))),
+                  if (_isEditing) DataColumn(label: Center(child: Text(localizations.actions))),
                 ],
                 rows: macronutrients.entries.map((entry) {
                   return DataRow(
@@ -151,7 +153,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   Expanded(
                     flex: 2,
                     child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(labelText: 'Name'),
+                      decoration: InputDecoration(labelText: localizations.macronutrient),
                       value: macronutrientsArray.contains(editedName) ? editedName : null,
                       items: macronutrientsArray.map((nutrient) {
                         return DropdownMenuItem<String>(
@@ -173,8 +175,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Value(100g)',
+                      decoration: InputDecoration(
+                        labelText: localizations.valueLabel,
                         labelStyle: TextStyle(fontSize: 14),
                       ),
                       controller: valueController,

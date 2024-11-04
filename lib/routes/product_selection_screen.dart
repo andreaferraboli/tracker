@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
 import '../models/product.dart';
@@ -25,10 +27,10 @@ class ProductSelectionScreen extends StatefulWidget {
 
 class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   final Map<String, List<String>> defaultCategories = {
-    'Breakfast': ['Dolci', 'Latticini', 'Frutta', 'Bevande'],
-    'Lunch': ['Pasta, Pane e Riso', 'Sughi e Condimenti', 'Frutta', 'Verdura'],
-    'Snack': ['Dolci', 'Bevande', 'Snack Salati', 'Frutta'],
-    'Dinner': ['Carne', 'Pesce', 'Frutta', 'Verdura'],
+    'Breakfast': ['dessert', 'dairy_products', 'fruit', 'drinks'],
+    'Lunch': ['pasta_bread_rice', 'sauces_condiments', 'fruit', 'vegetables'],
+    'Snack': ['dessert', 'drinks', 'salty_snacks', 'fruit'],
+    'Dinner': ['meat', 'fish', 'fruit', 'vegetables'],
   };
   List<Product> mealProducts = [];
   List<String> selectedCategories = [];
@@ -165,24 +167,24 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
       builder: (BuildContext context) {
         String searchQuery = '';
         return AlertDialog(
-          title: const Text('Ricerca per nome prodotto'),
+          title: Text(AppLocalizations.of(context)!.searchProductByName),
           content: TextField(
             onChanged: (value) {
               searchQuery = value;
             },
-            decoration: const InputDecoration(
-              labelText: 'Inserisci nome prodotto',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.insertProductName,
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Annulla'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Cerca'),
+              child: Text(AppLocalizations.of(context)!.search),
               onPressed: () {
                 setState(() {
                   filteredProducts = originalProducts
@@ -217,7 +219,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Seleziona prodotti - ${widget.mealType.name}'),
+        title: Text("${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
         backgroundColor: widget.mealType.color,
       ),
       body: Column(
@@ -227,7 +229,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             children: [
               ElevatedButton(
                 onPressed: _saveMeal,
-                child: const Text('Salva Pasto'),
+                child: Text(AppLocalizations.of(context)!.save_meal),
               ),
               IconButton(
                 onPressed: _showFilterDialog,
@@ -269,7 +271,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                 children: [
                   ExpansionTile(
                     title: Text(
-                      'Prodotti selezionati',
+                      AppLocalizations.of(context)!.selectedProducts,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     initiallyExpanded: mealProducts.isNotEmpty,
@@ -277,7 +279,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     children: mealProducts.isEmpty
                         ? [
                             Center(
-                              child: Text('Nessun prodotto selezionato'),
+                              child: Text(AppLocalizations.of(context)!.noSelectedProducts),
                             ),
                           ]
                         : [
@@ -304,7 +306,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                   ),
                   ExpansionTile(
                     title: Text(
-                      'Elenco Prodotti',
+                      AppLocalizations.of(context)!.listProducts,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     initiallyExpanded: true,
