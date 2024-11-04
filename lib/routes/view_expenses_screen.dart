@@ -356,12 +356,12 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                                 textColor: Theme.of(context).colorScheme.onPrimary,
                                 title: Text(
                                   'Supermercato: ${expense.supermarket}',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 4),
+                                    const SizedBox(height: 4),
                                     Text('Data: ${expense.date}'),
                                     Text('Totale: €${expense.totalAmount.toStringAsFixed(2)}'),
                                   ],

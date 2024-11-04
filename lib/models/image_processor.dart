@@ -6,7 +6,7 @@ import 'package:image/image.dart' as img;
 class ImageProcessor extends StatefulWidget {
   final String imageUrl;
 
-  const ImageProcessor({Key? key, required this.imageUrl}) : super(key: key);
+  const ImageProcessor({super.key, required this.imageUrl});
 
   @override
   _ImageProcessorState createState() => _ImageProcessorState();

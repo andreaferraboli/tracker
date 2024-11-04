@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/add_product_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductScreen extends StatelessWidget {
   final Product product;
@@ -58,9 +60,10 @@ class ProductScreen extends StatelessWidget {
                 ),
               );
             },
-          ),IconButton(
+          ),
+          IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: (){_deleteProduct();},
+            onPressed: _deleteProduct,
           ),
         ],
       ),
@@ -74,7 +77,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    'Nome prodotto: ${product.productName}',
+                    '${AppLocalizations.of(context)!.productName}: ${product.productName}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -82,7 +85,7 @@ class ProductScreen extends StatelessWidget {
                   flex: 2,
                   child: product.imageUrl.isNotEmpty
                       ? Image.network(product.imageUrl)
-                      : const Text('No image available'),
+                      : Text(AppLocalizations.of(context)!.noImageAvailable),
                 ),
               ],
             ),
@@ -92,7 +95,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Text(
-                    'Quantity: ${product.quantity}',
+                    '${AppLocalizations.of(context)!.quantity}: ${product.quantity}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -100,7 +103,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Prezzo: €${product.price.toStringAsFixed(2)}',
+                    '${AppLocalizations.of(context)!.price}: €${product.price.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -108,7 +111,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'C/U: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
+                    '${AppLocalizations.of(context)!.unitPrice}: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -120,7 +123,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Text(
-                    'Peso totale (kg/litro): ${product.totalWeight}',
+                    '${AppLocalizations.of(context)!.totalWeight} (kg/l): ${product.totalWeight}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -128,7 +131,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    '€/kg: €${(product.price / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
+                    '${AppLocalizations.of(context)!.pricePerKg}: €${(product.price / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -136,7 +139,7 @@ class ProductScreen extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'Peso unitario: ${(product.totalWeight / (product.quantity > 0 ? product.quantity : 1) * 1000).toStringAsFixed(3)} g',
+                    '${AppLocalizations.of(context)!.unitWeight}: ${(product.totalWeight / (product.quantity > 0 ? product.quantity : 1) * 1000).toStringAsFixed(3)} g',
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
@@ -144,26 +147,30 @@ class ProductScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Category: ${product.category}',
+                  '${AppLocalizations.of(context)!.category}: ${AppLocalizations.of(context)!.translateCategory(product.category)}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
-                  'Store: ${product.store}',
+                  '${AppLocalizations.of(context)!.store}: ${AppLocalizations.of(context)!.getStorageTitle(product.store)}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-
               ],
             ),
-            Center(child: Text("quantityOwned: ${product.quantityOwned}",style: Theme.of(context).textTheme.bodyLarge)),
+            Center(
+              child: Text(
+                '${AppLocalizations.of(context)!.quantityOwned}: ${product.quantityOwned}',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
             const SizedBox(height: 16),
             Table(
               border: TableBorder.all(
-                  color: Theme.of(context).textTheme.bodyLarge!.color ?? Colors.black,
-                  width: 1),
+                color: Theme.of(context).textTheme.bodyLarge!.color ?? Colors.black,
+                width: 1,
+              ),
               columnWidths: const {
                 0: FlexColumnWidth(),
                 1: FixedColumnWidth(100),
@@ -173,13 +180,13 @@ class ProductScreen extends StatelessWidget {
                   children: [
                     Center(
                       child: Text(
-                        'Macronutrients',
+                        AppLocalizations.of(context)!.macronutrients,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
                     Center(
                       child: Text(
-                        'Values(100g)',
+                        AppLocalizations.of(context)!.valuesPer100g,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
@@ -188,7 +195,7 @@ class ProductScreen extends StatelessWidget {
                 ...product.macronutrients.entries.map(
                       (entry) => TableRow(
                     children: [
-                      Center(child: Text('${entry.key}')),
+                      Center(child: Text(AppLocalizations.of(context)!.getNutrientString(entry.key))),
                       Center(child: Text('${entry.value}g')),
                     ],
                   ),
@@ -197,19 +204,19 @@ class ProductScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Expiration Date: ${product.expirationDate}',
+              '${AppLocalizations.of(context)!.expirationDate}: ${product.expirationDate}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              'Supermarket: ${product.supermarket}',
+              '${AppLocalizations.of(context)!.supermarket}: ${product.supermarket}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              'Purchase Date: ${product.purchaseDate}',
+              '${AppLocalizations.of(context)!.purchaseDate}: ${product.purchaseDate}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
-              'Barcode: ${product.barcode}',
+              '${AppLocalizations.of(context)!.barcode}: ${product.barcode}',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/macronutrientDialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa AppLocalizations
 
@@ -108,7 +109,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                 rows: macronutrients.entries.map((entry) {
                   return DataRow(
                     cells: [
-                      DataCell(Center(child: Text(entry.key))),
+                      DataCell(Center(child: Text(localizations.getNutrientString(entry.key)))),
                       DataCell(Center(child: Text(entry.value.toString()))),
                       if (_isEditing)
                         DataCell(
@@ -159,7 +160,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                         return DropdownMenuItem<String>(
                           value: nutrient,
                           child: Text(
-                            nutrient,
+                            localizations.getNutrientString(nutrient),
                             style: const TextStyle(fontSize: 14),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -177,7 +178,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                     child: TextField(
                       decoration: InputDecoration(
                         labelText: localizations.valueLabel,
-                        labelStyle: TextStyle(fontSize: 14),
+                        labelStyle: const TextStyle(fontSize: 14),
                       ),
                       controller: valueController,
                       keyboardType: TextInputType.number,

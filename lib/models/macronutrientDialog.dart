@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 
 class MacronutrientDialog extends StatefulWidget {
   final String initialName;
@@ -57,7 +58,7 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
             items: widget.macronutrientsArray.map((nutrient) {
               return DropdownMenuItem<String>(
                 value: nutrient,
-                child: Text(nutrient),
+                child: Text(localizations.getNutrientString(nutrient)),
               );
             }).toList(),
             onChanged: (String? newValue) {

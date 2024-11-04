@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -63,7 +64,7 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${widget.product.quantityOwned * widget.product.totalWeight} kg disponibili',
+                    '${widget.product.quantityOwned * widget.product.totalWeight} ${AppLocalizations.of(context)!.kgAvailable}',
                     style: TextStyle(
                       color: Colors.grey[600],
                     ),
@@ -90,8 +91,8 @@ class _ProductCardState extends State<ProductCard> {
                   width: 40,
                   child: TextField(
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Peso (kg)',
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.weightInKg,
                     ),
                     controller: TextEditingController(
                       text: _quantityInWeight.toStringAsFixed(3),
@@ -108,8 +109,8 @@ class _ProductCardState extends State<ProductCard> {
                   width: 40,
                   child: TextField(
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'Unità',
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.units,
                     ),
                     controller: TextEditingController(
                       text: _quantityInUnits.toString(),

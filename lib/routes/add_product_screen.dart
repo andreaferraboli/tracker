@@ -350,6 +350,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 24,
             ),
+            //TODO: riparti da questo file a tradurre
             decoration: InputDecoration(
               labelText: 'Quantity',
               labelStyle: TextStyle(

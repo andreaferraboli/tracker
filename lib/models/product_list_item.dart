@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tracker/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/api_client.dart';
@@ -79,7 +81,7 @@ class _ProductListItemState extends State<ProductListItem> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      widget.product.category,
+                      AppLocalizations.of(context)!.translateCategory(widget.product.category),
                       style: const TextStyle(
                         color: Color.fromARGB(255, 106, 106, 106),
                         fontSize: 14,
@@ -87,7 +89,7 @@ class _ProductListItemState extends State<ProductListItem> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '€${widget.product.price.toStringAsFixed(2)}, Totale €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
+                      '€${widget.product.price.toStringAsFixed(2)}, ${AppLocalizations.of(context)!.total} €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 14,
@@ -150,7 +152,7 @@ class _ProductListItemState extends State<ProductListItem> {
                           ),
                         ],
                       ),
-                      Text('Posseduto: ${widget.product.quantityOwned}'),
+                      Text(' ${AppLocalizations.of(context)!.have}: ${widget.product.quantityOwned}'),
                     ],
                   ),
                 ],

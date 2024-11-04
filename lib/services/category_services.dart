@@ -78,9 +78,6 @@ class CategoryServices {
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Ottieni la dimensione massima disponibile per l'icona
-            double maxIconSize = constraints.biggest.width *
-                0.6; // Adatta l'icona al 60% del contenitore
 
             return Center(
               child: LayoutBuilder(

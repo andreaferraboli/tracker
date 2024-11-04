@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:tracker/routes/product_selection_screen.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/meal_type.dart';
 import '../models/meal_type_card.dart';
@@ -13,10 +12,10 @@ class AddMealScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    Color colazioneColor = Color.fromRGBO(30, 144, 255, 1.0);
-    Color pranzoColor =  Color.fromRGBO(243, 238, 13, 1.0);
-    Color merendaColor =  Color.fromRGBO(236, 124, 38, 1.0);
-    Color cenaColor = Color.fromRGBO(0, 194, 0, 1.0);
+    Color colazioneColor = const Color.fromRGBO(30, 144, 255, 1.0);
+    Color pranzoColor =  const Color.fromRGBO(243, 238, 13, 1.0);
+    Color merendaColor =  const Color.fromRGBO(236, 124, 38, 1.0);
+    Color cenaColor = const Color.fromRGBO(0, 194, 0, 1.0);
     final List<MealType> mealTypes = [
       MealType(
         name: 'Breakfast',

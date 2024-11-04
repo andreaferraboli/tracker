@@ -85,15 +85,15 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     if (selectedPeriod == 'week') {
       final startOfWeek =
           currentDate.subtract(Duration(days: currentDate.weekday - 1));
-      final endOfWeek = startOfWeek.add(Duration(days: 6));
+      final endOfWeek = startOfWeek.add(const Duration(days: 6));
 
       filteredMeals = meals.where((meal) {
         final mealDate = dateFormat.parse(meal.date);
         var subtract = dateFormat
-            .parse(dateFormat.format(startOfWeek.subtract(Duration(days: 1))));
+            .parse(dateFormat.format(startOfWeek.subtract(const Duration(days: 1))));
         var after = mealDate.isAfter(subtract);
         var add = dateFormat
-            .parse(dateFormat.format(endOfWeek.add(Duration(days: 1))));
+            .parse(dateFormat.format(endOfWeek.add(const Duration(days: 1))));
         var before = mealDate.isBefore(add);
         return after && before;
       }).toList();

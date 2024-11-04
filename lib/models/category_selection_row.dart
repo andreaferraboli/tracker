@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import '../models/meal_type.dart';
 
 class CategorySelectionRow extends StatefulWidget {
@@ -132,7 +131,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
               tooltip: AppLocalizations.of(context)!.customizeCategories,
             ),
             IconButton(
-              icon: Icon(Icons.delete, color: Colors.redAccent),
+              icon: const Icon(Icons.delete, color: Colors.redAccent),
               onPressed: _clearCategories,
               tooltip: AppLocalizations.of(context)!.removeAllCategories,
             ),

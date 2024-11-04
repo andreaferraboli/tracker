@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa il file generato con le stringhe
 
 class PeriodSelector extends StatelessWidget {
   final String selectedPeriod;
@@ -27,10 +28,10 @@ class PeriodSelector extends StatelessWidget {
         ),
         DropdownButton<String>(
           value: selectedPeriod,
-          items: const [
-            DropdownMenuItem(value: 'week', child: Text('Settimana')),
-            DropdownMenuItem(value: 'month', child: Text('Mese')),
-            DropdownMenuItem(value: 'year', child: Text('Anno')),
+          items: [
+            DropdownMenuItem(value: 'week', child: Text(AppLocalizations.of(context)!.week)),
+            DropdownMenuItem(value: 'month', child: Text(AppLocalizations.of(context)!.month)),
+            DropdownMenuItem(value: 'year', child: Text(AppLocalizations.of(context)!.year)),
           ],
           onChanged: onPeriodChanged,
         ),

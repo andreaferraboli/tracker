@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
@@ -275,7 +273,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     initiallyExpanded: mealProducts.isNotEmpty,
-                    leading: Icon(Icons.food_bank),
+                    leading: const Icon(Icons.food_bank),
                     children: mealProducts.isEmpty
                         ? [
                             Center(
@@ -285,7 +283,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                         : [
                             ListView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               padding: const EdgeInsets.all(16),
                               itemCount: mealProducts.length,
                               itemBuilder: (context, index) {
@@ -310,13 +308,13 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     initiallyExpanded: true,
-                    leading: Icon(Icons.list),
+                    leading: const Icon(Icons.list),
                     children: filteredProducts.isEmpty
                         ? [const Center(child: CircularProgressIndicator())]
                         : [
                             ListView.builder(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               padding: const EdgeInsets.all(16),
                               itemCount: filteredProducts.length,
                               itemBuilder: (context, index) {

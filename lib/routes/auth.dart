@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import di Riverpod
 import 'package:tracker/providers/products_provider.dart';
@@ -27,17 +26,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _usernameController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Funzione per autenticare l'utente
   Future<void> _authenticateUser() async {
     try {
-      UserCredential userCredential;
       if (isLogin) {
-        userCredential = await _auth.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
         loadUserData(); // Caricamento dati utente
       } else {
         if (_passwordController.text.trim() !=
@@ -48,10 +41,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           return;
         }
 
-        userCredential = await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
         DocumentReference userDocRef = FirebaseFirestore.instance
             .collection('products')
             .doc(FirebaseAuth.instance.currentUser!.uid);

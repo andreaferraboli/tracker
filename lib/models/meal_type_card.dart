@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'meal_type.dart';
 
@@ -20,7 +19,7 @@ class MealTypeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (mealType == null) {
-      return SizedBox.shrink(); // Non mostra nulla se mealType è null
+      return const SizedBox.shrink(); // Non mostra nulla se mealType è null
     }
 
     return Card(
@@ -53,7 +52,7 @@ class MealTypeCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                mealType!.mealString(context) ?? '',
+                mealType!.mealString(context),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 18,

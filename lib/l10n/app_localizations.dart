@@ -49,4 +49,48 @@ extension AppLocalizationsExtension on AppLocalizations {
         return category; // Ritorna la stringa originale se non è trovata
     }
   }
+
+  String getNutrientString(String nutrient) {
+    switch (nutrient) {
+      case 'Energy':
+        return energy;
+      case 'Fats':
+        return fats;
+      case 'Proteins':
+        return proteins;
+      case 'Carbohydrates':
+        return carbohydrates;
+      case 'Sugars':
+        return sugars;
+      case 'Fiber':
+        return fiber;
+      case 'Saturated Fats':
+        return saturated_fats;
+      case 'Monounsaturated Fats':
+        return monounsaturated_fats;
+      case 'Polyunsaturated Fats':
+        return polyunsaturated_fats;
+      case 'Cholesterol':
+        return cholesterol;
+      case 'Sodium':
+        return sodium;
+      default:
+        return nutrient; // Ritorna la stringa originale se non è trovata
+    }
+  }
+
+  String getStorageTitle(String storage) {
+    switch (storage) {
+      case 'Fridge':
+        return fridge;
+      case 'Pantry':
+        return pantry;
+      case 'Freezer':
+        return freezer;
+      case 'Other':
+        return other;
+      default:
+        return storage; // Return the original string if not found
+    }
+  }
 }

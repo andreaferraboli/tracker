@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 class StorageCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -34,7 +35,7 @@ class StorageCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              title,
+              AppLocalizations.of(context)!.getStorageTitle(title),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],

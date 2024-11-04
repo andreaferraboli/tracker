@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductStoreCard extends StatelessWidget {
   final Product product;
@@ -20,7 +21,7 @@ class ProductStoreCard extends StatelessWidget {
       },
       child: Card(
         child: SizedBox(
-          height: 150, // Adjust as needed
+          height: 150, // Regola l'altezza se necessario
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +45,7 @@ class ProductStoreCard extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    'Quantità: ${product.quantityOwned}',
+                    '${AppLocalizations.of(context)!.quantity}: ${product.quantityOwned}',
                     style: const TextStyle(fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
