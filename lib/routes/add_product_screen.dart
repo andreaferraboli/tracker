@@ -5,9 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/product.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
@@ -217,11 +218,13 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    category,
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                      AppLocalizations.of(context)!.translateCategory(category),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
+
                 ],
               ),
             ),
@@ -265,7 +268,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    store,
+                    AppLocalizations.of(context)!.getStorageTitle(store),
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
@@ -350,9 +354,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 24,
             ),
-            //TODO: riparti da questo file a tradurre
             decoration: InputDecoration(
-              labelText: 'Quantity',
+              labelText: AppLocalizations.of(context)!.quantity,
               labelStyle: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
@@ -401,7 +404,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
-            child: const Text('ANNULLA'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
         ),
         const SizedBox(width: 16),
@@ -411,7 +414,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
-            child: Text(widget.product == null ? 'SALVA' : 'AGGIORNA'),
+            child: Text(widget.product == null
+                ? AppLocalizations.of(context)!.save
+                : AppLocalizations.of(context)!.update),
           ),
         ),
       ],
@@ -429,7 +434,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
             decoration: InputDecoration(
-              labelText: 'ImageUrl',
+              labelText: AppLocalizations.of(context)!.imageUrl,
               labelStyle: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
@@ -601,8 +606,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           "products": FieldValue.arrayUnion([_productData])
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Prodotto aggiunto con successo!'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.successAddProduct),
             backgroundColor: Colors.green,
           ),
         );
@@ -624,7 +629,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Nuovo Prodotto',
+          AppLocalizations.of(context)!.newProduct,
           style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
         actions: [
@@ -655,7 +660,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       Expanded(
                         flex: 3, // 60% of the row
                         child: _buildTextField(
-                            'Nome prodotto',
+                            AppLocalizations.of(context)!.productName,
                             _nameProductController,
                             (value) => _productData['productName'] = value),
                       ),
@@ -709,8 +714,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       Expanded(
                         flex: 4, // 30% of the row
                         child: _buildTextField(
-                            'Peso totale (kg/litro)', _totalWeightController,
-                            (value) {
+                            '${AppLocalizations.of(context)!.totalWeight} (kg/l)',
+                            _totalWeightController, (value) {
                           setState(() {
                             value = value?.replaceAll(',', '.');
                             _productData['totalWeight'] =
@@ -750,7 +755,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                                       : 1)),
                           builder: (context, value, child) {
                             return Text(
-                              'Peso unitario: ${value > 1 ? value.toStringAsFixed(3) + ' Kg' : (value * 1000).toStringAsFixed(3) + ' g'}',
+                              '${AppLocalizations.of(context)!.unitWeight}: ${value > 1 ? value.toStringAsFixed(3) + ' Kg' : (value * 1000).toStringAsFixed(3) + ' g'}',
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -767,8 +772,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   Row(children: [
                     Expanded(
                       child: _buildTextField(
-                          'quantità posseduta:', _quantityOwnedController,
-                          (value) {
+                          '${AppLocalizations.of(context)!.quantityOwned}:',
+                          _quantityOwnedController, (value) {
                         setState(() {
                           value = value?.replaceAll(',', '.');
                           _productData['quantityOwned'] =
@@ -779,14 +784,16 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   ]),
                   Row(
                     children: [
-                      _buildCategorySelector(),
-                      _buildStoreSelector(),
+                      Expanded(child: _buildCategorySelector()),
+                      Expanded(child: _buildStoreSelector()),
                     ],
                   ),
                   const SizedBox(height: 16),
                   _buildMacronutrientTable(),
                   _buildImageUrlInput(),
-                  _buildTextField('Codice a barre', _barcodeController,
+                  _buildTextField(
+                      AppLocalizations.of(context)!.barcode,
+                      _barcodeController,
                       (value) => _productData['barcode'] = value),
                   _buildBottomButtons(),
                 ],

@@ -80,14 +80,14 @@ extension AppLocalizationsExtension on AppLocalizations {
   }
 
   String getStorageTitle(String storage) {
-    switch (storage) {
-      case 'Fridge':
+    switch (storage.toLowerCase()) {
+      case 'fridge':
         return fridge;
-      case 'Pantry':
+      case 'pantry':
         return pantry;
-      case 'Freezer':
+      case 'freezer':
         return freezer;
-      case 'Other':
+      case 'other':
         return other;
       default:
         return storage; // Return the original string if not found

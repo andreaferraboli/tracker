@@ -1,56 +1,56 @@
 [
   {
-    "nomeCategoria": "Carne",
+    "nomeCategoria": "meat",
     "iconaFlutter": "meat",
     "coloreSfondo": "#FFC107"
   },
   {
-    "nomeCategoria": "Pesce",
+    "nomeCategoria": "fish",
     "iconaFlutter": "fish",
     "coloreSfondo": "#03A9F4"
   },
   {
-    "nomeCategoria": "Pasta, Pane e Riso",
-    "iconaFlutter": "pasta",
+    "nomeCategoria": "pasta_bread_rice",
+    "iconaFlutter": "pasta_bread_rice",
     "coloreSfondo": "#FFEB3B"
   },
   {
-    "nomeCategoria": "Sughi e Condimenti",
-    "iconaFlutter": "sauces",
+    "nomeCategoria": "sauces_condiments",
+    "iconaFlutter": "sauces_condiments",
     "coloreSfondo": "#FF9800"
   },
   {
-    "nomeCategoria": "Verdura",
+    "nomeCategoria": "vegetables",
     "iconaFlutter": "vegetables",
     "coloreSfondo": "#4CAF50"
   },
   {
-    "nomeCategoria": "Frutta",
+    "nomeCategoria": "fruit",
     "iconaFlutter": "fruit",
     "coloreSfondo": "#FF5722"
   },
   {
-    "nomeCategoria": "Latticini",
+    "nomeCategoria": "dairy_products",
     "iconaFlutter": "dairy_products",
     "coloreSfondo": "#ccecff"
   },
   {
-    "nomeCategoria": "Acqua",
+    "nomeCategoria": "water",
     "iconaFlutter": "water",
     "coloreSfondo": "#2196F3"
   },
   {
-    "nomeCategoria": "Dolci",
+    "nomeCategoria": "dessert",
     "iconaFlutter": "dessert",
     "coloreSfondo": "#E91E63"
   },
   {
-    "nomeCategoria": "Snack Salati",
+    "nomeCategoria": "salty_snacks",
     "iconaFlutter": "salty_snacks",
     "coloreSfondo": "#795548"
   },
   {
-    "nomeCategoria": "Bevande",
+    "nomeCategoria": "drinks",
     "iconaFlutter": "drinks",
     "coloreSfondo": "#607D8B"
   }

@@ -34,7 +34,6 @@ class CategoryServices {
     for (var category in _categoriesData!) {
       categoryNames.add(category['nomeCategoria']);
     }
-    categoryNames=['meat','fish','pasta_bread_rice','sauces_condiments','vegetables','fruit','dairy_products','water','dessert','salty_snacks','drinks'];
     return categoryNames;
   }
 
@@ -140,7 +139,7 @@ class CategoryServices {
         return Icons.apple;
       case 'dairy_products':
         return HugeIcons.strokeRoundedCheese;
-      case 'pasta':
+      case 'pasta_bread_rice':
         return FontAwesomeIcons.wheatAwn;
       case 'meat':
         return HugeIcons.strokeRoundedChickenThighs;
@@ -150,7 +149,7 @@ class CategoryServices {
         return Icons.water_drop;
       case 'dessert':
         return FontAwesomeIcons.cookieBite;
-      case 'sauces':
+      case 'sauces_condiments':
         return Icons.kitchen; // Icona per "Sughi e Condimenti"
       case 'salty_snacks':
         return HugeIcons.strokeRoundedFrenchFries01; // Icona per "Snack Salati"

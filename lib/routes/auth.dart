@@ -33,6 +33,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       if (isLogin) {
         loadUserData(); // Caricamento dati utente
       } else {
+        //todo: continua da qua a tradurre
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
           ScaffoldMessenger.of(context).showSnackBar(
