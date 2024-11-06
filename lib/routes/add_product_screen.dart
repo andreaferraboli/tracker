@@ -144,7 +144,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           fontSize: 24,
         ),
         decoration: InputDecoration(
-          labelText: 'Prezzo',
+          labelText: AppLocalizations.of(context)!.price,
           labelStyle: TextStyle(
             color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
@@ -200,7 +200,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     if (!categories.contains(selectedCategory)) {
       selectedCategory = categories.isNotEmpty ? categories[0] : '';
     }
-
+    //TODO:va in overflow
     return Center(
       child: DropdownButton<String>(
         value: selectedCategory,
@@ -217,14 +217,18 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                     child: CategoryServices.iconFromCategory(category),
                   ),
                   const SizedBox(width: 10),
-                  Text(
+                  // Avvolgi il Row con SingleChildScrollView per abilitare lo scorrimento orizzontale
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
                       AppLocalizations.of(context)!.translateCategory(category),
                       style: TextStyle(
                         color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
-
+                  ),
                 ],
               ),
             ),
@@ -232,16 +236,16 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         }).toList(),
         onChanged: (value) {
           if (value != null) {
-            // Add null check
             setState(() {
               selectedCategory = value;
               _productData['category'] = selectedCategory;
             });
           }
         },
-        underline: const SizedBox(), // Add const
+        underline: const SizedBox(),
       ),
     );
+
   }
 
   Widget _buildStoreSelector() {

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
 import 'package:tracker/routes/expense_detail_screen.dart';
@@ -97,7 +99,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
     }
 
     return categoryData.map((category, total) {
-      return MapEntry('$category - €${total.toStringAsFixed(2)}', total);
+      return MapEntry('${AppLocalizations.of(context)!.translateCategory(category)} - €${total.toStringAsFixed(2)}', total);
     });
   }
 
@@ -205,16 +207,22 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
           : const Color.fromARGB(255, 66, 12, 20),
     ];
     return Scaffold(
-      appBar: AppBar(title: const Text('Visualizzare spese')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.viewExpenses),
+      ),
       body: FutureBuilder<List<Expense>>(
         future: _fetchExpenses(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Errore: ${snapshot.error}'));
+            return Center(
+              child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'),
+            );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nessuna spesa trovata'));
+            return Center(
+              child: Text(AppLocalizations.of(context)!.noExpensesFound),
+            );
           } else {
             final expenses = snapshot.data!;
             final filteredExpenses = _filterExpensesByPeriod(expenses);
@@ -224,7 +232,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Nessuna spesa trovata per il periodo selezionato'),
+                    Text(AppLocalizations.of(context)!.noExpensesForPeriod),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -243,12 +251,11 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                           const SizedBox(height: 8),
                           Text(
                             selectedPeriod == 'week'
-                                ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                                ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                                 : selectedPeriod == 'month'
-                                ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
                                 : '${currentDate.year}',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -283,12 +290,11 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                         const SizedBox(height: 8),
                         Text(
                           selectedPeriod == 'week'
-                              ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                              ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                               : selectedPeriod == 'month'
-                              ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                              ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
                               : '${currentDate.year}',
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -330,9 +336,9 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                   ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: expenses.length,
+                    itemCount: filteredExpenses.length,
                     itemBuilder: (context, index) {
-                      final expense = expenses[index];
+                      final expense = filteredExpenses[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
                         child: GestureDetector(
@@ -355,15 +361,15 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                               child: ListTile(
                                 textColor: Theme.of(context).colorScheme.onPrimary,
                                 title: Text(
-                                  'Supermercato: ${expense.supermarket}',
+                                  '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
                                   style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 4),
-                                    Text('Data: ${expense.date}'),
-                                    Text('Totale: €${expense.totalAmount.toStringAsFixed(2)}'),
+                                    Text('${AppLocalizations.of(context)!.date}: ${expense.date}'),
+                                    Text('${AppLocalizations.of(context)!.total}: €${expense.totalAmount.toStringAsFixed(2)}'),
                                   ],
                                 ),
                                 trailing: Icon(

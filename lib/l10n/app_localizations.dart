@@ -21,8 +21,25 @@ extension MealTypeL18n on MealType {
 
 // Estensione per tradurre le categorie
 extension AppLocalizationsExtension on AppLocalizations {
+
+
+  String mealString(String name) {
+    switch (name.toLowerCase()) {
+      case 'breakfast':
+        return meal_type_breakfast;
+      case 'lunch':
+        return meal_type_lunch;
+      case 'dinner':
+        return meal_type_dinner;
+      case 'snack':
+        return meal_type_snack;
+      default:
+        return name;
+    }
+  }
+
   String translateCategory(String category) {
-    switch (category) {
+    switch (category.toLowerCase()) {
       case 'meat':
         return meat;
       case 'fish':

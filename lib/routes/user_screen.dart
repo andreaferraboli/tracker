@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserScreen extends StatelessWidget {
   const UserScreen({super.key});
@@ -10,23 +11,27 @@ class UserScreen extends StatelessWidget {
     print(user);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Profile'),
+        title: Text(AppLocalizations.of(context)!.userProfile),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: user != null
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Name: ${user.displayName}',
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  Text('Email: ${user.email}'),
-                ],
-              )
-            : const Center(
-                child: Text('No user logged in'),
-              ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${AppLocalizations.of(context)!.name}: ${user.displayName}',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${AppLocalizations.of(context)!.email}: ${user.email}',
+            ),
+          ],
+        )
+            : Center(
+          child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
+        ),
       ),
     );
   }

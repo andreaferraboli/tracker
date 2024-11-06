@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa le localizzazioni generate
 import 'supermarket_screen.dart';
 import '../providers/supermarkets_list_provider.dart';
 import '../providers/supermarket_provider.dart';
@@ -13,13 +14,14 @@ class ShoppingScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Fare la spesa'),
+        title: Text(AppLocalizations.of(context)!.shoppingTitle), // Traduzione del titolo
       ),
       body: GridView.count(
-        crossAxisCount: 2, // Numero di colonne
+        crossAxisCount: 2,
         padding: const EdgeInsets.all(16.0),
         children: [
-          ...selectedSupermarkets.map((name) => _buildSupermarketCard(context, name, 'assets/images/$name.png', ref)),
+          ...selectedSupermarkets.map((name) =>
+              _buildSupermarketCard(context, name, 'assets/images/$name.png', ref)),
           _buildAddSupermarketCard(context, ref),
         ],
       ),
@@ -35,9 +37,9 @@ class ShoppingScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              imagePath, // Carica l'immagine del supermercato
-              height: 80, // Altezza dell'immagine
-              fit: BoxFit.cover, // Adatta l'immagine nel riquadro
+              imagePath,
+              height: 80,
+              fit: BoxFit.cover,
             ),
             const SizedBox(height: 8),
             Text(
@@ -83,9 +85,12 @@ class ShoppingScreen extends ConsumerWidget {
                 height: 400,
                 child: Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text('Seleziona un supermercato', style: TextStyle(fontSize: 20)),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        AppLocalizations.of(context)!.selectSupermarket, // Traduzione del testo dialogo
+                        style: const TextStyle(fontSize: 20),
+                      ),
                     ),
                     Expanded(
                       child: ListView.builder(
@@ -104,7 +109,7 @@ class ShoppingScreen extends ConsumerWidget {
                       ),
                     ),
                     TextButton(
-                      child: const Text('Chiudi'),
+                      child: Text(AppLocalizations.of(context)!.close), // Traduzione del pulsante "Chiudi"
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -116,20 +121,20 @@ class ShoppingScreen extends ConsumerWidget {
           },
         );
       },
-      child: const Card(
+      child: Card(
         elevation: 4,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.add,
                 size: 40,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
-                'Aggiungi Supermercato',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                AppLocalizations.of(context)!.addSupermarket, // Traduzione per "Aggiungi Supermercato"
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -139,7 +144,6 @@ class ShoppingScreen extends ConsumerWidget {
     );
   }
 
-  // Naviga alla schermata del supermercato selezionato
   void _navigateToSupermarket(BuildContext context, String supermarketName, WidgetRef ref) {
     ref.read(supermarketProvider.notifier).setSupermarket(supermarketName);
     Navigator.push(

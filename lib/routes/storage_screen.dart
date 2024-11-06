@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_store_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import per multilingua
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import '../services/category_services.dart';
@@ -31,7 +33,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
 
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
     DocumentReference userDocRef =
-        FirebaseFirestore.instance.collection('products').doc(userId);
+    FirebaseFirestore.instance.collection('products').doc(userId);
 
     userDocRef.snapshots().listen((DocumentSnapshot snapshot) {
       if (snapshot.exists) {
@@ -113,30 +115,30 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                         builder: (context) => const AddProductScreen()),
                   );
                 },
-                child: const Text('Aggiungi Prodotto'),
+                child: Text(AppLocalizations.of(context)!.addProduct),
               ),
             ],
           ),
           Expanded(
             child: storedProducts.isNotEmpty
                 ? GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
-                    itemCount: storedProducts.length,
-                    itemBuilder: (context, index) {
-                      return storedProducts[index];
-                    },
-                  )
-                : const Center(
-                    child: Text(
-                      'Non ci sono prodotti salvati disponibili',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ),
+              gridDelegate:
+              const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),
+              itemCount: storedProducts.length,
+              itemBuilder: (context, index) {
+                return storedProducts[index];
+              },
+            )
+                : Center(
+              child: Text(
+                AppLocalizations.of(context)!.noSavedProducts,
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
           )
         ],
       ),
@@ -153,18 +155,18 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
             } else {
               String selectedCategory = '';
               List<String> categoryNames = snapshot.data ?? [];
               return AlertDialog(
-                title: const Text('Filter by Category'),
+                title: Text(AppLocalizations.of(context)!.filterByCategory),
                 content: DropdownButtonFormField<String>(
                   value: selectedCategory.isEmpty ? null : selectedCategory,
                   items: categoryNames.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
-                      child: Text(category),
+                      child: Text(AppLocalizations.of(context)!.translateCategory(category)),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
@@ -172,24 +174,24 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                       selectedCategory = newValue!;
                     });
                   },
-                  decoration: const InputDecoration(
-                    labelText: 'Select Category',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.selectCategory,
                   ),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Cancel'),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: const Text('Filter'),
+                    child: Text(AppLocalizations.of(context)!.filter),
                     onPressed: () {
                       setState(() {
                         storedProducts = originalProducts
                             .where((product) =>
-                                product.product.category == selectedCategory)
+                        product.product.category == selectedCategory)
                             .toList();
                       });
                       Navigator.of(context).pop();
@@ -210,30 +212,30 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
       builder: (BuildContext context) {
         String searchQuery = '';
         return AlertDialog(
-          title: const Text('Search by Product Name'),
+          title: Text(AppLocalizations.of(context)!.searchByProductName),
           content: TextField(
             onChanged: (value) {
               searchQuery = value;
             },
-            decoration: const InputDecoration(
-              labelText: 'Enter product name',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterProductName,
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Search'),
+              child: Text(AppLocalizations.of(context)!.search),
               onPressed: () {
                 setState(() {
                   storedProducts = originalProducts
                       .where((product) => product.product.productName
-                          .toLowerCase()
-                          .contains(searchQuery.toLowerCase()))
+                      .toLowerCase()
+                      .contains(searchQuery.toLowerCase()))
                       .toList();
                 });
                 Navigator.of(context).pop();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di avere il pacchetto flutter_localizations configurato
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
 import '../models/meal.dart';
 
@@ -14,7 +15,7 @@ class MealDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(meal.mealType),
+        title: Text(localizations.mealString(meal.mealType)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,7 +28,7 @@ class MealDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '${localizations.mealType}: ${meal.mealType}',
+              '${localizations.mealType}: ${localizations.mealString(meal.mealType)}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),
@@ -39,13 +40,13 @@ class MealDetailScreen extends StatelessWidget {
             Table(
               border: TableBorder.all(color: Colors.grey, width: 0.5),
               children: [
-                _buildMacronutrientRow(localizations.energy, '${meal.macronutrients['Energy']} kcal'),
-                _buildMacronutrientRow(localizations.proteins, '${meal.macronutrients['Proteins']} g'),
-                _buildMacronutrientRow(localizations.carbohydrates, '${meal.macronutrients['Carbohydrates']} g'),
-                _buildMacronutrientRow(localizations.fats, '${meal.macronutrients['Fats']} g'),
-                _buildMacronutrientRow(localizations.fiber, '${meal.macronutrients['Fiber']} g'),
-                _buildMacronutrientRow(localizations.saturated_fats, '${meal.macronutrients['Saturated_Fats']} g'),
-                _buildMacronutrientRow(localizations.sugars, '${meal.macronutrients['Sugars']} g'),
+                _buildMacronutrientRow(localizations.energy, '${meal.macronutrients['Energy']?.toStringAsFixed(2)} kcal'),
+                _buildMacronutrientRow(localizations.proteins, '${meal.macronutrients['Proteins']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.carbohydrates, '${meal.macronutrients['Carbohydrates']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.fats, '${meal.macronutrients['Fats']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.fiber, '${meal.macronutrients['Fiber']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.saturated_fats, '${meal.macronutrients['Saturated Fats']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.sugars, '${meal.macronutrients['Sugars']?.toStringAsFixed(2)} g'),
               ],
             ),
             const SizedBox(height: 16),

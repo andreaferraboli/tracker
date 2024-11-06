@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
 import '../models/period_selector.dart';
@@ -116,51 +117,47 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return filteredMeals;
   }
 
-  // Funzione per preparare i dati del grafico a barre con i costi giornalieri
+
   Map<String, double> _prepareBarChartData(List<Meal> filteredMeals) {
     Map<String, double> periodData = {};
-    const months = [
-      "Gen",
-      "Feb",
-      "Mar",
-      "Apr",
-      "Mag",
-      "Giu",
-      "Lug",
-      "Ago",
-      "Set",
-      "Ott",
-      "Nov",
-      "Dic"
+    var localizations = AppLocalizations.of(context);
+    final months = [
+      localizations!.jan,
+      localizations.feb,
+      localizations.mar,
+      localizations.apr,
+      localizations.may,
+      localizations.jun,
+      localizations.jul,
+      localizations.aug,
+      localizations.sep,
+      localizations.oct,
+      localizations.nov,
+      localizations.dec
     ];
+
     switch (selectedPeriod) {
       case 'week':
-        // Aggiungi i 7 giorni della settimana con valore iniziale 0
         for (int i = 0; i < 7; i++) {
-          DateTime day =
-              currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
+          DateTime day = currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
           String dayLabel = '${day.day}-${day.month}';
           periodData[dayLabel] = 0.0;
         }
         break;
 
       case 'month':
-        // Aggiungi le 4 settimane con valore iniziale 0
         for (int i = 1; i <= 4; i++) {
-          periodData['Settimana $i'] = 0.0;
+          periodData['${localizations.week} $i'] = 0.0;
         }
         break;
 
       case 'year':
-        // Aggiungi i 12 mesi con valore iniziale 0
-
         for (int i = 0; i < 12; i++) {
           periodData[months[i]] = 0.0;
         }
         break;
     }
 
-    // Aggiorna il valore di `periodData` con le spese effettive
     for (Meal meal in filteredMeals) {
       String key;
       switch (selectedPeriod) {
@@ -171,7 +168,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
         case 'month':
           int weekOfMonth = (DateTime.parse(meal.date).day - 1) ~/ 7 + 1;
           weekOfMonth = weekOfMonth > 4 ? 4 : weekOfMonth;
-          key = 'Settimana $weekOfMonth';
+          key = '${localizations.week} $weekOfMonth';
           break;
         case 'year':
           int month = DateTime.parse(meal.date).month - 1;
@@ -181,7 +178,6 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           key = '';
       }
 
-      // Aggiorna solo se `key` è valida
       if (key.isNotEmpty) {
         periodData[key] = (periodData[key] ?? 0) + meal.totalExpense;
       }
@@ -190,52 +186,49 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return periodData;
   }
 
+
+
   Map<String, double> _prepareMacronutrientData(List<Meal> filteredMeals) {
     Map<String, double> macronutrientData = {};
-    const months = [
-      "Gen",
-      "Feb",
-      "Mar",
-      "Apr",
-      "Mag",
-      "Giu",
-      "Lug",
-      "Ago",
-      "Set",
-      "Ott",
-      "Nov",
-      "Dic"
+    var localizations = AppLocalizations.of(context);
+    final months = [
+      localizations!.jan,
+      localizations.feb,
+      localizations.mar,
+      localizations.apr,
+      localizations.may,
+      localizations.jun,
+      localizations.jul,
+      localizations.aug,
+      localizations.sep,
+      localizations.oct,
+      localizations.nov,
+      localizations.dec
     ];
 
     switch (selectedPeriod) {
       case 'week':
-        // Aggiungi i 7 giorni della settimana con valore iniziale 0 kcal
         for (int i = 0; i < 7; i++) {
-          DateTime day =
-              currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
+          DateTime day = currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
           String dayLabel = '${day.day}-${day.month}';
           macronutrientData[dayLabel] = 0.0;
         }
         break;
 
       case 'month':
-        // Aggiungi le 4 settimane del mese con valore iniziale 0 kcal
         for (int i = 1; i <= 4; i++) {
-          macronutrientData['Settimana $i'] = 0.0;
+          macronutrientData['${localizations.week} $i'] = 0.0;
         }
         break;
 
       case 'year':
-        // Aggiungi i 12 mesi con valore iniziale 0 kcal
         for (int i = 0; i < 12; i++) {
           macronutrientData[months[i]] = 0.0;
         }
         break;
     }
 
-    // Calcola le kilocalorie effettive per ogni periodo
-    Map<String, int> counts =
-        {}; // Mappa per tenere conto del numero di pasti per calcolare le medie
+    Map<String, int> counts = {};
     for (Meal meal in filteredMeals) {
       String key;
       DateTime mealDate = DateTime.parse(meal.date);
@@ -247,7 +240,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
         case 'month':
           int weekOfMonth = (mealDate.day - 1) ~/ 7 + 1;
           weekOfMonth = weekOfMonth > 4 ? 4 : weekOfMonth;
-          key = 'Settimana $weekOfMonth';
+          key = '${localizations.week} $weekOfMonth';
           break;
         case 'year':
           key = months[mealDate.month - 1];
@@ -257,20 +250,19 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
       }
 
       if (key.isNotEmpty) {
-        // Somma i macronutrienti selezionati
         macronutrientData[key] = (macronutrientData[key] ?? 0) +
             (meal.macronutrients[selectedMacronutrient] ?? 0);
         counts[key] = (counts[key] ?? 0) + 1;
       }
     }
 
-    // Se necessario, calcola la media settimanale o mensile
     if (selectedPeriod == 'month' || selectedPeriod == 'year') {
       macronutrientData.updateAll((key, value) => value / (counts[key] ?? 1));
     }
 
     return macronutrientData;
   }
+
 
   // Funzione per calcolare il totale speso per ogni tipo di pasto
   Map<String, double> _calculateMealTypeExpenses(List<Meal> filteredMeals) {
@@ -280,7 +272,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           (mealTypeData[meal.mealType] ?? 0) + meal.totalExpense;
     }
     return mealTypeData.map((type, total) {
-      return MapEntry('$type - €${total.toStringAsFixed(2)}', total);
+      return MapEntry('${AppLocalizations.of(context)!.mealString(type)} - €${total.toStringAsFixed(2)}', total);
     });
   }
 
@@ -336,16 +328,16 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           : const Color.fromARGB(255, 66, 12, 20),
     ];
     return Scaffold(
-      appBar: AppBar(title: const Text('Visualizzare Pasti')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
       body: FutureBuilder<List<Meal>>(
         future: _fetchMeals(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Errore: ${snapshot.error}'));
+            return Center(child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nessun pasto trovato'));
+            return Center(child: Text(AppLocalizations.of(context)!.noMealsFound));
           } else {
             final meals = snapshot.data!;
             final filteredMeals = _filterMeals(meals);
@@ -355,8 +347,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                        'Nessun pasto trovata per il periodo selezionato'),
+                    Text(
+                        AppLocalizations.of(context)!.noMealsForPeriod),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -375,10 +367,10 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                           const SizedBox(height: 8),
                           Text(
                             selectedPeriod == 'week'
-                                ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                                ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                                 : selectedPeriod == 'month'
-                                    ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                                    : '${currentDate.year}',
+                                ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                : '${currentDate.year}',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),
                           ),
@@ -447,9 +439,9 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                   const SizedBox(height: 8),
                   Text(
                     selectedPeriod == 'week'
-                        ? 'Settimana del ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                        ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                         : selectedPeriod == 'month'
-                        ? 'Mese di ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                        ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
                         : '${currentDate.year}',
                     style: TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),
@@ -463,7 +455,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                         items: mealTypes.map((String type) {
                           return DropdownMenuItem<String>(
                             value: type,
-                            child: Text(type),
+                            child: Text(AppLocalizations.of(context)!.mealString(type)),
                           );
                         }).toList(),
                         onChanged: (value) {
@@ -478,7 +470,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                         items: macronutrients.map((String nutrient) {
                           return DropdownMenuItem<String>(
                             value: nutrient,
-                            child: Text(nutrient),
+                            child: Text(AppLocalizations.of(context)!.getNutrientString(nutrient)),
                           );
                         }).toList(),
                         onChanged: (value) {
@@ -530,7 +522,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                             ),
                             child: ListTile(
                               title: Text(
-                                '${meal.mealType} - €${meal.totalExpense.toStringAsFixed(2)}',
+                                '${AppLocalizations.of(context)!.mealString(meal.mealType)} - €${meal.totalExpense.toStringAsFixed(2)}',
                                 style: TextStyle(
                                     color: Theme.of(context)
                                         .colorScheme

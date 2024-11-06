@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
@@ -45,7 +46,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     // _checkConnection();
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/esselunga_output.json');
     // uploadProductsFromJsonToFirestore(FirebaseAuth.instance.currentUser!.uid, 'assets/json/output.json');
-    saveMealsToJson(FirebaseAuth.instance.currentUser!.uid, 'assets/json/meals.json');
+    // saveMealsToJson(FirebaseAuth.instance.currentUser!.uid, 'assets/json/meals.json');
     _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
         ref); // Recupera i prodotti dal database
   }
@@ -179,7 +180,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 double fontSize = 24.0; // Dimensione font di base
-                String totalText = 'Saldo Totale: €${totalBalance.toStringAsFixed(2)}';
+                String totalText = '${AppLocalizations.of(context)!.totalBalance}: €${totalBalance.toStringAsFixed(2)}';
                 double textWidth = (totalText.length * fontSize) * 0.99; // Stima della larghezza del testo
 
                 // Se il testo supera la larghezza disponibile, riduci la dimensione del font
@@ -229,14 +230,12 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     context,
                     MaterialPageRoute(builder: (context) => const AddProductScreen()),
                   );
-                  // _fetchProducts(FirebaseAuth.instance.currentUser!.uid, ref);
                 },
-                child: const Text('Aggiungi Prodotto'),
+                child: Text(AppLocalizations.of(context)!.addProduct),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 33, 78,
-                      52), // Imposta il colore di sfondo del bottone
+                  backgroundColor: const Color.fromARGB(255, 33, 78, 52),
                 ),
                 onPressed: () async {
                   try {
@@ -244,59 +243,47 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                         .collection('expenses')
                         .doc(FirebaseAuth.instance.currentUser!.uid);
 
-                    List<Map<String, dynamic>> productsToSave =
-                        purchasedProducts
-                            .where((product) => product.product.buyQuantity > 0)
-                            .map((product) {
+                    List<Map<String, dynamic>> productsToSave = purchasedProducts
+                        .where((product) => product.product.buyQuantity > 0)
+                        .map((product) {
                       return {
                         'idProdotto': product.product.productId,
                         'productName': product.product.productName,
                         'price': product.product.price,
                         'pricePerKg': (product.product.price /
-                                product.product.totalWeight)
+                            product.product.totalWeight)
                             .toStringAsFixed(3),
                         'category': product.product.category,
                         'quantita': product.product.buyQuantity,
                       };
                     }).toList();
 
-                    // Passo 1: Scarica l'array di prodotti
                     DocumentReference productDocRef = FirebaseFirestore.instance
                         .collection('products')
                         .doc(FirebaseAuth.instance.currentUser!.uid);
 
-                    // Recupera il documento
                     DocumentSnapshot snapshot = await productDocRef.get();
 
                     if (snapshot.exists) {
-                      // Recupera l'array "products" dal documento
-                      final List<dynamic> productsList =
-                          snapshot['products'] ?? [];
+                      final List<dynamic> productsList = snapshot['products'] ?? [];
 
-                      // Passo 2: Modifica l'array localmente
                       for (var product in purchasedProducts) {
                         if (product.product.buyQuantity > 0) {
-                          // Trova il prodotto corrispondente nell'array locale
                           var existingProduct = productsList.firstWhere(
-                              (p) =>
-                                  p['productId'] == product.product.productId,
+                                  (p) => p['productId'] == product.product.productId,
                               orElse: () => null);
 
-                          // Se esiste, aggiorna la quantità
                           if (existingProduct != null) {
                             existingProduct['quantityOwned'] +=
                                 product.product.buyQuantity;
                           } else {
-                            // Se non esiste, aggiungi il nuovo prodotto
                             productsList.add(product.product.toJson());
                           }
 
-                          // Reset della buyQuantity
                           product.product.buyQuantity = 0;
                         }
                       }
 
-// Passo 3: Carica l'array modificato in Firestore
                       await productDocRef.update({
                         'products': productsList,
                       });
@@ -315,8 +302,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     });
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Spesa salvata con successo!'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.expenseSaved),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -325,7 +312,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     print('Errore durante il salvataggio della spesa: $e');
                   }
                 },
-                child: const Text('Salva Spesa'),
+                child: Text(AppLocalizations.of(context)!.saveExpense),
               ),
               IconButton(
                 icon: const Icon(Icons.calendar_today),
@@ -346,6 +333,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             ],
           ),
           Expanded(
+            //todo:implementa come nella vista dei pasti i prodotti selezionati e quali no, in questo caso se la quantità selezionata>0
             child: purchasedProducts.isNotEmpty
                 ? ListView.builder(
                     itemCount: purchasedProducts.length,
@@ -354,9 +342,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                           index]; // Corretto il ritorno del widget
                     },
                   )
-                : const Center(
-                    child: Text(
-                      'Non ci sono prodotti salvati disponibili',
+                : Center(
+                    child: Text(AppLocalizations.of(context)!.noSavedProducts,
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
@@ -376,18 +363,18 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
             } else {
               String selectedCategory = '';
               List<String> categoryNames = snapshot.data ?? [];
               return AlertDialog(
-                title: const Text('Filter by Category'),
+                title: Text(AppLocalizations.of(context)!.filterByCategory),
                 content: DropdownButtonFormField<String>(
                   value: selectedCategory.isEmpty ? null : selectedCategory,
                   items: categoryNames.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
-                      child: Text(category),
+                      child: Text(AppLocalizations.of(context)!.translateCategory(category)),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
@@ -395,25 +382,25 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                       selectedCategory = newValue!;
                     });
                   },
-                  decoration: const InputDecoration(
-                    labelText: 'Select Category',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.selectCategory,
                   ),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Cancel'),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                   TextButton(
-                    child: const Text('Filter'),
+                    child: Text(AppLocalizations.of(context)!.filter),
                     onPressed: () {
-                      // Implement the filter logic here
+                      // Implementa la logica di filtro qui
                       setState(() {
                         purchasedProducts = originalProducts
                             .where((product) =>
-                                product.product.category == selectedCategory)
+                        product.product.category == selectedCategory)
                             .toList();
                       });
                       Navigator.of(context).pop();
@@ -434,31 +421,31 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       builder: (BuildContext context) {
         String searchQuery = '';
         return AlertDialog(
-          title: const Text('Search by Product Name'),
+          title: Text(AppLocalizations.of(context)!.searchByProductName),
           content: TextField(
             onChanged: (value) {
               searchQuery = value;
             },
-            decoration: const InputDecoration(
-              labelText: 'Enter product name',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterProductName,
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Search'),
+              child: Text(AppLocalizations.of(context)!.search),
               onPressed: () {
-                // Implement the search logic here
+                // Implementa la logica di ricerca qui
                 setState(() {
                   purchasedProducts = originalProducts
                       .where((product) => product.product.productName
-                          .toLowerCase()
-                          .contains(searchQuery.toLowerCase()))
+                      .toLowerCase()
+                      .contains(searchQuery.toLowerCase()))
                       .toList();
                 });
                 Navigator.of(context).pop();
@@ -469,4 +456,5 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       },
     );
   }
+
 }
