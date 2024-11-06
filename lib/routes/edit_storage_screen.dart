@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/services/icons_helper.dart';
 
 class EditStorageScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Modifica Dispensa'),
+        title: Text(AppLocalizations.of(context)!.editStorage),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -66,7 +67,9 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-              decoration: const InputDecoration(labelText: "Nome Dispensa"),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.storageName,
+              ),
               controller: TextEditingController(text: storageName),
               onChanged: (value) {
                 setState(() {
@@ -77,9 +80,9 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
             const SizedBox(height: 20),
             TextField(
               controller: searchController,
-              decoration: const InputDecoration(
-                labelText: 'Cerca icona',
-                prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.searchIcon,
+                prefixIcon: const Icon(Icons.search),
               ),
               onChanged: filterIcons,
             ),

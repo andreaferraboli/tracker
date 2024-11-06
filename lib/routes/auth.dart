@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import di Riverpod
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/providers/products_provider.dart';
 import 'package:tracker/providers/category_provider.dart';
 import 'package:tracker/models/product.dart';
@@ -33,50 +34,65 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       if (isLogin) {
         loadUserData(); // Caricamento dati utente
       } else {
-        //todo: continua da qua a tradurre
+        // Verifica se le password corrispondono
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Passwords do not match')),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.passwordsDoNotMatch),
+            ),
           );
           return;
         }
 
+        // Creazione documenti utente nelle collezioni Firestore
         DocumentReference userDocRef = FirebaseFirestore.instance
             .collection('products')
             .doc(FirebaseAuth.instance.currentUser!.uid);
-        userDocRef.set({
+        await userDocRef.set({
           "products": [],
         });
+
         userDocRef = FirebaseFirestore.instance
             .collection('expenses')
             .doc(FirebaseAuth.instance.currentUser!.uid);
-        userDocRef.set({
+        await userDocRef.set({
           "expenses": [],
         });
+
         userDocRef = FirebaseFirestore.instance
             .collection('meals')
             .doc(FirebaseAuth.instance.currentUser!.uid);
-        userDocRef.set({
+        await userDocRef.set({
           "meals": [],
         });
+
         userDocRef = FirebaseFirestore.instance
             .collection('categories')
             .doc(FirebaseAuth.instance.currentUser!.uid);
-        userDocRef.set({
+        await userDocRef.set({
           "categories": await CategoryServices.getAndLoadCategoriesData(),
         });
       }
+
       // Mostra messaggio di successo
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(isLogin ? 'Login successful' : 'Sign up successful')),
+          content: Text(
+            isLogin
+                ? AppLocalizations.of(context)!.loginSuccess
+                : AppLocalizations.of(context)!.signupSuccess,
+          ),
+        ),
       );
     } on FirebaseAuthException catch (e) {
       print("errore${e.message}");
+
       // Gestisce gli errori di autenticazione
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.message}')),
+        SnackBar(
+          content: Text('${AppLocalizations.of(context)!.error}: ${e.message}'),
+        ),
       );
     }
   }
@@ -130,7 +146,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isLogin ? 'Login' : 'Sign Up'),
+        title: Text(isLogin
+            ? AppLocalizations.of(context)!.login
+            : AppLocalizations.of(context)!.signUp),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -142,10 +160,12 @@ class _AuthPageState extends ConsumerState<AuthPage> {
               if (!isLogin)
                 TextFormField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.username,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your username';
+                      return AppLocalizations.of(context)!.enterUsername;
                     }
                     return null;
                   },
@@ -153,12 +173,14 @@ class _AuthPageState extends ConsumerState<AuthPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.email,
+                ),
                 textCapitalization: TextCapitalization.none,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
+                    return AppLocalizations.of(context)!.enterEmail;
                   }
                   return null;
                 },
@@ -166,11 +188,13 @@ class _AuthPageState extends ConsumerState<AuthPage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.password,
+                ),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
+                    return AppLocalizations.of(context)!.enterPassword;
                   }
                   return null;
                 },
@@ -179,12 +203,13 @@ class _AuthPageState extends ConsumerState<AuthPage> {
               if (!isLogin)
                 TextFormField(
                   controller: _confirmPasswordController,
-                  decoration:
-                      const InputDecoration(labelText: 'Confirm Password'),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.confirmPassword,
+                  ),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return AppLocalizations.of(context)!.confirmPassword;
                     }
                     return null;
                   },
@@ -196,7 +221,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     _authenticateUser();
                   }
                 },
-                child: Text(isLogin ? 'Login' : 'Sign Up'),
+                child: Text(isLogin
+                    ? AppLocalizations.of(context)!.login
+                    : AppLocalizations.of(context)!.signUp),
               ),
               TextButton(
                 onPressed: () {
@@ -205,8 +232,8 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                   });
                 },
                 child: Text(isLogin
-                    ? 'Create an account'
-                    : 'Already have an account? Login'),
+                    ? AppLocalizations.of(context)!.createAccount
+                    : AppLocalizations.of(context)!.alreadyHaveAccount),
               ),
             ],
           ),

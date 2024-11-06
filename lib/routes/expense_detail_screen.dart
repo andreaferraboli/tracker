@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
 import '../models/expense.dart';
 
@@ -11,7 +12,7 @@ class ExpenseDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dettaglio Spesa'),
+        title: Text(AppLocalizations.of(context)!.expenseDetailTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -19,23 +20,23 @@ class ExpenseDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Supermercato: ${expense.supermarket}',
+              '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
-              'Data: ${expense.date}',
+              '${AppLocalizations.of(context)!.date}: ${expense.date}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
             Text(
-              'Totale: €${expense.totalAmount.toStringAsFixed(2)}',
+              '${AppLocalizations.of(context)!.totalAmount}: €${expense.totalAmount.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Dettagli:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.details,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -55,7 +56,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded( // Utilizziamo Expanded qui
+                          Expanded(
                             child: Row(
                               children: [
                                 CircleAvatar(
@@ -63,7 +64,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                                   child: CategoryServices.iconFromCategory(item.category),
                                 ),
                                 const SizedBox(width: 12),
-                                Expanded( // Avvolgere anche la colonna in Expanded
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -78,7 +79,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Quantità: ${item.quantity} x €${item.price.toStringAsFixed(2)}',
+                                        '${AppLocalizations.of(context)!.quantity}: ${item.quantity} x €${item.price.toStringAsFixed(2)}',
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey[700],

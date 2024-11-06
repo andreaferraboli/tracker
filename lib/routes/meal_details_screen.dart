@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di avere il pacchetto flutter_localizations configurato
 import 'package:tracker/services/category_services.dart';
 import '../models/meal.dart';
 
@@ -9,6 +10,8 @@ class MealDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
+
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.mealType),
@@ -19,41 +22,41 @@ class MealDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Data: ${meal.date}',
+              '${localizations.date}: ${meal.date}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(
-              'Tipo di pasto: ${meal.mealType}',
+              '${localizations.mealType}: ${meal.mealType}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Macronutrienti:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              localizations.macronutrients,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Table(
               border: TableBorder.all(color: Colors.grey, width: 0.5),
               children: [
-                _buildMacronutrientRow('Calorie', '${meal.macronutrients['Energy']} kcal'),
-                _buildMacronutrientRow('Proteine', '${meal.macronutrients['Proteins']} g'),
-                _buildMacronutrientRow('Carboidrati', '${meal.macronutrients['Carbohydrates']} g'),
-                _buildMacronutrientRow('Grassi', '${meal.macronutrients['Fats']} g'),
-                _buildMacronutrientRow('Fibre', '${meal.macronutrients['Fiber']} g'),
-                _buildMacronutrientRow('Grassi Saturi', '${meal.macronutrients['Saturated_Fats']} g'),
-                _buildMacronutrientRow('Zuccheri', '${meal.macronutrients['Sugars']} g'),
+                _buildMacronutrientRow(localizations.energy, '${meal.macronutrients['Energy']} kcal'),
+                _buildMacronutrientRow(localizations.proteins, '${meal.macronutrients['Proteins']} g'),
+                _buildMacronutrientRow(localizations.carbohydrates, '${meal.macronutrients['Carbohydrates']} g'),
+                _buildMacronutrientRow(localizations.fats, '${meal.macronutrients['Fats']} g'),
+                _buildMacronutrientRow(localizations.fiber, '${meal.macronutrients['Fiber']} g'),
+                _buildMacronutrientRow(localizations.saturated_fats, '${meal.macronutrients['Saturated_Fats']} g'),
+                _buildMacronutrientRow(localizations.sugars, '${meal.macronutrients['Sugars']} g'),
               ],
             ),
             const SizedBox(height: 16),
             Text(
-              'Totale spesa: €${meal.totalExpense.toStringAsFixed(2)}',
+              '${localizations.totalExpense}: €${meal.totalExpense.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Prodotti:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              localizations.products,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Expanded(
@@ -71,12 +74,12 @@ class MealDetailScreen extends StatelessWidget {
                       child: ListTile(
                         leading: CategoryServices.iconFromCategory(product['category']),
                         title: Text(product['productName']),
-                        subtitle: Text('Categoria: ${product['category']}'),
+                        subtitle: Text('${localizations.category}: ${product['category']}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('Quantità: ${product['quantitySelected']} kg'),
-                            Text('Prezzo: €${product['price']}'),
+                            Text('${localizations.quantity}: ${product['quantitySelected']} kg'),
+                            Text('${localizations.price}: €${product['price']}'),
                           ],
                         ),
                         textColor: Theme.of(context).colorScheme.onPrimary,

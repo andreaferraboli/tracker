@@ -34,9 +34,11 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home',
-            style: TextStyle(
-                color: Theme.of(context).appBarTheme.titleTextStyle?.color)),
+        title: Text(
+          AppLocalizations.of(context)!.home, // Localizzazione del titolo "Home"
+          style: TextStyle(
+              color: Theme.of(context).appBarTheme.titleTextStyle?.color),
+        ),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -47,16 +49,15 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
-        // After
         actions: [
           if (user == null)
             Row(
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
-                    "accedi/registrati",
-                    style: TextStyle(fontSize: 16),
+                    AppLocalizations.of(context)!.loginRegister, // Localizzazione per "accedi/registrati"
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
                 IconButton(
@@ -95,9 +96,9 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
               ),
-              child: const Text(
-                'Menu',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.menu, // Localizzazione per "Menu"
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                 ),
@@ -105,7 +106,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.language),
-              title: const Text('Cambia lingua'),
+              title: Text(AppLocalizations.of(context)!.changeLanguage), // Localizzazione per "Cambia lingua"
               onTap: () {
                 Locale newLocale = Localizations.localeOf(context).languageCode == 'it'
                     ? const Locale('en')
@@ -116,7 +117,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.brightness_6),
-              title: const Text('Cambia tema'),
+              title: Text(AppLocalizations.of(context)!.changeTheme), // Localizzazione per "Cambia tema"
               onTap: () {
                 toggleTheme(); // Chiama la funzione per cambiare il tema
                 Navigator.pop(context); // Chiude il drawer
@@ -124,7 +125,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+              title: Text(AppLocalizations.of(context)!.logout), // Localizzazione per "Logout"
               onTap: () {
                 FirebaseAuth.instance.signOut(); // Effettua il logout
                 Navigator.pop(context); // Chiude il drawer
@@ -136,24 +137,46 @@ class HomeScreen extends StatelessWidget {
       body: GridView.count(
         crossAxisCount: 2,
         childAspectRatio: 0.8,
-        // Regola l'aspetto dei pulsanti per occupare più spazio
-        // Definisce due pulsanti per riga
         padding: const EdgeInsets.all(16),
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: <Widget>[
-          _buildMenuButton(context, AppLocalizations.of(context)!.shopping,
-              Icons.shopping_cart, '/shopping', shoppingColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.addMeal,
-              Icons.restaurant, '/addMeal', addMealColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.viewExpenses,
-              Icons.receipt_long, '/viewExpenses', viewExpensesColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.inventory,
-              Icons.inventory, '/inventory', inventoryColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.viewMeals,
-              Icons.fastfood, '/viewMeals', viewMealsColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.recipeTips,
-              Icons.food_bank_outlined, '/recipeTips', recipeTipsColor),
+          _buildMenuButton(
+              context,
+              AppLocalizations.of(context)!.shopping, // Localizzazione per "Shopping"
+              Icons.shopping_cart,
+              '/shopping',
+              shoppingColor),
+          _buildMenuButton(
+              context,
+              AppLocalizations.of(context)!.addMeal, // Localizzazione per "Add Meal"
+              Icons.restaurant,
+              '/addMeal',
+              addMealColor),
+          _buildMenuButton(
+              context,
+              AppLocalizations.of(context)!.viewExpenses, // Localizzazione per "View Expenses"
+              Icons.receipt_long,
+              '/viewExpenses',
+              viewExpensesColor),
+          _buildMenuButton(
+              context,
+              AppLocalizations.of(context)!.inventory, // Localizzazione per "Inventory"
+              Icons.inventory,
+              '/inventory',
+              inventoryColor),
+          _buildMenuButton(
+              context,
+              AppLocalizations.of(context)!.viewMeals, // Localizzazione per "View Meals"
+              Icons.fastfood,
+              '/viewMeals',
+              viewMealsColor),
+          _buildMenuButton(
+              context,
+              AppLocalizations.of(context)!.recipeTips, // Localizzazione per "Recipe Tips"
+              Icons.food_bank_outlined,
+              '/recipeTips',
+              recipeTipsColor),
         ],
       ),
     );

@@ -145,6 +145,7 @@ class ProductScreen extends StatelessWidget {
                 ),
               ],
             ),
+            //todo:ricomincia a tradurre da qui
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
