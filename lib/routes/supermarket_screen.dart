@@ -10,6 +10,8 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../models/product_added_to_meal.dart';
+import '../models/product_card.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
@@ -127,6 +129,82 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       isConnected = true; // Assumiamo di essere sempre connessi a Firestore.
     });
   }
+  Future<void> saveExpense() async {
+    try {
+      DocumentReference userDocRef = FirebaseFirestore.instance
+          .collection('expenses')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+
+      List<Map<String, dynamic>> productsToSave = purchasedProducts
+          .where((product) => product.product.buyQuantity > 0)
+          .map((product) {
+        return {
+          'idProdotto': product.product.productId,
+          'productName': product.product.productName,
+          'price': product.product.price,
+          'pricePerKg': (product.product.price /
+              product.product.totalWeight)
+              .toStringAsFixed(3),
+          'category': product.product.category,
+          'quantita': product.product.buyQuantity,
+        };
+      }).toList();
+
+      DocumentReference productDocRef = FirebaseFirestore.instance
+          .collection('products')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+
+      DocumentSnapshot snapshot = await productDocRef.get();
+
+      if (snapshot.exists) {
+        final List<dynamic> productsList = snapshot['products'] ?? [];
+
+        for (var product in purchasedProducts) {
+          if (product.product.buyQuantity > 0) {
+            var existingProduct = productsList.firstWhere(
+                    (p) => p['productId'] == product.product.productId,
+                orElse: () => null);
+
+            if (existingProduct != null) {
+              existingProduct['quantityOwned'] +=
+                  product.product.buyQuantity;
+            } else {
+              productsList.add(product.product.toJson());
+            }
+
+            product.product.buyQuantity = 0;
+          }
+        }
+
+        await productDocRef.update({
+          'products': productsList,
+        });
+      }
+
+      await userDocRef.update({
+        'expenses': FieldValue.arrayUnion([
+          {
+            'id': uuid.v4(),
+            'supermarket': ref.read(supermarketProvider),
+            'totalAmount': totalBalance,
+            'products': productsToSave,
+            'date': DateFormat('dd-MM-yyyy').format(selectedDate),
+          }
+        ])
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.expenseSaved),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      print('Errore durante il salvataggio della spesa: $e');
+    }
+
+  }
 
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
     // Riferimento al documento dell'utente basato sul suo id
@@ -238,79 +316,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   backgroundColor: const Color.fromARGB(255, 33, 78, 52),
                 ),
                 onPressed: () async {
-                  try {
-                    DocumentReference userDocRef = FirebaseFirestore.instance
-                        .collection('expenses')
-                        .doc(FirebaseAuth.instance.currentUser!.uid);
-
-                    List<Map<String, dynamic>> productsToSave = purchasedProducts
-                        .where((product) => product.product.buyQuantity > 0)
-                        .map((product) {
-                      return {
-                        'idProdotto': product.product.productId,
-                        'productName': product.product.productName,
-                        'price': product.product.price,
-                        'pricePerKg': (product.product.price /
-                            product.product.totalWeight)
-                            .toStringAsFixed(3),
-                        'category': product.product.category,
-                        'quantita': product.product.buyQuantity,
-                      };
-                    }).toList();
-
-                    DocumentReference productDocRef = FirebaseFirestore.instance
-                        .collection('products')
-                        .doc(FirebaseAuth.instance.currentUser!.uid);
-
-                    DocumentSnapshot snapshot = await productDocRef.get();
-
-                    if (snapshot.exists) {
-                      final List<dynamic> productsList = snapshot['products'] ?? [];
-
-                      for (var product in purchasedProducts) {
-                        if (product.product.buyQuantity > 0) {
-                          var existingProduct = productsList.firstWhere(
-                                  (p) => p['productId'] == product.product.productId,
-                              orElse: () => null);
-
-                          if (existingProduct != null) {
-                            existingProduct['quantityOwned'] +=
-                                product.product.buyQuantity;
-                          } else {
-                            productsList.add(product.product.toJson());
-                          }
-
-                          product.product.buyQuantity = 0;
-                        }
-                      }
-
-                      await productDocRef.update({
-                        'products': productsList,
-                      });
-                    }
-
-                    await userDocRef.update({
-                      'expenses': FieldValue.arrayUnion([
-                        {
-                          'id': uuid.v4(),
-                          'supermarket': ref.read(supermarketProvider),
-                          'totalAmount': totalBalance,
-                          'products': productsToSave,
-                          'date': DateFormat('dd-MM-yyyy').format(selectedDate),
-                        }
-                      ])
-                    });
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppLocalizations.of(context)!.expenseSaved),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  } catch (e) {
-                    print('Errore durante il salvataggio della spesa: $e');
-                  }
+                  await saveExpense();
                 },
                 child: Text(AppLocalizations.of(context)!.saveExpense),
               ),
@@ -333,21 +339,69 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             ],
           ),
           Expanded(
-            //todo:implementa come nella vista dei pasti i prodotti selezionati e quali no, in questo caso se la quantità selezionata>0
-            child: purchasedProducts.isNotEmpty
-                ? ListView.builder(
-                    itemCount: purchasedProducts.length,
-                    itemBuilder: (context, index) {
-                      return purchasedProducts[
-                          index]; // Corretto il ritorno del widget
-                    },
-                  )
-                : Center(
-                    child: Text(AppLocalizations.of(context)!.noSavedProducts,
-                      style: TextStyle(fontSize: 18),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Sezione per i prodotti acquistati con quantità selezionata > 0
+                  ExpansionTile(
+                    title: Text(
+                      AppLocalizations.of(context)!.selectedProducts,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
+                    initiallyExpanded: purchasedProducts.isNotEmpty,
+                    leading: const Icon(Icons.shopping_cart),
+                    children: purchasedProducts.where((product) => product.product.selectedQuantity > 0).isEmpty
+                        ? [
+                      Center(
+                        child: Text(AppLocalizations.of(context)!.noSelectedProducts),
+                      ),
+                    ]
+                        : [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: purchasedProducts.where((product) => product.product.selectedQuantity > 0).length,
+                        itemBuilder: (context, index) {
+                          final product = purchasedProducts.where((product) => product.product.selectedQuantity > 0).elementAt(index);
+                          return product;
+                        },
+                      ),
+                    ],
                   ),
+                  // Sezione per la lista completa dei prodotti acquistati
+                  ExpansionTile(
+                    title: Text(
+                      AppLocalizations.of(context)!.listProducts,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    initiallyExpanded: true,
+                    leading: const Icon(Icons.list),
+                    children: purchasedProducts.isEmpty
+                        ? [
+                      Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.noSavedProducts,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ]
+                        : [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: purchasedProducts.length,
+                        itemBuilder: (context, index) {
+                          final product = purchasedProducts[index];
+                          return product;
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           )
+
         ],
       ),
     );
