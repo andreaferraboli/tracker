@@ -33,9 +33,10 @@ class Meal {
       date: json['date'] ?? '',
       mealType: json['mealType'] ?? '',
       macronutrients: json['macronutrients'] != null
-    ? (json['macronutrients'] as Map<String, dynamic>).map<String, double>((key, value) =>
-        MapEntry(key, value is int ? value.toDouble() : value))
-    : {},
+          ? (json['macronutrients'] as Map<String, dynamic>)
+              .map<String, double>((key, value) =>
+                  MapEntry(key, value is int ? value.toDouble() : value))
+          : {},
       id: json['id'] ?? '',
       totalExpense:
           double.tryParse(json['totalExpense']?.toString() ?? '0.0') ?? 0.0,

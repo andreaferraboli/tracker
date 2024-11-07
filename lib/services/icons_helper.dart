@@ -185,36 +185,53 @@ class IconsHelper {
     'air_sharp': Icons.air_sharp,
     'airline_seat_flat': Icons.airline_seat_flat,
     'airline_seat_flat_angled': Icons.airline_seat_flat_angled,
-    'airline_seat_flat_angled_outlined': Icons.airline_seat_flat_angled_outlined,
+    'airline_seat_flat_angled_outlined':
+        Icons.airline_seat_flat_angled_outlined,
     'airline_seat_flat_angled_rounded': Icons.airline_seat_flat_angled_rounded,
     'airline_seat_flat_angled_sharp': Icons.airline_seat_flat_angled_sharp,
     'airline_seat_flat_outlined': Icons.airline_seat_flat_outlined,
     'airline_seat_flat_rounded': Icons.airline_seat_flat_rounded,
     'airline_seat_flat_sharp': Icons.airline_seat_flat_sharp,
     'airline_seat_individual_suite': Icons.airline_seat_individual_suite,
-    'airline_seat_individual_suite_outlined': Icons.airline_seat_individual_suite_outlined,
-    'airline_seat_individual_suite_rounded': Icons.airline_seat_individual_suite_rounded,
-    'airline_seat_individual_suite_sharp': Icons.airline_seat_individual_suite_sharp,
+    'airline_seat_individual_suite_outlined':
+        Icons.airline_seat_individual_suite_outlined,
+    'airline_seat_individual_suite_rounded':
+        Icons.airline_seat_individual_suite_rounded,
+    'airline_seat_individual_suite_sharp':
+        Icons.airline_seat_individual_suite_sharp,
     'airline_seat_legroom_extra': Icons.airline_seat_legroom_extra,
-    'airline_seat_legroom_extra_outlined': Icons.airline_seat_legroom_extra_outlined,
-    'airline_seat_legroom_extra_rounded': Icons.airline_seat_legroom_extra_rounded,
+    'airline_seat_legroom_extra_outlined':
+        Icons.airline_seat_legroom_extra_outlined,
+    'airline_seat_legroom_extra_rounded':
+        Icons.airline_seat_legroom_extra_rounded,
     'airline_seat_legroom_extra_sharp': Icons.airline_seat_legroom_extra_sharp,
     'airline_seat_legroom_normal': Icons.airline_seat_legroom_normal,
-    'airline_seat_legroom_normal_outlined': Icons.airline_seat_legroom_normal_outlined,
-    'airline_seat_legroom_normal_rounded': Icons.airline_seat_legroom_normal_rounded,
-    'airline_seat_legroom_normal_sharp': Icons.airline_seat_legroom_normal_sharp,
+    'airline_seat_legroom_normal_outlined':
+        Icons.airline_seat_legroom_normal_outlined,
+    'airline_seat_legroom_normal_rounded':
+        Icons.airline_seat_legroom_normal_rounded,
+    'airline_seat_legroom_normal_sharp':
+        Icons.airline_seat_legroom_normal_sharp,
     'airline_seat_legroom_reduced': Icons.airline_seat_legroom_reduced,
-    'airline_seat_legroom_reduced_outlined': Icons.airline_seat_legroom_reduced_outlined,
-    'airline_seat_legroom_reduced_rounded': Icons.airline_seat_legroom_reduced_rounded,
-    'airline_seat_legroom_reduced_sharp': Icons.airline_seat_legroom_reduced_sharp,
+    'airline_seat_legroom_reduced_outlined':
+        Icons.airline_seat_legroom_reduced_outlined,
+    'airline_seat_legroom_reduced_rounded':
+        Icons.airline_seat_legroom_reduced_rounded,
+    'airline_seat_legroom_reduced_sharp':
+        Icons.airline_seat_legroom_reduced_sharp,
     'airline_seat_recline_extra': Icons.airline_seat_recline_extra,
-    'airline_seat_recline_extra_outlined': Icons.airline_seat_recline_extra_outlined,
-    'airline_seat_recline_extra_rounded': Icons.airline_seat_recline_extra_rounded,
+    'airline_seat_recline_extra_outlined':
+        Icons.airline_seat_recline_extra_outlined,
+    'airline_seat_recline_extra_rounded':
+        Icons.airline_seat_recline_extra_rounded,
     'airline_seat_recline_extra_sharp': Icons.airline_seat_recline_extra_sharp,
     'airline_seat_recline_normal': Icons.airline_seat_recline_normal,
-    'airline_seat_recline_normal_outlined': Icons.airline_seat_recline_normal_outlined,
-    'airline_seat_recline_normal_rounded': Icons.airline_seat_recline_normal_rounded,
-    'airline_seat_recline_normal_sharp': Icons.airline_seat_recline_normal_sharp,
+    'airline_seat_recline_normal_outlined':
+        Icons.airline_seat_recline_normal_outlined,
+    'airline_seat_recline_normal_rounded':
+        Icons.airline_seat_recline_normal_rounded,
+    'airline_seat_recline_normal_sharp':
+        Icons.airline_seat_recline_normal_sharp,
     'airplane_ticket': Icons.airplane_ticket,
     'airplane_ticket_outlined': Icons.airplane_ticket_outlined,
     'airplane_ticket_rounded': Icons.airplane_ticket_rounded,
@@ -1694,8 +1711,10 @@ class IconsHelper {
     'directions_outlined': Icons.directions_outlined,
     'directions_railway': Icons.directions_railway,
     'directions_railway_filled': Icons.directions_railway_filled,
-    'directions_railway_filled_outlined': Icons.directions_railway_filled_outlined,
-    'directions_railway_filled_rounded': Icons.directions_railway_filled_rounded,
+    'directions_railway_filled_outlined':
+        Icons.directions_railway_filled_outlined,
+    'directions_railway_filled_rounded':
+        Icons.directions_railway_filled_rounded,
     'directions_railway_filled_sharp': Icons.directions_railway_filled_sharp,
     'directions_railway_outlined': Icons.directions_railway_outlined,
     'directions_railway_rounded': Icons.directions_railway_rounded,
@@ -1708,7 +1727,8 @@ class IconsHelper {
     'directions_sharp': Icons.directions_sharp,
     'directions_subway': Icons.directions_subway,
     'directions_subway_filled': Icons.directions_subway_filled,
-    'directions_subway_filled_outlined': Icons.directions_subway_filled_outlined,
+    'directions_subway_filled_outlined':
+        Icons.directions_subway_filled_outlined,
     'directions_subway_filled_rounded': Icons.directions_subway_filled_rounded,
     'directions_subway_filled_sharp': Icons.directions_subway_filled_sharp,
     'directions_subway_outlined': Icons.directions_subway_outlined,
@@ -1720,8 +1740,10 @@ class IconsHelper {
     'directions_train_sharp': Icons.directions_train_sharp,
     'directions_transit': Icons.directions_transit,
     'directions_transit_filled': Icons.directions_transit_filled,
-    'directions_transit_filled_outlined': Icons.directions_transit_filled_outlined,
-    'directions_transit_filled_rounded': Icons.directions_transit_filled_rounded,
+    'directions_transit_filled_outlined':
+        Icons.directions_transit_filled_outlined,
+    'directions_transit_filled_rounded':
+        Icons.directions_transit_filled_rounded,
     'directions_transit_filled_sharp': Icons.directions_transit_filled_sharp,
     'directions_transit_outlined': Icons.directions_transit_outlined,
     'directions_transit_rounded': Icons.directions_transit_rounded,
@@ -1780,9 +1802,12 @@ class IconsHelper {
     'do_not_disturb_on_rounded': Icons.do_not_disturb_on_rounded,
     'do_not_disturb_on_sharp': Icons.do_not_disturb_on_sharp,
     'do_not_disturb_on_total_silence': Icons.do_not_disturb_on_total_silence,
-    'do_not_disturb_on_total_silence_outlined': Icons.do_not_disturb_on_total_silence_outlined,
-    'do_not_disturb_on_total_silence_rounded': Icons.do_not_disturb_on_total_silence_rounded,
-    'do_not_disturb_on_total_silence_sharp': Icons.do_not_disturb_on_total_silence_sharp,
+    'do_not_disturb_on_total_silence_outlined':
+        Icons.do_not_disturb_on_total_silence_outlined,
+    'do_not_disturb_on_total_silence_rounded':
+        Icons.do_not_disturb_on_total_silence_rounded,
+    'do_not_disturb_on_total_silence_sharp':
+        Icons.do_not_disturb_on_total_silence_sharp,
     'do_not_disturb_outlined': Icons.do_not_disturb_outlined,
     'do_not_disturb_rounded': Icons.do_not_disturb_rounded,
     'do_not_disturb_sharp': Icons.do_not_disturb_sharp,
@@ -1888,8 +1913,10 @@ class IconsHelper {
     'drive_file_move_rounded': Icons.drive_file_move_rounded,
     'drive_file_move_sharp': Icons.drive_file_move_sharp,
     'drive_file_rename_outline': Icons.drive_file_rename_outline,
-    'drive_file_rename_outline_outlined': Icons.drive_file_rename_outline_outlined,
-    'drive_file_rename_outline_rounded': Icons.drive_file_rename_outline_rounded,
+    'drive_file_rename_outline_outlined':
+        Icons.drive_file_rename_outline_outlined,
+    'drive_file_rename_outline_rounded':
+        Icons.drive_file_rename_outline_rounded,
     'drive_file_rename_outline_sharp': Icons.drive_file_rename_outline_sharp,
     'drive_folder_upload': Icons.drive_folder_upload,
     'drive_folder_upload_outlined': Icons.drive_folder_upload_outlined,
@@ -2640,7 +2667,8 @@ class IconsHelper {
     'format_list_numbered_outlined': Icons.format_list_numbered_outlined,
     'format_list_numbered_rounded': Icons.format_list_numbered_rounded,
     'format_list_numbered_rtl': Icons.format_list_numbered_rtl,
-    'format_list_numbered_rtl_outlined': Icons.format_list_numbered_rtl_outlined,
+    'format_list_numbered_rtl_outlined':
+        Icons.format_list_numbered_rtl_outlined,
     'format_list_numbered_rtl_rounded': Icons.format_list_numbered_rtl_rounded,
     'format_list_numbered_rtl_sharp': Icons.format_list_numbered_rtl_sharp,
     'format_list_numbered_sharp': Icons.format_list_numbered_sharp,
@@ -2665,13 +2693,19 @@ class IconsHelper {
     'format_strikethrough_rounded': Icons.format_strikethrough_rounded,
     'format_strikethrough_sharp': Icons.format_strikethrough_sharp,
     'format_textdirection_l_to_r': Icons.format_textdirection_l_to_r,
-    'format_textdirection_l_to_r_outlined': Icons.format_textdirection_l_to_r_outlined,
-    'format_textdirection_l_to_r_rounded': Icons.format_textdirection_l_to_r_rounded,
-    'format_textdirection_l_to_r_sharp': Icons.format_textdirection_l_to_r_sharp,
+    'format_textdirection_l_to_r_outlined':
+        Icons.format_textdirection_l_to_r_outlined,
+    'format_textdirection_l_to_r_rounded':
+        Icons.format_textdirection_l_to_r_rounded,
+    'format_textdirection_l_to_r_sharp':
+        Icons.format_textdirection_l_to_r_sharp,
     'format_textdirection_r_to_l': Icons.format_textdirection_r_to_l,
-    'format_textdirection_r_to_l_outlined': Icons.format_textdirection_r_to_l_outlined,
-    'format_textdirection_r_to_l_rounded': Icons.format_textdirection_r_to_l_rounded,
-    'format_textdirection_r_to_l_sharp': Icons.format_textdirection_r_to_l_sharp,
+    'format_textdirection_r_to_l_outlined':
+        Icons.format_textdirection_r_to_l_outlined,
+    'format_textdirection_r_to_l_rounded':
+        Icons.format_textdirection_r_to_l_rounded,
+    'format_textdirection_r_to_l_sharp':
+        Icons.format_textdirection_r_to_l_sharp,
     'format_underline': Icons.format_underline,
     'format_underline_outlined': Icons.format_underline_outlined,
     'format_underline_rounded': Icons.format_underline_rounded,
@@ -3236,7 +3270,8 @@ class IconsHelper {
     'insights_rounded': Icons.insights_rounded,
     'insights_sharp': Icons.insights_sharp,
     'integration_instructions': Icons.integration_instructions,
-    'integration_instructions_outlined': Icons.integration_instructions_outlined,
+    'integration_instructions_outlined':
+        Icons.integration_instructions_outlined,
     'integration_instructions_rounded': Icons.integration_instructions_rounded,
     'integration_instructions_sharp': Icons.integration_instructions_sharp,
     'inventory': Icons.inventory,
@@ -4246,9 +4281,12 @@ class IconsHelper {
     'no_drinks_sharp': Icons.no_drinks_sharp,
     'no_encryption': Icons.no_encryption,
     'no_encryption_gmailerrorred': Icons.no_encryption_gmailerrorred,
-    'no_encryption_gmailerrorred_outlined': Icons.no_encryption_gmailerrorred_outlined,
-    'no_encryption_gmailerrorred_rounded': Icons.no_encryption_gmailerrorred_rounded,
-    'no_encryption_gmailerrorred_sharp': Icons.no_encryption_gmailerrorred_sharp,
+    'no_encryption_gmailerrorred_outlined':
+        Icons.no_encryption_gmailerrorred_outlined,
+    'no_encryption_gmailerrorred_rounded':
+        Icons.no_encryption_gmailerrorred_rounded,
+    'no_encryption_gmailerrorred_sharp':
+        Icons.no_encryption_gmailerrorred_sharp,
     'no_encryption_outlined': Icons.no_encryption_outlined,
     'no_encryption_rounded': Icons.no_encryption_rounded,
     'no_encryption_sharp': Icons.no_encryption_sharp,
@@ -4499,8 +4537,10 @@ class IconsHelper {
     'panorama_horizontal_outlined': Icons.panorama_horizontal_outlined,
     'panorama_horizontal_rounded': Icons.panorama_horizontal_rounded,
     'panorama_horizontal_select': Icons.panorama_horizontal_select,
-    'panorama_horizontal_select_outlined': Icons.panorama_horizontal_select_outlined,
-    'panorama_horizontal_select_rounded': Icons.panorama_horizontal_select_rounded,
+    'panorama_horizontal_select_outlined':
+        Icons.panorama_horizontal_select_outlined,
+    'panorama_horizontal_select_rounded':
+        Icons.panorama_horizontal_select_rounded,
     'panorama_horizontal_select_sharp': Icons.panorama_horizontal_select_sharp,
     'panorama_horizontal_sharp': Icons.panorama_horizontal_sharp,
     'panorama_outlined': Icons.panorama_outlined,
@@ -4508,9 +4548,12 @@ class IconsHelper {
     'panorama_photosphere_outlined': Icons.panorama_photosphere_outlined,
     'panorama_photosphere_rounded': Icons.panorama_photosphere_rounded,
     'panorama_photosphere_select': Icons.panorama_photosphere_select,
-    'panorama_photosphere_select_outlined': Icons.panorama_photosphere_select_outlined,
-    'panorama_photosphere_select_rounded': Icons.panorama_photosphere_select_rounded,
-    'panorama_photosphere_select_sharp': Icons.panorama_photosphere_select_sharp,
+    'panorama_photosphere_select_outlined':
+        Icons.panorama_photosphere_select_outlined,
+    'panorama_photosphere_select_rounded':
+        Icons.panorama_photosphere_select_rounded,
+    'panorama_photosphere_select_sharp':
+        Icons.panorama_photosphere_select_sharp,
     'panorama_photosphere_sharp': Icons.panorama_photosphere_sharp,
     'panorama_rounded': Icons.panorama_rounded,
     'panorama_sharp': Icons.panorama_sharp,
@@ -4518,7 +4561,8 @@ class IconsHelper {
     'panorama_vertical_outlined': Icons.panorama_vertical_outlined,
     'panorama_vertical_rounded': Icons.panorama_vertical_rounded,
     'panorama_vertical_select': Icons.panorama_vertical_select,
-    'panorama_vertical_select_outlined': Icons.panorama_vertical_select_outlined,
+    'panorama_vertical_select_outlined':
+        Icons.panorama_vertical_select_outlined,
     'panorama_vertical_select_rounded': Icons.panorama_vertical_select_rounded,
     'panorama_vertical_select_sharp': Icons.panorama_vertical_select_sharp,
     'panorama_vertical_sharp': Icons.panorama_vertical_sharp,
@@ -4526,8 +4570,10 @@ class IconsHelper {
     'panorama_wide_angle_outlined': Icons.panorama_wide_angle_outlined,
     'panorama_wide_angle_rounded': Icons.panorama_wide_angle_rounded,
     'panorama_wide_angle_select': Icons.panorama_wide_angle_select,
-    'panorama_wide_angle_select_outlined': Icons.panorama_wide_angle_select_outlined,
-    'panorama_wide_angle_select_rounded': Icons.panorama_wide_angle_select_rounded,
+    'panorama_wide_angle_select_outlined':
+        Icons.panorama_wide_angle_select_outlined,
+    'panorama_wide_angle_select_rounded':
+        Icons.panorama_wide_angle_select_rounded,
     'panorama_wide_angle_select_sharp': Icons.panorama_wide_angle_select_sharp,
     'panorama_wide_angle_sharp': Icons.panorama_wide_angle_sharp,
     'paragliding': Icons.paragliding,
@@ -4815,7 +4861,8 @@ class IconsHelper {
     'photo_rounded': Icons.photo_rounded,
     'photo_sharp': Icons.photo_sharp,
     'photo_size_select_actual': Icons.photo_size_select_actual,
-    'photo_size_select_actual_outlined': Icons.photo_size_select_actual_outlined,
+    'photo_size_select_actual_outlined':
+        Icons.photo_size_select_actual_outlined,
     'photo_size_select_actual_rounded': Icons.photo_size_select_actual_rounded,
     'photo_size_select_actual_sharp': Icons.photo_size_select_actual_sharp,
     'photo_size_select_large': Icons.photo_size_select_large,
@@ -5018,8 +5065,10 @@ class IconsHelper {
     'privacy_tip_rounded': Icons.privacy_tip_rounded,
     'privacy_tip_sharp': Icons.privacy_tip_sharp,
     'production_quantity_limits': Icons.production_quantity_limits,
-    'production_quantity_limits_outlined': Icons.production_quantity_limits_outlined,
-    'production_quantity_limits_rounded': Icons.production_quantity_limits_rounded,
+    'production_quantity_limits_outlined':
+        Icons.production_quantity_limits_outlined,
+    'production_quantity_limits_rounded':
+        Icons.production_quantity_limits_rounded,
     'production_quantity_limits_sharp': Icons.production_quantity_limits_sharp,
     'psychology': Icons.psychology,
     'psychology_outlined': Icons.psychology_outlined,
@@ -5602,11 +5651,15 @@ class IconsHelper {
     'sentiment_satisfied_rounded': Icons.sentiment_satisfied_rounded,
     'sentiment_satisfied_sharp': Icons.sentiment_satisfied_sharp,
     'sentiment_very_dissatisfied': Icons.sentiment_very_dissatisfied,
-    'sentiment_very_dissatisfied_outlined': Icons.sentiment_very_dissatisfied_outlined,
-    'sentiment_very_dissatisfied_rounded': Icons.sentiment_very_dissatisfied_rounded,
-    'sentiment_very_dissatisfied_sharp': Icons.sentiment_very_dissatisfied_sharp,
+    'sentiment_very_dissatisfied_outlined':
+        Icons.sentiment_very_dissatisfied_outlined,
+    'sentiment_very_dissatisfied_rounded':
+        Icons.sentiment_very_dissatisfied_rounded,
+    'sentiment_very_dissatisfied_sharp':
+        Icons.sentiment_very_dissatisfied_sharp,
     'sentiment_very_satisfied': Icons.sentiment_very_satisfied,
-    'sentiment_very_satisfied_outlined': Icons.sentiment_very_satisfied_outlined,
+    'sentiment_very_satisfied_outlined':
+        Icons.sentiment_very_satisfied_outlined,
     'sentiment_very_satisfied_rounded': Icons.sentiment_very_satisfied_rounded,
     'sentiment_very_satisfied_sharp': Icons.sentiment_very_satisfied_sharp,
     'set_meal': Icons.set_meal,
@@ -5651,11 +5704,13 @@ class IconsHelper {
     'settings_input_antenna_rounded': Icons.settings_input_antenna_rounded,
     'settings_input_antenna_sharp': Icons.settings_input_antenna_sharp,
     'settings_input_component': Icons.settings_input_component,
-    'settings_input_component_outlined': Icons.settings_input_component_outlined,
+    'settings_input_component_outlined':
+        Icons.settings_input_component_outlined,
     'settings_input_component_rounded': Icons.settings_input_component_rounded,
     'settings_input_component_sharp': Icons.settings_input_component_sharp,
     'settings_input_composite': Icons.settings_input_composite,
-    'settings_input_composite_outlined': Icons.settings_input_composite_outlined,
+    'settings_input_composite_outlined':
+        Icons.settings_input_composite_outlined,
     'settings_input_composite_rounded': Icons.settings_input_composite_rounded,
     'settings_input_composite_sharp': Icons.settings_input_composite_sharp,
     'settings_input_hdmi': Icons.settings_input_hdmi,
@@ -5690,7 +5745,8 @@ class IconsHelper {
     'settings_suggest_rounded': Icons.settings_suggest_rounded,
     'settings_suggest_sharp': Icons.settings_suggest_sharp,
     'settings_system_daydream': Icons.settings_system_daydream,
-    'settings_system_daydream_outlined': Icons.settings_system_daydream_outlined,
+    'settings_system_daydream_outlined':
+        Icons.settings_system_daydream_outlined,
     'settings_system_daydream_rounded': Icons.settings_system_daydream_rounded,
     'settings_system_daydream_sharp': Icons.settings_system_daydream_sharp,
     'settings_voice': Icons.settings_voice,
@@ -5797,14 +5853,22 @@ class IconsHelper {
     'signal_cellular_alt_outlined': Icons.signal_cellular_alt_outlined,
     'signal_cellular_alt_rounded': Icons.signal_cellular_alt_rounded,
     'signal_cellular_alt_sharp': Icons.signal_cellular_alt_sharp,
-    'signal_cellular_connected_no_internet_0_bar': Icons.signal_cellular_connected_no_internet_0_bar,
-    'signal_cellular_connected_no_internet_0_bar_outlined': Icons.signal_cellular_connected_no_internet_0_bar_outlined,
-    'signal_cellular_connected_no_internet_0_bar_rounded': Icons.signal_cellular_connected_no_internet_0_bar_rounded,
-    'signal_cellular_connected_no_internet_0_bar_sharp': Icons.signal_cellular_connected_no_internet_0_bar_sharp,
-    'signal_cellular_connected_no_internet_4_bar': Icons.signal_cellular_connected_no_internet_4_bar,
-    'signal_cellular_connected_no_internet_4_bar_outlined': Icons.signal_cellular_connected_no_internet_4_bar_outlined,
-    'signal_cellular_connected_no_internet_4_bar_rounded': Icons.signal_cellular_connected_no_internet_4_bar_rounded,
-    'signal_cellular_connected_no_internet_4_bar_sharp': Icons.signal_cellular_connected_no_internet_4_bar_sharp,
+    'signal_cellular_connected_no_internet_0_bar':
+        Icons.signal_cellular_connected_no_internet_0_bar,
+    'signal_cellular_connected_no_internet_0_bar_outlined':
+        Icons.signal_cellular_connected_no_internet_0_bar_outlined,
+    'signal_cellular_connected_no_internet_0_bar_rounded':
+        Icons.signal_cellular_connected_no_internet_0_bar_rounded,
+    'signal_cellular_connected_no_internet_0_bar_sharp':
+        Icons.signal_cellular_connected_no_internet_0_bar_sharp,
+    'signal_cellular_connected_no_internet_4_bar':
+        Icons.signal_cellular_connected_no_internet_4_bar,
+    'signal_cellular_connected_no_internet_4_bar_outlined':
+        Icons.signal_cellular_connected_no_internet_4_bar_outlined,
+    'signal_cellular_connected_no_internet_4_bar_rounded':
+        Icons.signal_cellular_connected_no_internet_4_bar_rounded,
+    'signal_cellular_connected_no_internet_4_bar_sharp':
+        Icons.signal_cellular_connected_no_internet_4_bar_sharp,
     'signal_cellular_no_sim': Icons.signal_cellular_no_sim,
     'signal_cellular_no_sim_outlined': Icons.signal_cellular_no_sim_outlined,
     'signal_cellular_no_sim_rounded': Icons.signal_cellular_no_sim_rounded,
@@ -5837,25 +5901,38 @@ class IconsHelper {
     'signal_wifi_bad_outlined': Icons.signal_wifi_bad_outlined,
     'signal_wifi_bad_rounded': Icons.signal_wifi_bad_rounded,
     'signal_wifi_bad_sharp': Icons.signal_wifi_bad_sharp,
-    'signal_wifi_connected_no_internet_4': Icons.signal_wifi_connected_no_internet_4,
-    'signal_wifi_connected_no_internet_4_outlined': Icons.signal_wifi_connected_no_internet_4_outlined,
-    'signal_wifi_connected_no_internet_4_rounded': Icons.signal_wifi_connected_no_internet_4_rounded,
-    'signal_wifi_connected_no_internet_4_sharp': Icons.signal_wifi_connected_no_internet_4_sharp,
+    'signal_wifi_connected_no_internet_4':
+        Icons.signal_wifi_connected_no_internet_4,
+    'signal_wifi_connected_no_internet_4_outlined':
+        Icons.signal_wifi_connected_no_internet_4_outlined,
+    'signal_wifi_connected_no_internet_4_rounded':
+        Icons.signal_wifi_connected_no_internet_4_rounded,
+    'signal_wifi_connected_no_internet_4_sharp':
+        Icons.signal_wifi_connected_no_internet_4_sharp,
     'signal_wifi_off': Icons.signal_wifi_off,
     'signal_wifi_off_outlined': Icons.signal_wifi_off_outlined,
     'signal_wifi_off_rounded': Icons.signal_wifi_off_rounded,
     'signal_wifi_off_sharp': Icons.signal_wifi_off_sharp,
     'signal_wifi_statusbar_4_bar': Icons.signal_wifi_statusbar_4_bar,
-    'signal_wifi_statusbar_4_bar_outlined': Icons.signal_wifi_statusbar_4_bar_outlined,
-    'signal_wifi_statusbar_4_bar_rounded': Icons.signal_wifi_statusbar_4_bar_rounded,
-    'signal_wifi_statusbar_4_bar_sharp': Icons.signal_wifi_statusbar_4_bar_sharp,
-    'signal_wifi_statusbar_connected_no_internet_4': Icons.signal_wifi_statusbar_connected_no_internet_4,
-    'signal_wifi_statusbar_connected_no_internet_4_outlined': Icons.signal_wifi_statusbar_connected_no_internet_4_outlined,
-    'signal_wifi_statusbar_connected_no_internet_4_rounded': Icons.signal_wifi_statusbar_connected_no_internet_4_rounded,
-    'signal_wifi_statusbar_connected_no_internet_4_sharp': Icons.signal_wifi_statusbar_connected_no_internet_4_sharp,
+    'signal_wifi_statusbar_4_bar_outlined':
+        Icons.signal_wifi_statusbar_4_bar_outlined,
+    'signal_wifi_statusbar_4_bar_rounded':
+        Icons.signal_wifi_statusbar_4_bar_rounded,
+    'signal_wifi_statusbar_4_bar_sharp':
+        Icons.signal_wifi_statusbar_4_bar_sharp,
+    'signal_wifi_statusbar_connected_no_internet_4':
+        Icons.signal_wifi_statusbar_connected_no_internet_4,
+    'signal_wifi_statusbar_connected_no_internet_4_outlined':
+        Icons.signal_wifi_statusbar_connected_no_internet_4_outlined,
+    'signal_wifi_statusbar_connected_no_internet_4_rounded':
+        Icons.signal_wifi_statusbar_connected_no_internet_4_rounded,
+    'signal_wifi_statusbar_connected_no_internet_4_sharp':
+        Icons.signal_wifi_statusbar_connected_no_internet_4_sharp,
     'signal_wifi_statusbar_null': Icons.signal_wifi_statusbar_null,
-    'signal_wifi_statusbar_null_outlined': Icons.signal_wifi_statusbar_null_outlined,
-    'signal_wifi_statusbar_null_rounded': Icons.signal_wifi_statusbar_null_rounded,
+    'signal_wifi_statusbar_null_outlined':
+        Icons.signal_wifi_statusbar_null_outlined,
+    'signal_wifi_statusbar_null_rounded':
+        Icons.signal_wifi_statusbar_null_rounded,
     'signal_wifi_statusbar_null_sharp': Icons.signal_wifi_statusbar_null_sharp,
     'sim_card': Icons.sim_card,
     'sim_card_alert': Icons.sim_card_alert,
@@ -6262,7 +6339,8 @@ class IconsHelper {
     'subdirectory_arrow_left_rounded': Icons.subdirectory_arrow_left_rounded,
     'subdirectory_arrow_left_sharp': Icons.subdirectory_arrow_left_sharp,
     'subdirectory_arrow_right': Icons.subdirectory_arrow_right,
-    'subdirectory_arrow_right_outlined': Icons.subdirectory_arrow_right_outlined,
+    'subdirectory_arrow_right_outlined':
+        Icons.subdirectory_arrow_right_outlined,
     'subdirectory_arrow_right_rounded': Icons.subdirectory_arrow_right_rounded,
     'subdirectory_arrow_right_sharp': Icons.subdirectory_arrow_right_sharp,
     'subject': Icons.subject,
@@ -6387,16 +6465,22 @@ class IconsHelper {
     'sync_sharp': Icons.sync_sharp,
     'system_security_update': Icons.system_security_update,
     'system_security_update_good': Icons.system_security_update_good,
-    'system_security_update_good_outlined': Icons.system_security_update_good_outlined,
-    'system_security_update_good_rounded': Icons.system_security_update_good_rounded,
-    'system_security_update_good_sharp': Icons.system_security_update_good_sharp,
+    'system_security_update_good_outlined':
+        Icons.system_security_update_good_outlined,
+    'system_security_update_good_rounded':
+        Icons.system_security_update_good_rounded,
+    'system_security_update_good_sharp':
+        Icons.system_security_update_good_sharp,
     'system_security_update_outlined': Icons.system_security_update_outlined,
     'system_security_update_rounded': Icons.system_security_update_rounded,
     'system_security_update_sharp': Icons.system_security_update_sharp,
     'system_security_update_warning': Icons.system_security_update_warning,
-    'system_security_update_warning_outlined': Icons.system_security_update_warning_outlined,
-    'system_security_update_warning_rounded': Icons.system_security_update_warning_rounded,
-    'system_security_update_warning_sharp': Icons.system_security_update_warning_sharp,
+    'system_security_update_warning_outlined':
+        Icons.system_security_update_warning_outlined,
+    'system_security_update_warning_rounded':
+        Icons.system_security_update_warning_rounded,
+    'system_security_update_warning_sharp':
+        Icons.system_security_update_warning_sharp,
     'system_update': Icons.system_update,
     'system_update_alt': Icons.system_update_alt,
     'system_update_alt_outlined': Icons.system_update_alt_outlined,
@@ -6710,8 +6794,10 @@ class IconsHelper {
     'tram_rounded': Icons.tram_rounded,
     'tram_sharp': Icons.tram_sharp,
     'transfer_within_a_station': Icons.transfer_within_a_station,
-    'transfer_within_a_station_outlined': Icons.transfer_within_a_station_outlined,
-    'transfer_within_a_station_rounded': Icons.transfer_within_a_station_rounded,
+    'transfer_within_a_station_outlined':
+        Icons.transfer_within_a_station_outlined,
+    'transfer_within_a_station_rounded':
+        Icons.transfer_within_a_station_rounded,
     'transfer_within_a_station_sharp': Icons.transfer_within_a_station_sharp,
     'transform': Icons.transform,
     'transform_outlined': Icons.transform_outlined,
@@ -7237,9 +7323,12 @@ class IconsHelper {
     'wifi_sharp': Icons.wifi_sharp,
     'wifi_tethering': Icons.wifi_tethering,
     'wifi_tethering_error_rounded': Icons.wifi_tethering_error_rounded,
-    'wifi_tethering_error_rounded_outlined': Icons.wifi_tethering_error_rounded_outlined,
-    'wifi_tethering_error_rounded_rounded': Icons.wifi_tethering_error_rounded_rounded,
-    'wifi_tethering_error_rounded_sharp': Icons.wifi_tethering_error_rounded_sharp,
+    'wifi_tethering_error_rounded_outlined':
+        Icons.wifi_tethering_error_rounded_outlined,
+    'wifi_tethering_error_rounded_rounded':
+        Icons.wifi_tethering_error_rounded_rounded,
+    'wifi_tethering_error_rounded_sharp':
+        Icons.wifi_tethering_error_rounded_sharp,
     'wifi_tethering_off': Icons.wifi_tethering_off,
     'wifi_tethering_off_outlined': Icons.wifi_tethering_off_outlined,
     'wifi_tethering_off_rounded': Icons.wifi_tethering_off_rounded,
@@ -7306,10 +7395,12 @@ class IconsHelper {
     'zoom_out_rounded': Icons.zoom_out_rounded,
     'zoom_out_sharp': Icons.zoom_out_sharp
   };
+
   //metodo IconData to String
   static String iconName(IconData icon) {
     return iconMap.entries
-        .firstWhere((element) => element.value == icon, orElse: () => const MapEntry("", Icons.error))
+        .firstWhere((element) => element.value == icon,
+            orElse: () => const MapEntry("", Icons.error))
         .key;
   }
 }

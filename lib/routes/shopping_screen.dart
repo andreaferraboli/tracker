@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa le localizzazioni generate
-import 'supermarket_screen.dart';
-import '../providers/supermarkets_list_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../providers/supermarket_provider.dart';
+import '../providers/supermarkets_list_provider.dart';
+import 'supermarket_screen.dart';
 
 class ShoppingScreen extends ConsumerWidget {
   const ShoppingScreen({super.key});
@@ -14,21 +15,23 @@ class ShoppingScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.shoppingTitle), // Traduzione del titolo
+        title: Text(AppLocalizations.of(context)!
+            .shoppingTitle), // Traduzione del titolo
       ),
       body: GridView.count(
         crossAxisCount: 2,
         padding: const EdgeInsets.all(16.0),
         children: [
-          ...selectedSupermarkets.map((name) =>
-              _buildSupermarketCard(context, name, 'assets/images/$name.png', ref)),
+          ...selectedSupermarkets.map((name) => _buildSupermarketCard(
+              context, name, 'assets/images/$name.png', ref)),
           _buildAddSupermarketCard(context, ref),
         ],
       ),
     );
   }
 
-  Widget _buildSupermarketCard(BuildContext context, String name, String imagePath, WidgetRef ref) {
+  Widget _buildSupermarketCard(
+      BuildContext context, String name, String imagePath, WidgetRef ref) {
     return GestureDetector(
       onTap: () => _navigateToSupermarket(context, name, ref),
       child: Card(
@@ -73,7 +76,9 @@ class ShoppingScreen extends ConsumerWidget {
       "Eataly"
     ];
     final selectedSupermarkets = ref.watch(supermarketsListProvider);
-    final addSupermarketArray = supermarkets.where((element) => !selectedSupermarkets.contains(element)).toList();
+    final addSupermarketArray = supermarkets
+        .where((element) => !selectedSupermarkets.contains(element))
+        .toList();
 
     return GestureDetector(
       onTap: () {
@@ -88,7 +93,8 @@ class ShoppingScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        AppLocalizations.of(context)!.selectSupermarket, // Traduzione del testo dialogo
+                        AppLocalizations.of(context)!.selectSupermarket,
+                        // Traduzione del testo dialogo
                         style: const TextStyle(fontSize: 20),
                       ),
                     ),
@@ -98,10 +104,13 @@ class ShoppingScreen extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           final name = addSupermarketArray[index];
                           return ListTile(
-                            leading: Image.asset('assets/images/$name.png', width: 50, height: 50),
+                            leading: Image.asset('assets/images/$name.png',
+                                width: 50, height: 50),
                             title: Text(name),
                             onTap: () {
-                              ref.read(supermarketsListProvider.notifier).addSupermarket(name);
+                              ref
+                                  .read(supermarketsListProvider.notifier)
+                                  .addSupermarket(name);
                               Navigator.of(context).pop();
                             },
                           );
@@ -109,7 +118,8 @@ class ShoppingScreen extends ConsumerWidget {
                       ),
                     ),
                     TextButton(
-                      child: Text(AppLocalizations.of(context)!.close), // Traduzione del pulsante "Chiudi"
+                      child: Text(AppLocalizations.of(context)!.close),
+                      // Traduzione del pulsante "Chiudi"
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -133,8 +143,10 @@ class ShoppingScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                AppLocalizations.of(context)!.addSupermarket, // Traduzione per "Aggiungi Supermercato"
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                AppLocalizations.of(context)!.addSupermarket,
+                // Traduzione per "Aggiungi Supermercato"
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -144,7 +156,8 @@ class ShoppingScreen extends ConsumerWidget {
     );
   }
 
-  void _navigateToSupermarket(BuildContext context, String supermarketName, WidgetRef ref) {
+  void _navigateToSupermarket(
+      BuildContext context, String supermarketName, WidgetRef ref) {
     ref.read(supermarketProvider.notifier).setSupermarket(supermarketName);
     Navigator.push(
       context,

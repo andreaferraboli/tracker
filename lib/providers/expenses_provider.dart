@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/expense.dart';
 
 class ExpensesNotifier extends StateNotifier<List<Expense>> {

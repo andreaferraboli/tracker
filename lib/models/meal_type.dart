@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class MealType {
   final String name;
   final IconData icon;
@@ -9,6 +10,7 @@ class MealType {
     required this.icon,
     required this.color,
   });
+
   const MealType.empty()
       : name = '',
         icon = Icons.error,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/models/product.dart';
 
 class ProductAddedToMeal extends StatefulWidget {
   final Product product;
@@ -36,7 +36,8 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
-                  tempQuantity = double.tryParse(value) ?? widget.selectedQuantity;
+                  tempQuantity =
+                      double.tryParse(value) ?? widget.selectedQuantity;
                 },
                 controller: TextEditingController(
                   text: widget.selectedQuantity.toStringAsFixed(2),

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tracker/l10n/app_localizations.dart';
+
 import 'meal_type.dart';
 
 class MealTypeCard extends StatelessWidget {
   final MealType? mealType;
   final VoidCallback? onTap;
 
-  const MealTypeCard({super.key,
+  const MealTypeCard({
+    super.key,
     required this.mealType,
     required this.onTap,
   });

@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
@@ -41,7 +42,8 @@ class ApiClient {
     }
   }
 
-  static Future<Widget> getImageWithRemovedBackground(String imageUrl, String category) async {
+  static Future<Widget> getImageWithRemovedBackground(
+      String imageUrl, String category) async {
     final imageBytes = await removeBackground(imageUrl);
     if (imageBytes != null) {
       return Image.memory(imageBytes, width: 100, height: 100);
@@ -49,7 +51,9 @@ class ApiClient {
       return await _processAndUploadImage(imageUrl, category);
     }
   }
-  static Future<Widget> _processAndUploadImage(String imageUrl, String category) async {
+
+  static Future<Widget> _processAndUploadImage(
+      String imageUrl, String category) async {
     try {
       // Scarica l'immagine
       final response = await http.get(Uri.parse(imageUrl));
@@ -133,7 +137,6 @@ class ApiClient {
           return CategoryServices.iconFromCategory(category);
         },
       );
-
     } catch (e) {
       // In caso di errore, ritorna l'icona della categoria
       print('Error occurred while processing and uploading image: $e');
@@ -147,14 +150,10 @@ class ApiClient {
     // Estrai i valori dei canali di colore usando operazioni bitwise
     final r = (pixel >> 24) & 0xFF; // Estrai il canale rosso
     final g = (pixel >> 16) & 0xFF; // Estrai il canale verde
-    final b = (pixel >> 8) & 0xFF;   // Estrai il canale blu
-    final a = pixel & 0xFF;          // Estrai il canale alpha (trasparenza)
+    final b = (pixel >> 8) & 0xFF; // Estrai il canale blu
+    final a = pixel & 0xFF; // Estrai il canale alpha (trasparenza)
 
     // Controlla se il pixel è bianco (RGB: 255, 255, 255) e opaco (A: 255)
     return r == 255 && g == 255 && b == 255 && a == 255;
   }
-
-
 }
-
-

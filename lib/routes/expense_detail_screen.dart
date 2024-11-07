@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
+
 import '../models/expense.dart';
 
 class ExpenseDetailScreen extends StatelessWidget {
   final Expense expense;
 
-  const ExpenseDetailScreen({Key? key, required this.expense}) : super(key: key);
+  const ExpenseDetailScreen({Key? key, required this.expense})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +62,17 @@ class ExpenseDetailScreen extends StatelessWidget {
                             child: Row(
                               children: [
                                 CircleAvatar(
-                                  backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                                  child: CategoryServices.iconFromCategory(item.category),
+                                  backgroundColor: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.1),
+                                  child: CategoryServices.iconFromCategory(
+                                      item.category),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item.productName,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductStoreCard extends StatelessWidget {
   final Product product;
@@ -38,7 +38,8 @@ class ProductStoreCard extends StatelessWidget {
                 Center(
                   child: Text(
                     product.productName,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

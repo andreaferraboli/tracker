@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/storage_card.dart';
 import 'package:tracker/routes/storage_screen.dart';
 import 'package:tracker/services/icons_helper.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'edit_storage_screen.dart';
 
@@ -26,7 +25,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.inventoryTitle), // 'Vedere Inventario'
+        title: Text(AppLocalizations.of(context)!
+            .inventoryTitle), // 'Vedere Inventario'
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,7 +45,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => StorageScreen(
-                          name: storage['title'],
+                        name: storage['title'],
                       ),
                     ),
                   );
@@ -74,9 +74,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => EditStorageScreen(
-          initialName: index >= 0
-              ? storages[index]['title']
-              : '',
+          initialName: index >= 0 ? storages[index]['title'] : '',
           initialIcon: index >= 0
               ? IconsHelper.iconName(storages[index]['icon'])
               : 'home',

@@ -77,7 +77,6 @@ class CategoryServices {
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
-
             return Center(
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -157,6 +156,4 @@ class CategoryServices {
         return Icons.category; // Icona di default
     }
   }
-
 }
-

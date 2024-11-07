@@ -1,11 +1,11 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
 import '../models/product.dart';
@@ -217,7 +217,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
+        title: Text(
+            "${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
         backgroundColor: widget.mealType.color,
       ),
       body: Column(
@@ -277,7 +278,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     children: mealProducts.isEmpty
                         ? [
                             Center(
-                              child: Text(AppLocalizations.of(context)!.noSelectedProducts),
+                              child: Text(AppLocalizations.of(context)!
+                                  .noSelectedProducts),
                             ),
                           ]
                         : [

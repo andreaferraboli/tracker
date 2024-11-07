@@ -26,6 +26,7 @@ final categoriesProvider =
 // Definizione della classe CategoriesNotifier che estende StateNotifier
 class CategoriesNotifier extends StateNotifier<List<Category>> {
   CategoriesNotifier() : super([]);
+
 // Metodo per caricare un array di categorie
   void loadCategories(List<Category> categories) {
     state = categories;

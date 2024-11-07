@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../models/meal_type.dart';
 
 class CategorySelectionRow extends StatefulWidget {
@@ -39,53 +40,61 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
 
   // Funzione per aprire il dialog di personalizzazione delle categorie
   void _openCustomizeCategoriesDialog() async {
+    // Recupera le categorie disponibili
     List<String> availableCategories =
         await CategoryServices.getCategoryNames();
 
+    // Mostra il dialogo
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.customizeCategories),
           content: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: availableCategories.map((category) {
-                  return CheckboxListTile(
-                    title: Text(AppLocalizations.of(context)!.translateCategory(category)),
-                    value: selectedCategories.contains(category),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          // Aggiungi categoria
-                          if (selectedCategories.length < 4) {
-                            selectedCategories.add(category);
+            builder: (BuildContext context, StateSetter setDialogState) {
+              return Container(
+                width: 200, // Imposta una larghezza fissa
+                height: 500, // Imposta un'altezza fissa
+                child: ListView(
+                  shrinkWrap: true,
+                  children: availableCategories.map((category) {
+                    return CheckboxListTile(
+                      title: Text(
+                        AppLocalizations.of(context)!
+                            .translateCategory(category),
+                      ),
+                      value: selectedCategories.contains(category),
+                      onChanged: (bool? value) {
+                        setDialogState(() {
+                          if (value == true) {
+                            if (selectedCategories.length < 4) {
+                              selectedCategories.add(category);
+                            }
+                          } else {
+                            selectedCategories.remove(category);
                           }
-                        } else {
-                          // Rimuovi categoria
-                          selectedCategories.remove(category);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
               );
             },
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Chiudi il dialogo senza salvare
               },
               child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
+                // Aggiorna le categorie selezionate nel widget principale
                 setState(() {
                   widget.onCategoriesUpdated?.call(selectedCategories);
                 });
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Chiudi il dialogo e salva
               },
               child: Text(AppLocalizations.of(context)!.save),
             ),
@@ -109,13 +118,16 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
       children: [
         Expanded(
           child: Wrap(
-            spacing: 4.0, // Spazio orizzontale tra i Chip
-            runSpacing: 4.0, // Spazio verticale tra le righe di Chip
+            spacing: 4.0,
+            // Spazio orizzontale tra i Chip
+            runSpacing: 4.0,
+            // Spazio verticale tra le righe di Chip
             alignment: WrapAlignment.center,
             runAlignment: WrapAlignment.center,
             children: selectedCategories.map((category) {
               return Chip(
-                label: Text(AppLocalizations.of(context)!.translateCategory(category)),
+                label: Text(
+                    AppLocalizations.of(context)!.translateCategory(category)),
                 backgroundColor: Colors.blueAccent.withOpacity(0.2),
                 onDeleted: () => _removeCategory(category),
               );
@@ -141,5 +153,3 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
     );
   }
 }
-
-

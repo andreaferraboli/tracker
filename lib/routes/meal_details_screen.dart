@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di avere il pacchetto flutter_localizations configurato
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
+
 import '../models/meal.dart';
 
 class MealDetailScreen extends StatelessWidget {
@@ -11,7 +12,8 @@ class MealDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
+    final localizations =
+        AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
 
     return Scaffold(
       appBar: AppBar(
@@ -40,13 +42,20 @@ class MealDetailScreen extends StatelessWidget {
             Table(
               border: TableBorder.all(color: Colors.grey, width: 0.5),
               children: [
-                _buildMacronutrientRow(localizations.energy, '${meal.macronutrients['Energy']?.toStringAsFixed(2)} kcal'),
-                _buildMacronutrientRow(localizations.proteins, '${meal.macronutrients['Proteins']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.carbohydrates, '${meal.macronutrients['Carbohydrates']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.fats, '${meal.macronutrients['Fats']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.fiber, '${meal.macronutrients['Fiber']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.saturated_fats, '${meal.macronutrients['Saturated Fats']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.sugars, '${meal.macronutrients['Sugars']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.energy,
+                    '${meal.macronutrients['Energy']?.toStringAsFixed(2)} kcal'),
+                _buildMacronutrientRow(localizations.proteins,
+                    '${meal.macronutrients['Proteins']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.carbohydrates,
+                    '${meal.macronutrients['Carbohydrates']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.fats,
+                    '${meal.macronutrients['Fats']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.fiber,
+                    '${meal.macronutrients['Fiber']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.saturated_fats,
+                    '${meal.macronutrients['Saturated Fats']?.toStringAsFixed(2)} g'),
+                _buildMacronutrientRow(localizations.sugars,
+                    '${meal.macronutrients['Sugars']?.toStringAsFixed(2)} g'),
               ],
             ),
             const SizedBox(height: 16),
@@ -73,14 +82,18 @@ class MealDetailScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: ListTile(
-                        leading: CategoryServices.iconFromCategory(product['category']),
+                        leading: CategoryServices.iconFromCategory(
+                            product['category']),
                         title: Text(product['productName']),
-                        subtitle: Text('${localizations.category}: ${product['category']}'),
+                        subtitle: Text(
+                            '${localizations.category}: ${product['category']}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text('${localizations.quantity}: ${product['quantitySelected']} kg'),
-                            Text('${localizations.price}: €${product['price']}'),
+                            Text(
+                                '${localizations.quantity}: ${product['quantitySelected']} kg'),
+                            Text(
+                                '${localizations.price}: €${product['price']}'),
                           ],
                         ),
                         textColor: Theme.of(context).colorScheme.onPrimary,

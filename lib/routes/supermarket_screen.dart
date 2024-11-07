@@ -1,17 +1,17 @@
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tracker/l10n/app_localizations.dart';
-import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../models/product_added_to_meal.dart';
-import '../models/product_card.dart';
+import 'package:uuid/uuid.dart';
+
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
@@ -52,9 +52,11 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     _fetchProducts(FirebaseAuth.instance.currentUser!.uid,
         ref); // Recupera i prodotti dal database
   }
+
   Future<void> saveMealsToJson(String userId, String jsonFilePath) async {
     // Riferimento al documento dell'utente basato sul suo id
-    DocumentReference userDocRef = FirebaseFirestore.instance.collection('meals').doc(userId);
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('meals').doc(userId);
 
     try {
       // Recupera il documento
@@ -78,6 +80,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       print('Errore durante il salvataggio dei dati: $e');
     }
   }
+
   Future<void> uploadProductsFromJsonToFirestore(
       String userId, String jsonFilePath) async {
     // Leggi il file JSON
@@ -129,6 +132,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       isConnected = true; // Assumiamo di essere sempre connessi a Firestore.
     });
   }
+
   Future<void> saveExpense() async {
     try {
       DocumentReference userDocRef = FirebaseFirestore.instance
@@ -142,8 +146,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           'idProdotto': product.product.productId,
           'productName': product.product.productName,
           'price': product.product.price,
-          'pricePerKg': (product.product.price /
-              product.product.totalWeight)
+          'pricePerKg': (product.product.price / product.product.totalWeight)
               .toStringAsFixed(3),
           'category': product.product.category,
           'quantita': product.product.buyQuantity,
@@ -162,12 +165,11 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         for (var product in purchasedProducts) {
           if (product.product.buyQuantity > 0) {
             var existingProduct = productsList.firstWhere(
-                    (p) => p['productId'] == product.product.productId,
+                (p) => p['productId'] == product.product.productId,
                 orElse: () => null);
 
             if (existingProduct != null) {
-              existingProduct['quantityOwned'] +=
-                  product.product.buyQuantity;
+              existingProduct['quantityOwned'] += product.product.buyQuantity;
             } else {
               productsList.add(product.product.toJson());
             }
@@ -203,7 +205,6 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     } catch (e) {
       print('Errore durante il salvataggio della spesa: $e');
     }
-
   }
 
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
@@ -258,16 +259,19 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 double fontSize = 24.0; // Dimensione font di base
-                String totalText = '${AppLocalizations.of(context)!.totalBalance}: €${totalBalance.toStringAsFixed(2)}';
-                double textWidth = (totalText.length * fontSize) * 0.99; // Stima della larghezza del testo
+                String totalText =
+                    '${AppLocalizations.of(context)!.totalBalance}: €${totalBalance.toStringAsFixed(2)}';
+                double textWidth = (totalText.length * fontSize) *
+                    0.99; // Stima della larghezza del testo
 
                 // Se il testo supera la larghezza disponibile, riduci la dimensione del font
                 if (textWidth > constraints.maxWidth) {
-                  fontSize=fontSize-2; // Riduci in proporzione
+                  fontSize = fontSize - 2; // Riduci in proporzione
                 }
 
                 return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Posiziona i pulsanti alla fine
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Posiziona i pulsanti alla fine
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Utilizza il font size calcolato
@@ -278,12 +282,14 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     // Pulsante filtro
                     IconButton(
                       onPressed: _showFilterDialog,
-                      icon: Icon(Icons.filter_list, color: Theme.of(context).iconTheme.color),
+                      icon: Icon(Icons.filter_list,
+                          color: Theme.of(context).iconTheme.color),
                     ),
                     // Pulsante ricerca
                     IconButton(
                       onPressed: _showSearchDialog,
-                      icon: Icon(Icons.search, color: Theme.of(context).iconTheme.color),
+                      icon: Icon(Icons.search,
+                          color: Theme.of(context).iconTheme.color),
                     ),
                     // Pulsante reset filtri e ricerca
                     IconButton(
@@ -292,7 +298,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                           purchasedProducts = originalProducts;
                         });
                       },
-                      icon: Icon(Icons.refresh, color: Theme.of(context).iconTheme.color),
+                      icon: Icon(Icons.refresh,
+                          color: Theme.of(context).iconTheme.color),
                     ),
                   ],
                 );
@@ -306,7 +313,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AddProductScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const AddProductScreen()),
                   );
                 },
                 child: Text(AppLocalizations.of(context)!.addProduct),
@@ -350,23 +358,33 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     ),
                     initiallyExpanded: purchasedProducts.isNotEmpty,
                     leading: const Icon(Icons.shopping_cart),
-                    children: purchasedProducts.where((product) => product.product.selectedQuantity > 0).isEmpty
+                    children: purchasedProducts
+                            .where((product) =>
+                                product.product.selectedQuantity > 0)
+                            .isEmpty
                         ? [
-                      Center(
-                        child: Text(AppLocalizations.of(context)!.noSelectedProducts),
-                      ),
-                    ]
+                            Center(
+                              child: Text(AppLocalizations.of(context)!
+                                  .noSelectedProducts),
+                            ),
+                          ]
                         : [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: purchasedProducts.where((product) => product.product.selectedQuantity > 0).length,
-                        itemBuilder: (context, index) {
-                          final product = purchasedProducts.where((product) => product.product.selectedQuantity > 0).elementAt(index);
-                          return product;
-                        },
-                      ),
-                    ],
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: purchasedProducts
+                                  .where((product) =>
+                                      product.product.selectedQuantity > 0)
+                                  .length,
+                              itemBuilder: (context, index) {
+                                final product = purchasedProducts
+                                    .where((product) =>
+                                        product.product.selectedQuantity > 0)
+                                    .elementAt(index);
+                                return product;
+                              },
+                            ),
+                          ],
                   ),
                   // Sezione per la lista completa dei prodotti acquistati
                   ExpansionTile(
@@ -378,30 +396,29 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     leading: const Icon(Icons.list),
                     children: purchasedProducts.isEmpty
                         ? [
-                      Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.noSavedProducts,
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ),
-                    ]
+                            Center(
+                              child: Text(
+                                AppLocalizations.of(context)!.noSavedProducts,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          ]
                         : [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: purchasedProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = purchasedProducts[index];
-                          return product;
-                        },
-                      ),
-                    ],
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: purchasedProducts.length,
+                              itemBuilder: (context, index) {
+                                final product = purchasedProducts[index];
+                                return product;
+                              },
+                            ),
+                          ],
                   ),
                 ],
               ),
             ),
           )
-
         ],
       ),
     );
@@ -417,7 +434,9 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
+              return Center(
+                  child: Text(
+                      '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
             } else {
               String selectedCategory = '';
               List<String> categoryNames = snapshot.data ?? [];
@@ -428,7 +447,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   items: categoryNames.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
-                      child: Text(AppLocalizations.of(context)!.translateCategory(category)),
+                      child: Text(AppLocalizations.of(context)!
+                          .translateCategory(category)),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
@@ -454,7 +474,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                       setState(() {
                         purchasedProducts = originalProducts
                             .where((product) =>
-                        product.product.category == selectedCategory)
+                                product.product.category == selectedCategory)
                             .toList();
                       });
                       Navigator.of(context).pop();
@@ -498,8 +518,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                 setState(() {
                   purchasedProducts = originalProducts
                       .where((product) => product.product.productName
-                      .toLowerCase()
-                      .contains(searchQuery.toLowerCase()))
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
                       .toList();
                 });
                 Navigator.of(context).pop();
@@ -510,5 +530,4 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       },
     );
   }
-
 }

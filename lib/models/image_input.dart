@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart'; // Importa il file generato con le stringhe
@@ -16,7 +17,8 @@ class _ImageInputState extends State<ImageInput> {
   File? _selectedImage;
 
   void _pickImage(ImageSource source) async {
-    final pickedImage = await ImagePicker().pickImage(source: source, maxWidth: 600);
+    final pickedImage =
+        await ImagePicker().pickImage(source: source, maxWidth: 600);
 
     if (pickedImage == null) {
       return;
@@ -74,14 +76,14 @@ class _ImageInputState extends State<ImageInput> {
             ),
             child: _selectedImage != null
                 ? Image.file(
-              _selectedImage!,
-              fit: BoxFit.cover,
-              width: double.infinity,
-            )
+                    _selectedImage!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  )
                 : Text(
-              AppLocalizations.of(context)!.noImageTaken,
-              textAlign: TextAlign.center,
-            ),
+                    AppLocalizations.of(context)!.noImageTaken,
+                    textAlign: TextAlign.center,
+                  ),
           ),
         ],
       ),

@@ -4,11 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../models/product.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
@@ -196,104 +197,97 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Widget _buildCategorySelector() {
-    // Ensure selectedCategory has a valid initial value
+    // Assicura che selectedCategory abbia un valore iniziale valido
     if (!categories.contains(selectedCategory)) {
       selectedCategory = categories.isNotEmpty ? categories[0] : '';
     }
-    //TODO:va in overflow
-    return Center(
-      child: DropdownButton<String>(
-        value: selectedCategory,
-        dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-        items: categories.map((category) {
-          return DropdownMenuItem<String>(
-            value: category,
-            child: Center(
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: CategoryServices.iconFromCategory(category),
-                  ),
-                  const SizedBox(width: 10),
-                  // Avvolgi il Row con SingleChildScrollView per abilitare lo scorrimento orizzontale
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      AppLocalizations.of(context)!.translateCategory(category),
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
-        onChanged: (value) {
-          if (value != null) {
-            setState(() {
-              selectedCategory = value;
-              _productData['category'] = selectedCategory;
-            });
-          }
-        },
-        underline: const SizedBox(),
-      ),
-    );
 
+    return DropdownButton<String>(
+      itemHeight: null,
+      isExpanded: true,
+      value: selectedCategory,
+      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+      items: categories.map((category) {
+        return DropdownMenuItem<String>(
+          value: category,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 40, // Dimensioni ridotte per adattarsi meglio
+                height: 40,
+                child: CategoryServices.iconFromCategory(category),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  AppLocalizations.of(context)!.translateCategory(category),
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value != null) {
+          setState(() {
+            selectedCategory = value;
+            _productData['category'] = selectedCategory;
+          });
+        }
+      },
+      underline: const SizedBox(),
+    );
   }
 
   Widget _buildStoreSelector() {
-    // Ensure selectedStore has a valid initial value
+    // Garantisci un valore iniziale valido per selectedStore
     if (!stores.contains(selectedStore)) {
       selectedStore = stores.isNotEmpty ? stores[0] : '';
     }
 
-    return Center(
-      child: DropdownButton<String>(
-        value: selectedStore,
-        dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-        items: stores.map((store) {
-          return DropdownMenuItem<String>(
-            value: store,
-            child: Center(
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Icon(
-                        Icons.store), // Replace with appropriate icon if needed
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    AppLocalizations.of(context)!.getStorageTitle(store),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
-                  ),
-                ],
+    return DropdownButton<String>(
+      itemHeight: null,
+      isExpanded: true,
+      value: selectedStore,
+      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+      items: stores.map((store) {
+        return DropdownMenuItem<String>(
+          value: store,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Icon(
+                  Icons.store, // Puoi sostituire l'icona se necessario
+                  color: Theme.of(context).iconTheme.color,
+                ),
               ),
-            ),
-          );
-        }).toList(),
-        onChanged: (value) {
-          if (value != null) {
-            // Add null check
-            setState(() {
-              selectedStore = value;
-              _productData['store'] = selectedStore;
-            });
-          }
-        },
-        underline: const SizedBox(), // Add const
-      ),
+              const SizedBox(width: 10),
+              Text(
+                AppLocalizations.of(context)!.getStorageTitle(store),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value != null) {
+          setState(() {
+            selectedStore = value;
+            _productData['store'] = selectedStore;
+          });
+        }
+      },
+      underline: const SizedBox(),
     );
   }
 
@@ -788,8 +782,14 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   ]),
                   Row(
                     children: [
-                      Expanded(child: _buildCategorySelector()),
-                      Expanded(child: _buildStoreSelector()),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: _buildCategorySelector(),
+                      ),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: _buildStoreSelector(),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),

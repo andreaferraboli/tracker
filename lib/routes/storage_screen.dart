@@ -1,12 +1,13 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tracker/l10n/app_localizations.dart';
-import 'package:tracker/models/product_store_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import per multilingua
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/models/product_store_card.dart';
 import 'package:tracker/routes/add_product_screen.dart';
+
 import '../services/category_services.dart';
 
 class StorageScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
 
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
     DocumentReference userDocRef =
-    FirebaseFirestore.instance.collection('products').doc(userId);
+        FirebaseFirestore.instance.collection('products').doc(userId);
 
     userDocRef.snapshots().listen((DocumentSnapshot snapshot) {
       if (snapshot.exists) {
@@ -43,7 +44,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
         if (productsArray.isNotEmpty &&
             productsArray[0]['productName'] != null) {
           for (var product in productsArray) {
-            if (product['store'] == widget.name.toLowerCase() && product['quantityOwned'] > 0) {
+            if (product['store'] == widget.name.toLowerCase() &&
+                product['quantityOwned'] > 0) {
               productWidgets.add(
                 ProductStoreCard(product: Product.fromJson(product)),
               );
@@ -122,23 +124,23 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
           Expanded(
             child: storedProducts.isNotEmpty
                 ? GridView.builder(
-              gridDelegate:
-              const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-              ),
-              itemCount: storedProducts.length,
-              itemBuilder: (context, index) {
-                return storedProducts[index];
-              },
-            )
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
+                    itemCount: storedProducts.length,
+                    itemBuilder: (context, index) {
+                      return storedProducts[index];
+                    },
+                  )
                 : Center(
-              child: Text(
-                AppLocalizations.of(context)!.noSavedProducts,
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+                    child: Text(
+                      AppLocalizations.of(context)!.noSavedProducts,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
           )
         ],
       ),
@@ -155,7 +157,9 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              return Center(child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
+              return Center(
+                  child: Text(
+                      '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
             } else {
               String selectedCategory = '';
               List<String> categoryNames = snapshot.data ?? [];
@@ -166,7 +170,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                   items: categoryNames.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
-                      child: Text(AppLocalizations.of(context)!.translateCategory(category)),
+                      child: Text(AppLocalizations.of(context)!
+                          .translateCategory(category)),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
@@ -191,7 +196,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                       setState(() {
                         storedProducts = originalProducts
                             .where((product) =>
-                        product.product.category == selectedCategory)
+                                product.product.category == selectedCategory)
                             .toList();
                       });
                       Navigator.of(context).pop();
@@ -234,8 +239,8 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                 setState(() {
                   storedProducts = originalProducts
                       .where((product) => product.product.productName
-                      .toLowerCase()
-                      .contains(searchQuery.toLowerCase()))
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
                       .toList();
                 });
                 Navigator.of(context).pop();

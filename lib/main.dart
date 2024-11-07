@@ -9,6 +9,7 @@ import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
 import 'package:tracker/routes/recipe_tips_screen.dart';
 import 'package:tracker/routes/user_screen.dart';
+
 import 'routes/add_meal_screen.dart';
 import 'routes/home_screen.dart';
 import 'routes/inventory_screen.dart';
@@ -37,10 +38,12 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
   static void setLocale(BuildContext context, Locale newLocale) {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state?.setLocale(newLocale);
   }
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -48,25 +51,28 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isDarkTheme = false;
   Locale? _locale;
+
   // Cambiato il metodo _toggleTheme per poter essere passato alla HomeScreen
   void _toggleTheme() {
     setState(() {
       _isDarkTheme = !_isDarkTheme;
     });
   }
+
   void setLocale(Locale locale) {
     setState(() {
       _locale = locale;
     });
   }
+
   bool get isDarkTheme => _isDarkTheme;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tracker App',
       locale: _locale,
-      localizationsDelegates:
-        AppLocalizations.localizationsDelegates,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,
       theme: _isDarkTheme ? _darkTheme : _lightTheme,

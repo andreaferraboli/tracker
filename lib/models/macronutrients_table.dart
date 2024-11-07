@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa AppLocalizations
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/macronutrientDialog.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa AppLocalizations
 
 class MacronutrientTable extends StatefulWidget {
   final void Function(Map<String, double>) onSave;
@@ -91,7 +91,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context); // Carica le stringhe localizzate
+    final localizations =
+        AppLocalizations.of(context); // Carica le stringhe localizzate
 
     return SizedBox(
       child: SingleChildScrollView(
@@ -102,21 +103,28 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
               child: DataTable(
                 columnSpacing: 5,
                 columns: [
-                  DataColumn(label: Center(child: Text(localizations!.macronutrient))),
-                  DataColumn(label: Center(child: Text(localizations.valueLabel))),
-                  if (_isEditing) DataColumn(label: Center(child: Text(localizations.actions))),
+                  DataColumn(
+                      label: Center(child: Text(localizations!.macronutrient))),
+                  DataColumn(
+                      label: Center(child: Text(localizations.valueLabel))),
+                  if (_isEditing)
+                    DataColumn(
+                        label: Center(child: Text(localizations.actions))),
                 ],
                 rows: macronutrients.entries.map((entry) {
                   return DataRow(
                     cells: [
-                      DataCell(Center(child: Text(localizations.getNutrientString(entry.key)))),
+                      DataCell(Center(
+                          child: Text(
+                              localizations.getNutrientString(entry.key)))),
                       DataCell(Center(child: Text(entry.value.toString()))),
                       if (_isEditing)
                         DataCell(
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                icon:
+                                    const Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () {
                                   showDialog(
                                     context: context,
@@ -124,7 +132,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                                       return MacronutrientDialog(
                                         initialName: entry.key,
                                         initialValue: entry.value.toString(),
-                                        macronutrientsArray: macronutrientsArray,
+                                        macronutrientsArray:
+                                            macronutrientsArray,
                                         onSave: (oldName, newName, newValue) {
                                           _editRow(oldName, newName, newValue);
                                         },
@@ -134,7 +143,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
                                   _deleteRow(entry.key);
                                 },
@@ -154,8 +164,11 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   Expanded(
                     flex: 2,
                     child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(labelText: localizations.macronutrient),
-                      value: macronutrientsArray.contains(editedName) ? editedName : null,
+                      decoration: InputDecoration(
+                          labelText: localizations.macronutrient),
+                      value: macronutrientsArray.contains(editedName)
+                          ? editedName
+                          : null,
                       items: macronutrientsArray.map((nutrient) {
                         return DropdownMenuItem<String>(
                           value: nutrient,
@@ -198,7 +211,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                       ),
                       child: IconButton(
                         onPressed: _addRow,
-                        icon: const Icon(Icons.add, color: Colors.white, size: 20),
+                        icon: const Icon(Icons.add,
+                            color: Colors.white, size: 20),
                       ),
                     ),
                   Container(

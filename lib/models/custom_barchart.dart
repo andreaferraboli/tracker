@@ -12,25 +12,25 @@ class CustomBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Color> colors = [
-  Theme.of(context).brightness == Brightness.light
-      ? const Color.fromARGB(255, 34, 65, 98)
-      : const Color.fromARGB(255, 41, 36, 36),
-  Theme.of(context).brightness == Brightness.light
-      ? const Color.fromARGB(255, 97, 3, 3)
-      : const Color.fromARGB(255, 97, 3, 3),
-  Theme.of(context).brightness == Brightness.light
-      ? const Color.fromARGB(255, 89, 100, 117)
-      : const Color.fromARGB(255, 100, 100, 100),
-  Theme.of(context).brightness == Brightness.light
-      ? const Color.fromARGB(255, 0, 126, 167)
-      : const Color.fromARGB(255, 150, 150, 150),
-  Theme.of(context).brightness == Brightness.light
-      ? const Color.fromARGB(255, 45, 49, 66)
-      : const Color.fromARGB(255, 50, 50, 50),
-  Theme.of(context).brightness == Brightness.light
-      ? const Color.fromARGB(255, 66, 12, 20)
-      : const Color.fromARGB(255, 66, 12, 20),
-];
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 34, 65, 98)
+          : const Color.fromARGB(255, 41, 36, 36),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 97, 3, 3)
+          : const Color.fromARGB(255, 97, 3, 3),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 89, 100, 117)
+          : const Color.fromARGB(255, 100, 100, 100),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 0, 126, 167)
+          : const Color.fromARGB(255, 150, 150, 150),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 45, 49, 66)
+          : const Color.fromARGB(255, 50, 50, 50),
+      Theme.of(context).brightness == Brightness.light
+          ? const Color.fromARGB(255, 66, 12, 20)
+          : const Color.fromARGB(255, 66, 12, 20),
+    ];
 
     final maxValue = periodData.values.reduce((a, b) => a > b ? a : b);
 
@@ -42,7 +42,8 @@ class CustomBarChart extends StatelessWidget {
             BarChart(
               BarChartData(
                 maxY: maxValue * 1.2,
-                barGroups: periodData.entries.toList().asMap().entries.map((entry) {
+                barGroups:
+                    periodData.entries.toList().asMap().entries.map((entry) {
                   final index = entry.key;
                   final periodEntry = entry.value;
 
@@ -114,13 +115,15 @@ class CustomBarChart extends StatelessWidget {
               final heightPercentage = value / maxValue;
 
               final availableHeight = constraints.maxHeight * 0.80;
-              final verticalPosition = availableHeight * (1 - heightPercentage) == 0
-                  ? availableHeight * (1 - heightPercentage) + 25
-                  : availableHeight * (1 - heightPercentage);
+              final verticalPosition =
+                  availableHeight * (1 - heightPercentage) == 0
+                      ? availableHeight * (1 - heightPercentage) + 25
+                      : availableHeight * (1 - heightPercentage);
 
               return Positioned(
                 left: (barCenter.isNaN ? 0 : barCenter) - 15,
-                top: (verticalPosition.isNaN ? 0 : verticalPosition) - 25,// aumentato lo spazio sopra la barra
+                top: (verticalPosition.isNaN ? 0 : verticalPosition) - 25,
+                // aumentato lo spazio sopra la barra
                 child: Text(
                   value.toStringAsFixed(1),
                   style: TextStyle(

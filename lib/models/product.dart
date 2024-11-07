@@ -7,7 +7,7 @@ class Product {
   int quantity;
   int buyQuantity;
   double selectedQuantity;
-  double quantityOwned;// Rinominato da quantityOwned
+  double quantityOwned; // Rinominato da quantityOwned
   String unit; // Unità di misura
   String store;
   Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
@@ -120,6 +120,5 @@ class Product {
       unitPrice: unitPrice,
       selectedQuantity: selectedQuantity,
     );
-
   }
 }

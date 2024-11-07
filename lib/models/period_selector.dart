@@ -29,9 +29,13 @@ class PeriodSelector extends StatelessWidget {
         DropdownButton<String>(
           value: selectedPeriod,
           items: [
-            DropdownMenuItem(value: 'week', child: Text(AppLocalizations.of(context)!.week)),
-            DropdownMenuItem(value: 'month', child: Text(AppLocalizations.of(context)!.month)),
-            DropdownMenuItem(value: 'year', child: Text(AppLocalizations.of(context)!.year)),
+            DropdownMenuItem(
+                value: 'week', child: Text(AppLocalizations.of(context)!.week)),
+            DropdownMenuItem(
+                value: 'month',
+                child: Text(AppLocalizations.of(context)!.month)),
+            DropdownMenuItem(
+                value: 'year', child: Text(AppLocalizations.of(context)!.year)),
           ],
           onChanged: onPeriodChanged,
         ),

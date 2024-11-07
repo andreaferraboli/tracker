@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
+
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
 import '../models/period_selector.dart';
@@ -90,8 +91,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
 
       filteredMeals = meals.where((meal) {
         final mealDate = dateFormat.parse(meal.date);
-        var subtract = dateFormat
-            .parse(dateFormat.format(startOfWeek.subtract(const Duration(days: 1))));
+        var subtract = dateFormat.parse(
+            dateFormat.format(startOfWeek.subtract(const Duration(days: 1))));
         var after = mealDate.isAfter(subtract);
         var add = dateFormat
             .parse(dateFormat.format(endOfWeek.add(const Duration(days: 1))));
@@ -117,7 +118,6 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return filteredMeals;
   }
 
-
   Map<String, double> _prepareBarChartData(List<Meal> filteredMeals) {
     Map<String, double> periodData = {};
     var localizations = AppLocalizations.of(context);
@@ -139,7 +139,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     switch (selectedPeriod) {
       case 'week':
         for (int i = 0; i < 7; i++) {
-          DateTime day = currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
+          DateTime day =
+              currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
           String dayLabel = '${day.day}-${day.month}';
           periodData[dayLabel] = 0.0;
         }
@@ -186,8 +187,6 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return periodData;
   }
 
-
-
   Map<String, double> _prepareMacronutrientData(List<Meal> filteredMeals) {
     Map<String, double> macronutrientData = {};
     var localizations = AppLocalizations.of(context);
@@ -209,7 +208,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     switch (selectedPeriod) {
       case 'week':
         for (int i = 0; i < 7; i++) {
-          DateTime day = currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
+          DateTime day =
+              currentDate.subtract(Duration(days: currentDate.weekday - 1 - i));
           String dayLabel = '${day.day}-${day.month}';
           macronutrientData[dayLabel] = 0.0;
         }
@@ -263,7 +263,6 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
     return macronutrientData;
   }
 
-
   // Funzione per calcolare il totale speso per ogni tipo di pasto
   Map<String, double> _calculateMealTypeExpenses(List<Meal> filteredMeals) {
     final Map<String, double> mealTypeData = {};
@@ -272,7 +271,9 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           (mealTypeData[meal.mealType] ?? 0) + meal.totalExpense;
     }
     return mealTypeData.map((type, total) {
-      return MapEntry('${AppLocalizations.of(context)!.mealString(type)} - €${total.toStringAsFixed(2)}', total);
+      return MapEntry(
+          '${AppLocalizations.of(context)!.mealString(type)} - €${total.toStringAsFixed(2)}',
+          total);
     });
   }
 
@@ -335,9 +336,12 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
+            return Center(
+                child: Text(
+                    '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text(AppLocalizations.of(context)!.noMealsFound));
+            return Center(
+                child: Text(AppLocalizations.of(context)!.noMealsFound));
           } else {
             final meals = snapshot.data!;
             final filteredMeals = _filterMeals(meals);
@@ -347,8 +351,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                        AppLocalizations.of(context)!.noMealsForPeriod),
+                    Text(AppLocalizations.of(context)!.noMealsForPeriod),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -369,10 +372,12 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                             selectedPeriod == 'week'
                                 ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                                 : selectedPeriod == 'month'
-                                ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                                : '${currentDate.year}',
+                                    ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                    : '${currentDate.year}',
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.primary),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -441,10 +446,12 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                     selectedPeriod == 'week'
                         ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                         : selectedPeriod == 'month'
-                        ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                        : '${currentDate.year}',
+                            ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                            : '${currentDate.year}',
                     style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.primary),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -455,7 +462,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                         items: mealTypes.map((String type) {
                           return DropdownMenuItem<String>(
                             value: type,
-                            child: Text(AppLocalizations.of(context)!.mealString(type)),
+                            child: Text(
+                                AppLocalizations.of(context)!.mealString(type)),
                           );
                         }).toList(),
                         onChanged: (value) {
@@ -470,7 +478,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                         items: macronutrients.map((String nutrient) {
                           return DropdownMenuItem<String>(
                             value: nutrient,
-                            child: Text(AppLocalizations.of(context)!.getNutrientString(nutrient)),
+                            child: Text(AppLocalizations.of(context)!
+                                .getNutrientString(nutrient)),
                           );
                         }).toList(),
                         onChanged: (value) {

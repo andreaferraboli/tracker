@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/l10n/app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/api_client.dart';
@@ -18,8 +18,6 @@ class ProductListItem extends StatefulWidget {
 }
 
 class _ProductListItemState extends State<ProductListItem> {
-
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -42,13 +40,15 @@ class _ProductListItemState extends State<ProductListItem> {
               if (widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
                   FutureBuilder<Widget>(
-                    future: ApiClient.getImageWithRemovedBackground(widget.product.imageUrl, widget.product.category),
+                    future: ApiClient.getImageWithRemovedBackground(
+                        widget.product.imageUrl, widget.product.category),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {
                           return snapshot.data!;
                         } else {
-                          return CategoryServices.iconFromCategory(widget.product.category);
+                          return CategoryServices.iconFromCategory(
+                              widget.product.category);
                         }
                       } else {
                         return const CircularProgressIndicator();
@@ -61,7 +61,8 @@ class _ProductListItemState extends State<ProductListItem> {
                     width: 100,
                     height: 100,
                     errorBuilder: (context, error, stackTrace) {
-                      return CategoryServices.iconFromCategory(widget.product.category);
+                      return CategoryServices.iconFromCategory(
+                          widget.product.category);
                     },
                   )
               else
@@ -81,7 +82,8 @@ class _ProductListItemState extends State<ProductListItem> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      AppLocalizations.of(context)!.translateCategory(widget.product.category),
+                      AppLocalizations.of(context)!
+                          .translateCategory(widget.product.category),
                       style: const TextStyle(
                         color: Color.fromARGB(255, 106, 106, 106),
                         fontSize: 14,
@@ -114,7 +116,8 @@ class _ProductListItemState extends State<ProductListItem> {
                                 ?.backgroundColor
                                 ?.resolve({}),
                             child: IconButton(
-                              icon: const Icon(Icons.remove, color: Colors.white),
+                              icon:
+                                  const Icon(Icons.remove, color: Colors.white),
                               iconSize: 30.0,
                               padding: const EdgeInsets.all(10.0),
                               onPressed: () {
@@ -122,14 +125,17 @@ class _ProductListItemState extends State<ProductListItem> {
                                   setState(() {
                                     widget.product.buyQuantity--;
                                   });
-                                  widget.onTotalPriceChange(widget.product.price, false);
+                                  widget.onTotalPriceChange(
+                                      widget.product.price, false);
                                 }
                               },
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Text('${widget.product.buyQuantity}', style: const TextStyle(fontSize: 20.0)),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Text('${widget.product.buyQuantity}',
+                                style: const TextStyle(fontSize: 20.0)),
                           ),
                           Material(
                             shape: const CircleBorder(),
@@ -146,13 +152,15 @@ class _ProductListItemState extends State<ProductListItem> {
                                 setState(() {
                                   widget.product.buyQuantity++;
                                 });
-                                widget.onTotalPriceChange(widget.product.price, true);
+                                widget.onTotalPriceChange(
+                                    widget.product.price, true);
                               },
                             ),
                           ),
                         ],
                       ),
-                      Text(' ${AppLocalizations.of(context)!.have}: ${widget.product.quantityOwned}'),
+                      Text(
+                          ' ${AppLocalizations.of(context)!.have}: ${widget.product.quantityOwned}'),
                     ],
                   ),
                 ],

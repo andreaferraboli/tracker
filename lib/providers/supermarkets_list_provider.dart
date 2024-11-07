@@ -12,6 +12,7 @@ class SupermarketsNotifier extends StateNotifier<List<String>> {
   }
 }
 
-final supermarketsListProvider = StateNotifierProvider<SupermarketsNotifier, List<String>>((ref) {
+final supermarketsListProvider =
+    StateNotifierProvider<SupermarketsNotifier, List<String>>((ref) {
   return SupermarketsNotifier();
 });

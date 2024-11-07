@@ -55,7 +55,8 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
             icon: const Icon(Icons.check),
             onPressed: () {
               widget.onNameChanged(storageName);
-              widget.onIconChanged(IconsHelper.iconMap[selectedIcon]!); // Passa l'icona come stringa
+              widget.onIconChanged(IconsHelper
+                  .iconMap[selectedIcon]!); // Passa l'icona come stringa
               Navigator.pop(context);
             },
           ),
@@ -100,11 +101,13 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIcon = icon; // Aggiorna l'icona selezionata come stringa
+                        selectedIcon =
+                            icon; // Aggiorna l'icona selezionata come stringa
                       });
                     },
                     child: Icon(
-                      IconsHelper.iconMap[icon], // Usa la mappa per ottenere IconData
+                      IconsHelper.iconMap[icon],
+                      // Usa la mappa per ottenere IconData
                       color: icon == selectedIcon ? Colors.blue : Colors.black,
                       size: 30,
                     ),

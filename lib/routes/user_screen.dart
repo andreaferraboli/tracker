@@ -17,21 +17,21 @@ class UserScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: user != null
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${AppLocalizations.of(context)!.name}: ${user.displayName}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${AppLocalizations.of(context)!.email}: ${user.email}',
-            ),
-          ],
-        )
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${AppLocalizations.of(context)!.name}: ${user.displayName}',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${AppLocalizations.of(context)!.email}: ${user.email}',
+                  ),
+                ],
+              )
             : Center(
-          child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
-        ),
+                child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
+              ),
       ),
     );
   }

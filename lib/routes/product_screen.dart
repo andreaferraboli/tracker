@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/add_product_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProductScreen extends StatelessWidget {
   final Product product;
@@ -13,11 +13,11 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     void _deleteProduct() async {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        DocumentReference userDocRef = FirebaseFirestore.instance.collection('products').doc(user.uid);
+        DocumentReference userDocRef =
+            FirebaseFirestore.instance.collection('products').doc(user.uid);
 
         try {
           // Leggi il documento corrente
@@ -168,7 +168,8 @@ class ProductScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Table(
               border: TableBorder.all(
-                color: Theme.of(context).textTheme.bodyLarge!.color ?? Colors.black,
+                color: Theme.of(context).textTheme.bodyLarge!.color ??
+                    Colors.black,
                 width: 1,
               ),
               columnWidths: const {
@@ -193,9 +194,11 @@ class ProductScreen extends StatelessWidget {
                   ],
                 ),
                 ...product.macronutrients.entries.map(
-                      (entry) => TableRow(
+                  (entry) => TableRow(
                     children: [
-                      Center(child: Text(AppLocalizations.of(context)!.getNutrientString(entry.key))),
+                      Center(
+                          child: Text(AppLocalizations.of(context)!
+                              .getNutrientString(entry.key))),
                       Center(child: Text('${entry.value}g')),
                     ],
                   ),

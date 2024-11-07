@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracker/models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/models/product.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
@@ -75,7 +75,9 @@ class _ProductCardState extends State<ProductCard> {
                     value: _quantityInUnits.toDouble(),
                     min: 0,
                     max: widget.product.quantityOwned.toDouble(),
-                    divisions: widget.product.quantityOwned > 0 ? widget.product.quantityOwned.toInt() : null,
+                    divisions: widget.product.quantityOwned > 0
+                        ? widget.product.quantityOwned.toInt()
+                        : null,
                     label: '$_quantityInUnits',
                     onChanged: (value) => _updateQuantities(value),
                   ),

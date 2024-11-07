@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/custom_barchart.dart';
@@ -99,7 +99,9 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
     }
 
     return categoryData.map((category, total) {
-      return MapEntry('${AppLocalizations.of(context)!.translateCategory(category)} - €${total.toStringAsFixed(2)}', total);
+      return MapEntry(
+          '${AppLocalizations.of(context)!.translateCategory(category)} - €${total.toStringAsFixed(2)}',
+          total);
     });
   }
 
@@ -217,7 +219,8 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('${AppLocalizations.of(context)!.error}: ${snapshot.error}'),
+              child: Text(
+                  '${AppLocalizations.of(context)!.error}: ${snapshot.error}'),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
@@ -253,9 +256,10 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                             selectedPeriod == 'week'
                                 ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                                 : selectedPeriod == 'month'
-                                ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                                : '${currentDate.year}',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                    : '${currentDate.year}',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -266,7 +270,8 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
             }
 
             final categoryData = _calculateCategoryExpenses(filteredExpenses);
-            final supermarketData = _calculateSupermarketExpenses(filteredExpenses);
+            final supermarketData =
+                _calculateSupermarketExpenses(filteredExpenses);
             final periodData = _prepareBarChartData(filteredExpenses);
 
             return SingleChildScrollView(
@@ -292,9 +297,10 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                           selectedPeriod == 'week'
                               ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
                               : selectedPeriod == 'month'
-                              ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                              : '${currentDate.year}',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                  : '${currentDate.year}',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -340,13 +346,15 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                     itemBuilder: (context, index) {
                       final expense = filteredExpenses[index];
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 8.0),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ExpenseDetailScreen(expense: expense),
+                                builder: (context) =>
+                                    ExpenseDetailScreen(expense: expense),
                               ),
                             );
                           },
@@ -357,19 +365,24 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 12.0),
                               child: ListTile(
-                                textColor: Theme.of(context).colorScheme.onPrimary,
+                                textColor:
+                                    Theme.of(context).colorScheme.onPrimary,
                                 title: Text(
                                   '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 4),
-                                    Text('${AppLocalizations.of(context)!.date}: ${expense.date}'),
-                                    Text('${AppLocalizations.of(context)!.total}: €${expense.totalAmount.toStringAsFixed(2)}'),
+                                    Text(
+                                        '${AppLocalizations.of(context)!.date}: ${expense.date}'),
+                                    Text(
+                                        '${AppLocalizations.of(context)!.total}: €${expense.totalAmount.toStringAsFixed(2)}'),
                                   ],
                                 ),
                                 trailing: Icon(
@@ -392,5 +405,3 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
     );
   }
 }
-
-
