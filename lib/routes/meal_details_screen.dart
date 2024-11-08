@@ -86,7 +86,7 @@ class MealDetailScreen extends StatelessWidget {
                             product['category']),
                         title: Text(product['productName']),
                         subtitle: Text(
-                            '${localizations.category}: ${product['category']}'),
+                            '${localizations.category}: ${localizations.translateCategory(product['category'])}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

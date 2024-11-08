@@ -167,5 +167,8 @@
   "nov": "Nov",
   "dec": "Dec",
   "ok": "Ok",
-  "invalidValue": "Invalid value"
+  "invalidValue": "Invalid value",
+  "enterBudget": "Enter budget",
+  "enterAmount": "Enter amount",
+  "suggest": "Suggest"
 }

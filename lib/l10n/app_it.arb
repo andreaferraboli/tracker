@@ -167,5 +167,8 @@
   "nov": "Nov",
   "dec": "Dic",
   "ok": "Ok",
-  "invalidValue": "Valore non valido"
+  "invalidValue": "Valore non valido",
+  "enterBudget": "Inserisci il budget",
+  "enterAmount": "Inserisci l'importo",
+  "suggest": "Suggerisci"
 }

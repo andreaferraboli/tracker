@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
@@ -34,7 +35,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
   void _updateTotalBalance(double price) {
     setState(() {
-        totalBalance += price;
+      totalBalance += price;
     });
   }
 
@@ -128,9 +129,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           .collection('expenses')
           .doc(FirebaseAuth.instance.currentUser!.uid);
 
-      List<Map<String, dynamic>> productsToSave = purchasedProducts
-          .where((product) => product.product.buyQuantity > 0)
-          .map((product) {
+      List<Map<String, dynamic>> productsToSave =
+          selectedProducts.map((product) {
         return {
           'idProdotto': product.product.productId,
           'productName': product.product.productName,
@@ -151,7 +151,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       if (snapshot.exists) {
         final List<dynamic> productsList = snapshot['products'] ?? [];
 
-        for (var product in purchasedProducts) {
+        for (var product in selectedProducts) {
           if (product.product.buyQuantity > 0) {
             var existingProduct = productsList.firstWhere(
                 (p) => p['productId'] == product.product.productId,
@@ -252,6 +252,162 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     });
   }
 
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FutureBuilder<List<String>>(
+          future: CategoryServices.getCategoryNames(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text(
+                      '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
+            } else {
+              String selectedCategory = '';
+              List<String> categoryNames = snapshot.data ?? [];
+              return AlertDialog(
+                title: Text(AppLocalizations.of(context)!.filterByCategory),
+                content: DropdownButtonFormField<String>(
+                  value: selectedCategory.isEmpty ? null : selectedCategory,
+                  items: categoryNames.map((String category) {
+                    return DropdownMenuItem<String>(
+                      value: category,
+                      child: Text(AppLocalizations.of(context)!
+                          .translateCategory(category)),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedCategory = newValue!;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.selectCategory,
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)!.filter),
+                    onPressed: () {
+                      // Implementa la logica di filtro qui
+                      setState(() {
+                        purchasedProducts = originalProducts
+                            .where((product) =>
+                                product.product.category == selectedCategory)
+                            .toList();
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String searchQuery = '';
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.searchByProductName),
+          content: TextField(
+            onChanged: (value) {
+              searchQuery = value;
+            },
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterProductName,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.cancel),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.search),
+              onPressed: () {
+                // Implementa la logica di ricerca qui
+                setState(() {
+                  purchasedProducts = originalProducts
+                      .where((product) => product.product.productName
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
+                      .toList();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAiDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        double budget = 0.0;
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.enterBudget),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              budget = double.tryParse(value) ?? 0.0;
+            },
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.enterAmount,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.cancel),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.suggest),
+              onPressed: () {
+                List<ProductListItem> suggestedProducts = [];
+                double currentSum = 0.0;
+
+                for (var product in originalProducts) {
+                  if (currentSum + product.product.price <= budget) {
+                    product.setSelected(true);
+                    suggestedProducts.add(product);
+                    currentSum += product.product.price;
+                  }
+                }
+
+                setState(() {
+                  selectedProducts = suggestedProducts;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -265,7 +421,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             padding: const EdgeInsets.all(16.0),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                double fontSize = 24.0; // Dimensione font di base
+                double fontSize = 18.0; // Dimensione font di base
                 String totalText =
                     '${AppLocalizations.of(context)!.totalBalance}: €${totalBalance.toStringAsFixed(2)}';
                 double textWidth = (totalText.length * fontSize) *
@@ -298,13 +454,14 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                       icon: Icon(Icons.search,
                           color: Theme.of(context).iconTheme.color),
                     ),
+                    IconButton(
+                      onPressed: _showAiDialog,
+                      icon: Icon(HugeIcons.strokeRoundedAiBrain01,
+                          color: Theme.of(context).iconTheme.color),
+                    ),
                     // Pulsante reset filtri e ricerca
                     IconButton(
-                      onPressed: () {
-                        setState(() {
-                          purchasedProducts = originalProducts;
-                        });
-                      },
+                      onPressed: _showAiDialog,
                       icon: Icon(Icons.refresh,
                           color: Theme.of(context).iconTheme.color),
                     ),
@@ -418,113 +575,6 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           )
         ],
       ),
-    );
-  }
-
-  void _showFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return FutureBuilder<List<String>>(
-          future: CategoryServices.getCategoryNames(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                  child: Text(
-                      '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
-            } else {
-              String selectedCategory = '';
-              List<String> categoryNames = snapshot.data ?? [];
-              return AlertDialog(
-                title: Text(AppLocalizations.of(context)!.filterByCategory),
-                content: DropdownButtonFormField<String>(
-                  value: selectedCategory.isEmpty ? null : selectedCategory,
-                  items: categoryNames.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(AppLocalizations.of(context)!
-                          .translateCategory(category)),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.selectCategory,
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text(AppLocalizations.of(context)!.cancel),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text(AppLocalizations.of(context)!.filter),
-                    onPressed: () {
-                      // Implementa la logica di filtro qui
-                      setState(() {
-                        purchasedProducts = originalProducts
-                            .where((product) =>
-                                product.product.category == selectedCategory)
-                            .toList();
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            }
-          },
-        );
-      },
-    );
-  }
-
-  void _showSearchDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String searchQuery = '';
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.searchByProductName),
-          content: TextField(
-            onChanged: (value) {
-              searchQuery = value;
-            },
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.enterProductName,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.cancel),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.search),
-              onPressed: () {
-                // Implementa la logica di ricerca qui
-                setState(() {
-                  purchasedProducts = originalProducts
-                      .where((product) => product.product.productName
-                          .toLowerCase()
-                          .contains(searchQuery.toLowerCase()))
-                      .toList();
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }
