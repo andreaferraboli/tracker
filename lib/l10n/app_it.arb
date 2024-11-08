@@ -68,7 +68,9 @@
   "update": "Aggiorna",
   "selectedQuantity": "Quantità selezionata",
   "kgAvailable": "kg disponibili",
+    "gramsAvailable": "g disponibili",
   "weightInKg": "Peso (kg)",
+  "weightInGrams": "Peso (g)",
   "units": "Unità",
   "total": "Totale",
   "have": "Hai",
@@ -163,5 +165,7 @@
   "sep": "Set",
   "oct": "Ott",
   "nov": "Nov",
-  "dec": "Dic"
+  "dec": "Dic",
+  "ok": "Ok",
+  "invalidValue": "Valore non valido"
 }

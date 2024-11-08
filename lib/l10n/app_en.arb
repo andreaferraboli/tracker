@@ -68,7 +68,9 @@
   "update": "Update",
   "selectedQuantity": "Selected Quantity",
   "kgAvailable": "kg available",
+  "gramsAvailable": "g available",
   "weightInKg": "Weight (kg)",
+  "weightInGrams": "Weight (g)",
   "units": "Units",
   "total": "Total",
   "have": "Owned",
@@ -163,5 +165,7 @@
   "sep": "Sep",
   "oct": "Oct",
   "nov": "Nov",
-  "dec": "Dec"
+  "dec": "Dec",
+  "ok": "Ok",
+  "invalidValue": "Invalid value"
 }

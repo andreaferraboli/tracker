@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 class RecipeTipsScreen extends StatefulWidget {
@@ -10,58 +9,47 @@ class RecipeTipsScreen extends StatefulWidget {
 }
 
 class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
-  List<Map<String, dynamic>> _mealSuggestions = [];
+  List<Map<String, dynamic>> _recipeSuggestions = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchMealSuggestions();
+    _fetchRecipeSuggestions();
   }
 
-  Future<void> _fetchMealSuggestions() async {
-    // Commento: Qui puoi inserire il codice per fare una richiesta HTTP
-    // final response = await http.get(
-    //   Uri.parse('https://api.example.com/recipes'),
-    //   headers: {'Content-Type': 'application/json'},
-    // );
-
-    // Simulazione di un JSON ricevuto da una richiesta HTTP
+  Future<void> _fetchRecipeSuggestions() async {
+    // Simulazione di una risposta da un server
     const String mockJsonResponse = '''
-    {
-      "meals": [
-        {
-          "name": "Spaghetti Carbonara",
-          "ingredients": ["Spaghetti", "Uova", "Pancetta", "Pecorino", "Pepe"]
-        },
-        {
-          "name": "Insalata Greca",
-          "ingredients": ["Pomodori", "Cipolla", "Olive", "Feta", "Cetrioli"]
-        },
-        {
-          "name": "Pizza Margherita",
-          "ingredients": ["Farina", "Mozzarella", "Pomodoro", "Basilico", "Olio"]
-        }
-      ]
-    }
+    [
+      {
+        "name": "Torta tenerina",
+        "imageUrl": "https://www.giallozafferano.it/images/242-24248/Torta-tenerina_360x300.jpg",
+        "calories": 395,
+        "rating": 4.4,
+        "time": "45 min"
+      },
+      {
+        "name": "Torta di mele",
+        "imageUrl": "https://www.giallozafferano.it/images/242-24248/Torta-tenerina_360x300.jpg",
+        "calories": 395,
+        "rating": 4.1,
+        "time": "1h 15min"
+      }
+    ]
     ''';
 
-    // Parsing del mock JSON come se fosse la risposta da un server
-    final Map<String, dynamic> jsonResponse = jsonDecode(mockJsonResponse);
+    // Parsing della stringa JSON simulata
+    final List<dynamic> jsonData = jsonDecode(mockJsonResponse);
 
-    // Aggiorna lo stato con i dati della simulazione
     setState(() {
-      _mealSuggestions = List<Map<String, dynamic>>.from(jsonResponse['meals']);
+      _recipeSuggestions = jsonData.map((recipe) => {
+        'name': recipe['name'],
+        'imageUrl': recipe['imageUrl'],
+        'calories': recipe['calories'],
+        'rating': recipe['rating'],
+        'time': recipe['time'],
+      }).toList();
     });
-
-    // Nel caso reale:
-    // if (response.statusCode == 200) {
-    //   setState(() {
-    //     _mealSuggestions = List<Map<String, dynamic>>.from(jsonDecode(response.body)['meals']);
-    //   });
-    // } else {
-    //   // Gestione dell'errore
-    //   print('Failed to fetch meal suggestions');
-    // }
   }
 
   @override
@@ -70,22 +58,85 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
       appBar: AppBar(
         title: const Text('Recipe Tips'),
       ),
-      body: _mealSuggestions.isEmpty
+      body: _recipeSuggestions.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: _mealSuggestions.length,
-              itemBuilder: (context, index) {
-                final recipe = _mealSuggestions[index];
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    title: Text(recipe['name']),
-                    subtitle: Text(
-                        "Ingredients: ${recipe['ingredients'].join(', ')}"),
+        itemCount: _recipeSuggestions.length,
+        itemBuilder: (context, index) {
+          final recipe = _recipeSuggestions[index];
+          return Card(
+            margin: const EdgeInsets.all(10),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  // Immagine a sinistra
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Image.network(
+                      recipe['imageUrl'],
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                );
-              },
+                  const SizedBox(width: 16), // Spaziatura tra immagine e info
+                  // Informazioni a destra
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          recipe['name'],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.local_fire_department,
+                              color: Colors.orange,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text('${recipe['calories']} kcal'),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.timer,
+                              color: Colors.grey,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(recipe['time']),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(recipe['rating'].toString()),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
+          );
+        },
+      ),
     );
   }
 }
