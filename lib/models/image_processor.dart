@@ -24,6 +24,7 @@ class _ImageProcessorState extends State<ImageProcessor> {
 
   Future<void> _removeWhiteBackground() async {
     // Carica l'immagine dalla rete
+    //todo:fai funzionare questa cosa
     final response = await http.get(Uri.parse(widget.imageUrl));
 
     if (response.statusCode == 200) {
