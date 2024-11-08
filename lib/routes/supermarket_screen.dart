@@ -28,16 +28,13 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
   List<ProductListItem> originalProducts = [];
+  List<ProductListItem> selectedProducts = [];
   DateTime selectedDate = DateTime.now();
   bool isConnected = false;
 
-  void _updateTotalBalance(double price, bool isAdding) {
+  void _updateTotalBalance(double price) {
     setState(() {
-      if (isAdding) {
         totalBalance += price;
-      } else {
-        totalBalance -= price;
-      }
     });
   }
 
@@ -123,14 +120,6 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     } catch (e) {
       print('Errore durante l\'impostazione dei prodotti: $e');
     }
-  }
-
-  void _checkConnection() {
-    // Firestore non ha un metodo per controllare la connessione come Realtime Database.
-    print('Firestore non fornisce un controllo diretto della connessione.');
-    setState(() {
-      isConnected = true; // Assumiamo di essere sempre connessi a Firestore.
-    });
   }
 
   Future<void> saveExpense() async {
@@ -225,8 +214,10 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             if (product['supermarket'] == ref.read(supermarketProvider)) {
               productWidgets.add(
                 ProductListItem(
-                    product: Product.fromJson(product),
-                    onTotalPriceChange: _updateTotalBalance),
+                  product: Product.fromJson(product),
+                  onTotalPriceChange: _updateTotalBalance,
+                  updateProductLists: _updateProductLists,
+                ),
               );
             }
           }
@@ -236,12 +227,28 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         setState(() {
           purchasedProducts = productWidgets;
           originalProducts = productWidgets;
+          selectedProducts = [];
         });
       } else {
         print('Nessun documento trovato per l\'utente.');
       }
     }, onError: (error) {
       print('Errore nel recupero dei prodotti: $error');
+    });
+  }
+
+  void _updateProductLists() {
+    setState(() {
+      selectedProducts = originalProducts.where((product) {
+        bool isSelected = product.product.buyQuantity > 0;
+        product.setSelected(isSelected);
+        return isSelected;
+      }).toList();
+      purchasedProducts = originalProducts.where((product) {
+        bool isSelected = product.product.buyQuantity == 0;
+        product.setSelected(!isSelected);
+        return isSelected;
+      }).toList();
     });
   }
 
@@ -356,12 +363,9 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                       AppLocalizations.of(context)!.selectedProducts,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    initiallyExpanded: purchasedProducts.isNotEmpty,
+                    initiallyExpanded: selectedProducts.isNotEmpty,
                     leading: const Icon(Icons.shopping_cart),
-                    children: purchasedProducts
-                            .where((product) =>
-                                product.product.selectedQuantity > 0)
-                            .isEmpty
+                    children: selectedProducts.isEmpty
                         ? [
                             Center(
                               child: Text(AppLocalizations.of(context)!
@@ -372,21 +376,14 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: purchasedProducts
-                                  .where((product) =>
-                                      product.product.selectedQuantity > 0)
-                                  .length,
+                              itemCount: selectedProducts.length,
                               itemBuilder: (context, index) {
-                                final product = purchasedProducts
-                                    .where((product) =>
-                                        product.product.selectedQuantity > 0)
-                                    .elementAt(index);
+                                final product = selectedProducts[index];
                                 return product;
                               },
                             ),
                           ],
                   ),
-                  // Sezione per la lista completa dei prodotti acquistati
                   ExpansionTile(
                     title: Text(
                       AppLocalizations.of(context)!.listProducts,

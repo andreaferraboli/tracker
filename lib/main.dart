@@ -136,7 +136,7 @@ final ThemeData _lightTheme = ThemeData(
     bodyMedium: TextStyle(color: Colors.black87),
     titleLarge: TextStyle(color: Colors.blueAccent, fontSize: 20),
   ),
-  cardColor: Colors.grey[100],
+  cardColor: Colors.white,
   dividerColor: Colors.grey,
 );
 

@@ -4,20 +4,43 @@ import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/api_client.dart';
+import 'package:tracker/routes/supermarket_screen.dart';
 import 'package:tracker/services/category_services.dart';
 
 class ProductListItem extends StatefulWidget {
   final Product product;
-  final void Function(double, bool) onTotalPriceChange;
+  final void Function(double) onTotalPriceChange;
+  final void Function() updateProductLists;
+  bool selected;
 
-  const ProductListItem(
-      {super.key, required this.product, required this.onTotalPriceChange});
+  ProductListItem({
+    super.key,
+    required this.product,
+    required this.onTotalPriceChange,
+    required this.updateProductLists,
+    this.selected = false,
+  });
+
+  void setSelected(bool value) {
+    selected = value;
+  }
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
 }
 
 class _ProductListItemState extends State<ProductListItem> {
+  void _updateQuantity(int change) {
+    setState(() {
+      widget.product.buyQuantity += change;
+      if (widget.product.buyQuantity < 0) {
+        widget.product.buyQuantity = 0;
+      }
+    });
+    widget.onTotalPriceChange(widget.product.price * change);
+    widget.updateProductLists();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -30,6 +53,9 @@ class _ProductListItemState extends State<ProductListItem> {
         );
       },
       child: Card(
+        color: widget.selected
+            ? Theme.of(context).primaryColor
+            : Theme.of(context).cardColor,
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
         elevation: 3,
         child: Container(
@@ -75,7 +101,10 @@ class _ProductListItemState extends State<ProductListItem> {
                   children: [
                     Text(
                       widget.product.productName,
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: widget.selected
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).textTheme.bodyLarge?.color,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -84,8 +113,17 @@ class _ProductListItemState extends State<ProductListItem> {
                     Text(
                       AppLocalizations.of(context)!
                           .translateCategory(widget.product.category),
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 106, 106, 106),
+                      style: TextStyle(
+                        color: widget.selected
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onPrimary
+                                .withOpacity(0.9)
+                            : Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.color
+                                ?.withOpacity(0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -93,7 +131,9 @@ class _ProductListItemState extends State<ProductListItem> {
                     Text(
                       '€${widget.product.price.toStringAsFixed(2)}, ${AppLocalizations.of(context)!.total} €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
                       style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        color: widget.selected
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 14,
                       ),
                     ),
@@ -110,24 +150,24 @@ class _ProductListItemState extends State<ProductListItem> {
                         children: [
                           Material(
                             shape: const CircleBorder(),
-                            color: Theme.of(context)
-                                .elevatedButtonTheme
-                                .style
-                                ?.backgroundColor
-                                ?.resolve({}),
+                            color: widget.selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(context)
+                                    .elevatedButtonTheme
+                                    .style
+                                    ?.backgroundColor
+                                    ?.resolve({}),
                             child: IconButton(
-                              icon:
-                                  const Icon(Icons.remove, color: Colors.white),
+                              icon: Icon(
+                                Icons.remove,
+                                color: !widget.selected
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
                               iconSize: 30.0,
                               padding: const EdgeInsets.all(10.0),
                               onPressed: () {
-                                if (widget.product.buyQuantity > 0) {
-                                  setState(() {
-                                    widget.product.buyQuantity--;
-                                  });
-                                  widget.onTotalPriceChange(
-                                      widget.product.price, false);
-                                }
+                                _updateQuantity(-1);
                               },
                             ),
                           ),
@@ -135,32 +175,49 @@ class _ProductListItemState extends State<ProductListItem> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Text('${widget.product.buyQuantity}',
-                                style: const TextStyle(fontSize: 20.0)),
+                                style: TextStyle(
+                                    fontSize: 20.0,
+                                    color: widget.selected
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color)),
                           ),
                           Material(
                             shape: const CircleBorder(),
-                            color: Theme.of(context)
-                                .elevatedButtonTheme
-                                .style
-                                ?.backgroundColor
-                                ?.resolve({}),
+                            color: widget.selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(context)
+                                    .elevatedButtonTheme
+                                    .style
+                                    ?.backgroundColor
+                                    ?.resolve({}),
                             child: IconButton(
-                              icon: const Icon(Icons.add, color: Colors.white),
+                              icon: Icon(Icons.add,
+                                  color: !widget.selected
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.primary,),
                               iconSize: 30.0,
                               padding: const EdgeInsets.all(10.0),
                               onPressed: () {
-                                setState(() {
-                                  widget.product.buyQuantity++;
-                                });
-                                widget.onTotalPriceChange(
-                                    widget.product.price, true);
+                                _updateQuantity(1);
                               },
                             ),
                           ),
                         ],
                       ),
                       Text(
-                          ' ${AppLocalizations.of(context)!.have}: ${widget.product.quantityOwned}'),
+                        ' ${AppLocalizations.of(context)!.have}: ${widget.product.quantityOwned}',
+                        style: TextStyle(
+                          color: widget.selected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).textTheme.bodyLarge?.color,
+                          fontSize: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ],
