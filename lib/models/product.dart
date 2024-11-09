@@ -8,6 +8,8 @@ class Product {
   int buyQuantity;
   double selectedQuantity;
   double quantityOwned; // Rinominato da quantityOwned
+  int quantityUnitOwned;
+  double quantityWeightOwned;
   String unit; // Unità di misura
   String store;
   Map<String, double> macronutrients; // Rinominato da macronutrientsPer100g
@@ -36,6 +38,8 @@ class Product {
     required this.barcode,
     required this.buyQuantity,
     required this.quantityOwned,
+    required this.quantityUnitOwned,
+    required this.quantityWeightOwned,
     this.store = '',
     this.imageUrl = '',
     this.totalWeight = 0,
@@ -64,6 +68,8 @@ class Product {
       store: json['store'] ?? 'other',
       buyQuantity: json['buyQuantity'],
       quantityOwned: double.parse(json['quantityOwned'].toString()),
+      quantityUnitOwned: (json['quantityUnitOwned'] as num).toInt(),
+      quantityWeightOwned: (json['quantityWeightOwned'] as num).toDouble(),
       totalWeight: double.parse(json['totalWeight'].toString()),
       unitWeight: double.parse(json['unitWeight'].toString()),
       unitPrice: double.parse(json['unitPrice'].toString()),
@@ -90,6 +96,8 @@ class Product {
       'imageUrl': imageUrl,
       'buyQuantity': buyQuantity,
       'quantityOwned': quantityOwned,
+      'quantityUnitOwned': quantityUnitOwned,
+      'quantityWeightOwned': quantityWeightOwned,
       'totalWeight': totalWeight,
       'unitWeight': unitWeight,
       'unitPrice': unitPrice,
@@ -114,6 +122,8 @@ class Product {
       barcode: barcode,
       buyQuantity: buyQuantity,
       quantityOwned: quantityOwned,
+      quantityUnitOwned: quantityUnitOwned,
+      quantityWeightOwned: quantityWeightOwned,
       imageUrl: imageUrl,
       totalWeight: totalWeight,
       unitWeight: unitWeight,

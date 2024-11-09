@@ -170,5 +170,6 @@
   "invalidValue": "Valore non valido",
   "enterBudget": "Inserisci il budget",
   "enterAmount": "Inserisci l'importo",
-  "suggest": "Suggerisci"
+  "suggest": "Suggerisci",
+  "noAvailableProducts": "Nessun prodotto disponibile, prova a cambiare categoria o fare la spesa"
 }

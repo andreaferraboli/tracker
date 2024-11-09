@@ -17,10 +17,9 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  double _sliderValue = 0; // Slider per la quantità
-  int _unitsFromSlider = 0; // Quantità in unità basata sullo slider
+  double _sliderValue = 0; // Slider per la quantità unità
   double _weightFromTextField = 0; // Peso in grammi inserito nel TextField
-  int _unitsFromTextField = 0; // Quantità in unità da TextField
+  int _unitsFromTextField = 0; // Quantità in unità inserita nel TextField
   late TextEditingController _weightController;
   late TextEditingController _unitsController;
   late FocusNode _weightFocusNode;
@@ -30,9 +29,9 @@ class _ProductCardState extends State<ProductCard> {
   void initState() {
     super.initState();
     _weightController = TextEditingController(
-        text: _weightFromTextField.toStringAsFixed(0)); // Inizializza il peso
+        text: widget.product.quantityWeightOwned.toStringAsFixed(0));
     _unitsController = TextEditingController(
-        text: _unitsFromTextField.toString()); // Inizializza le unità
+        text: widget.product.quantityOwned.toString());
     _weightFocusNode = FocusNode();
     _unitsFocusNode = FocusNode();
   }
@@ -50,10 +49,8 @@ class _ProductCardState extends State<ProductCard> {
   void _updateSliderValue(double value) {
     setState(() {
       _sliderValue = value;
-      _unitsFromSlider = value.toInt(); // Modifica la quantità in unità
-      _weightFromTextField = _unitsFromSlider *
-          widget.product.totalWeight *
-          1000; // Aggiorna il peso in grammi
+      widget.product.quantityUnitOwned = value.toInt();
+      _weightFromTextField = _sliderValue * widget.product.totalWeight * 1000;
     });
   }
 
@@ -78,12 +75,10 @@ class _ProductCardState extends State<ProductCard> {
 
       setState(() {
         _weightFromTextField = newWeight;
-        _unitsFromTextField =
-            (_weightFromTextField / widget.product.totalWeight)
-                .toInt(); // Calcola la quantità in unità
+        widget.product.quantityWeightOwned = newWeight;
+        _unitsFromTextField = (newWeight / widget.product.totalWeight).toInt();
         if (!_unitsFocusNode.hasFocus) {
-          _unitsController.text =
-              _unitsFromTextField.toString(); // Aggiorna solo se necessario
+          _unitsController.text = _unitsFromTextField.toString();
         }
       });
     } catch (e) {
@@ -101,12 +96,10 @@ class _ProductCardState extends State<ProductCard> {
 
       setState(() {
         _unitsFromTextField = newUnits;
-        _weightFromTextField = _unitsFromTextField *
-            widget.product.totalWeight *
-            1000; // aggiorna il peso in grammi
+        widget.product.quantityOwned = newUnits as double;
+        _weightFromTextField = newUnits * widget.product.totalWeight * 1000;
         if (!_weightFocusNode.hasFocus) {
-          _weightController.text = _weightFromTextField
-              .toStringAsFixed(0); // aggiorna solo se necessario
+          _weightController.text = _weightFromTextField.toStringAsFixed(0);
         }
       });
     } catch (e) {
@@ -137,7 +130,7 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    double maxQuantity = widget.product.quantityOwned.toDouble();
+    double maxQuantity = widget.product.quantityUnitOwned.toDouble();
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -171,7 +164,7 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${widget.product.quantityOwned * widget.product.totalWeight * 1000} ${AppLocalizations.of(context)!.gramsAvailable}',
+                    '${widget.product.quantityWeightOwned} ${AppLocalizations.of(context)!.gramsAvailable}',
                     style: TextStyle(
                       color: Colors.grey[600],
                     ),
@@ -181,10 +174,10 @@ class _ProductCardState extends State<ProductCard> {
                     value: _sliderValue,
                     min: 0,
                     max: maxQuantity,
-                    divisions: widget.product.quantityOwned > 0
-                        ? widget.product.quantityOwned.toInt()
+                    divisions: widget.product.quantityUnitOwned > 0
+                        ? widget.product.quantityUnitOwned
                         : null,
-                    label: '$_unitsFromSlider',
+                    label: '$_sliderValue',
                     onChanged: (value) {
                       _updateSliderValue(value);
                     },

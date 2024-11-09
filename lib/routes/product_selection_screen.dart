@@ -312,7 +312,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     initiallyExpanded: true,
                     leading: const Icon(Icons.list),
                     children: filteredProducts.isEmpty
-                        ? [const Center(child: CircularProgressIndicator())]
+                         ? [Center(child: Text(AppLocalizations.of(context)!.noAvailableProducts))]
                         : [
                             ListView.builder(
                               shrinkWrap: true,
