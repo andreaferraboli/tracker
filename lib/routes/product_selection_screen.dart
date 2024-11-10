@@ -99,8 +99,9 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         int index = products.indexWhere(
             (product) => product['productId'] == mealProduct.productId);
         if (index != -1) {
-          products[index]['quantityOwned'] = products[index]['quantityOwned'] -
-              mealProduct.selectedQuantity / mealProduct.totalWeight;
+          products[index]['quantityOwned'] = mealProduct.quantityOwned;
+          products[index]['quantityUnitOwned'] = mealProduct.quantityUnitOwned;
+          products[index]['quantityWeightOwned'] = mealProduct.quantityWeightOwned;
         }
         return {
           'idProdotto': mealProduct.productId,
@@ -323,8 +324,9 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                 final product = filteredProducts[index];
                                 return ProductCard(
                                   product: product,
-                                  addProductToMeal: (product, quantity) {
+                                  addProductToMeal: (product, quantity, inputSource) {
                                     setState(() {
+                                      //todo:cambia qua in modo che vada
                                       mealProducts.add(product.copyWith(
                                           selectedQuantity: quantity));
                                       originalProducts.remove(product);

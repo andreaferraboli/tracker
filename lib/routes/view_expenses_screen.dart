@@ -94,7 +94,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
     for (var expense in filteredExpenses) {
       for (var product in expense.products) {
         categoryData[product.category] =
-            (categoryData[product.category] ?? 0) + product.price;
+            (categoryData[product.category] ?? 0) + product.price * product.quantity;
       }
     }
 

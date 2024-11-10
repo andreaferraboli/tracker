@@ -171,5 +171,6 @@
   "enterBudget": "Enter budget",
   "enterAmount": "Enter amount",
   "suggest": "Suggest",
-  "noAvailableProducts": "No available products, try changing category or go shopping"
+  "noAvailableProducts": "No available products, try changing category or go shopping",
+  "quantityUnitOwned": "Units Owned"
 }

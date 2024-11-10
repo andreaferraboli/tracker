@@ -67,8 +67,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   String? selectedStore;
   File? _selectedImage;
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _quantityOwnedController =
-      TextEditingController();
+  final TextEditingController _quantityOwnedController =TextEditingController();
+  final TextEditingController _quantityUnitOwnedController =TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _totalWeightController = TextEditingController();
   final TextEditingController _nameProductController = TextEditingController();
@@ -116,6 +116,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     }
     _quantityController.text = _productData['quantity'].toString();
     _quantityOwnedController.text = _productData['quantityOwned'].toString();
+    _quantityUnitOwnedController.text = _productData['quantityUnitOwned'].toString();
     _imageUrlController.text = _productData['imageUrl'];
     _priceController.text = _productData['price'].toString();
     _totalWeightController.text = _productData['totalWeight'].toString();
@@ -127,6 +128,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   void dispose() {
     _quantityController.dispose();
     _quantityOwnedController.dispose();
+    _quantityUnitOwnedController.dispose();
     _imageUrlController.dispose();
     _priceController.dispose();
     _totalWeightController.dispose();
@@ -749,6 +751,16 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                         setState(() {
                           value = value?.replaceAll(',', '.');
                           _productData['quantityOwned'] =
+                              double.tryParse(value ?? '0') ?? 0.0;
+                        });
+                      }),
+                    ),Expanded(
+                      child: _buildTextField(
+                          '${AppLocalizations.of(context)!.quantityUnitOwned}:',
+                          _quantityUnitOwnedController, (value) {
+                        setState(() {
+                          value = value?.replaceAll(',', '.');
+                          _productData['quantityUnitOwned'] =
                               double.tryParse(value ?? '0') ?? 0.0;
                         });
                       }),

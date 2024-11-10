@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 
+import '../routes/product_screen.dart';
+
 class ProductCard extends StatefulWidget {
   final Product product;
-  final Function(Product, double)? addProductToMeal;
+  final Function(Product, double, InputSource)? addProductToMeal;
 
   const ProductCard({
     Key? key,
@@ -15,6 +17,8 @@ class ProductCard extends StatefulWidget {
   @override
   State<ProductCard> createState() => _ProductCardState();
 }
+
+enum InputSource { slider, weightField, unitsField }
 
 class _ProductCardState extends State<ProductCard> {
   double _sliderValue = 0; // Slider per la quantità unità
@@ -28,10 +32,8 @@ class _ProductCardState extends State<ProductCard> {
   @override
   void initState() {
     super.initState();
-    _weightController = TextEditingController(
-        text: widget.product.quantityWeightOwned.toStringAsFixed(0));
-    _unitsController = TextEditingController(
-        text: widget.product.quantityOwned.toString());
+    _weightController = TextEditingController(text: "0");
+    _unitsController = TextEditingController(text: "0");
     _weightFocusNode = FocusNode();
     _unitsFocusNode = FocusNode();
   }
@@ -49,8 +51,6 @@ class _ProductCardState extends State<ProductCard> {
   void _updateSliderValue(double value) {
     setState(() {
       _sliderValue = value;
-      widget.product.quantityUnitOwned = value.toInt();
-      _weightFromTextField = _sliderValue * widget.product.totalWeight * 1000;
     });
   }
 
@@ -75,8 +75,6 @@ class _ProductCardState extends State<ProductCard> {
 
       setState(() {
         _weightFromTextField = newWeight;
-        widget.product.quantityWeightOwned = newWeight;
-        _unitsFromTextField = (newWeight / widget.product.totalWeight).toInt();
         if (!_unitsFocusNode.hasFocus) {
           _unitsController.text = _unitsFromTextField.toString();
         }
@@ -88,16 +86,30 @@ class _ProductCardState extends State<ProductCard> {
 
   // Metodo per validare la quantità in unità inserita nel TextField
   void _validateUnits(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _unitsFromTextField = 0;
+        if (!_weightFocusNode.hasFocus) {
+          _weightController.text = _weightFromTextField.toStringAsFixed(0);
+        }
+      });
+      return;
+    }
+
     try {
       final int newUnits = int.parse(value);
-      if (newUnits < 0) {
+      if (newUnits < 0 || newUnits > widget.product.quantityOwned) {
+        setState(() {
+          _unitsFromTextField = 0;
+          if (!_weightFocusNode.hasFocus) {
+            _weightController.text = _weightFromTextField.toStringAsFixed(0);
+          }
+        });
         throw FormatException("La quantità non può essere negativa");
       }
 
       setState(() {
         _unitsFromTextField = newUnits;
-        widget.product.quantityOwned = newUnits as double;
-        _weightFromTextField = newUnits * widget.product.totalWeight * 1000;
         if (!_weightFocusNode.hasFocus) {
           _weightController.text = _weightFromTextField.toStringAsFixed(0);
         }
@@ -134,109 +146,160 @@ class _ProductCardState extends State<ProductCard> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            if (widget.product.imageUrl.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  widget.product.imageUrl,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductScreen(product: widget.product),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              // Immagine del prodotto o spazio riservato
+              if (widget.product.imageUrl.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    widget.product.imageUrl,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              else
+                const SizedBox(width: 80, height: 80),
+
+              const SizedBox(width: 16),
+
+              // Dettagli del prodotto
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.product.productName,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${(widget.product.quantityWeightOwned * 1000).toStringAsFixed((widget.product.quantityWeightOwned * 1000) % 1 == 0 ? 0 : 2)} ${AppLocalizations.of(context)!.gramsAvailable}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Slider per selezionare la quantità
+                    Slider(
+                      value: _sliderValue,
+                      min: 0,
+                      max: maxQuantity,
+                      divisions: widget.product.quantityUnitOwned > 0
+                          ? widget.product.quantityUnitOwned
+                          : null,
+                      label: '$_sliderValue',
+                      onChanged: (value) {
+                        _updateSliderValue(value);
+                      },
+                    ),
+
+                    // Input peso e unità
+                    Row(
+                      children: [
+                        Text(AppLocalizations.of(context)!.weightInGrams),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText:
+                                  AppLocalizations.of(context)!.weightInGrams,
+                            ),
+                            controller: _weightController,
+                            focusNode: _weightFocusNode,
+                            onChanged: (value) {
+                              _validateWeight(value);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(AppLocalizations.of(context)!.units),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context)!.units,
+                            ),
+                            controller: _unitsController,
+                            focusNode: _unitsFocusNode,
+                            onChanged: (value) {
+                              _validateUnits(value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              )
-            else
-              const SizedBox(width: 80, height: 80),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.product.productName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${widget.product.quantityWeightOwned} ${AppLocalizations.of(context)!.gramsAvailable}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Slider(
-                    value: _sliderValue,
-                    min: 0,
-                    max: maxQuantity,
-                    divisions: widget.product.quantityUnitOwned > 0
-                        ? widget.product.quantityUnitOwned
-                        : null,
-                    label: '$_sliderValue',
-                    onChanged: (value) {
-                      _updateSliderValue(value);
-                    },
-                  ),
-                  Row(
-                    children: [
-                      Text(AppLocalizations.of(context)!.weightInGrams),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 40,
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText:
-                            AppLocalizations.of(context)!.weightInGrams,
-                          ),
-                          controller: _weightController,
-                          focusNode: _weightFocusNode,
-                          onChanged: (value) {
-                            _validateWeight(value);
-                          },
-                        ),
-                      ),
-                      Text(AppLocalizations.of(context)!.units),
-                      const SizedBox(width: 8),
-                      SizedBox(
-                        width: 40,
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: AppLocalizations.of(context)!.units,
-                          ),
-                          controller: _unitsController,
-                          focusNode: _unitsFocusNode,
-                          onChanged: (value) {
-                            _validateUnits(value);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: () {
-                if (widget.addProductToMeal != null) {
-                  widget.addProductToMeal!(
-                      widget.product, _weightFromTextField / 1000);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.all(8),
-                minimumSize: const Size(16, 16),
+
+              const SizedBox(width: 8),
+
+              // Bottone per aggiungere il prodotto
+              ElevatedButton(
+                onPressed: () {
+                  InputSource source = InputSource.slider;
+                  double quantity = 0;
+                  if (_sliderValue > 0) {
+                    source = InputSource.slider;
+                    quantity = _sliderValue;
+                    //todo: mi sa che devi spostare la logica di aggiornamento a valle
+                    widget.product.quantityUnitOwned -= _sliderValue.toInt();
+                    if (widget.product.quantityUnitOwned == 0) {
+                      widget.product.quantityOwned--;
+                      widget.product.quantityUnitOwned =
+                          widget.product.quantity;
+                    }
+                    widget.product.quantityWeightOwned -=
+                        _sliderValue * widget.product.unitWeight;
+                  } else if (_unitsFromTextField > 0) {
+                    source = InputSource.unitsField;
+                    quantity = _unitsFromTextField.toDouble();
+                    widget.product.quantityOwned -= _unitsFromTextField;
+                    widget.product.quantityWeightOwned -=
+                        _unitsFromTextField * widget.product.totalWeight;
+                  } else if (_weightFromTextField > 0) {
+                    source = InputSource.weightField;
+                    quantity = _weightFromTextField / 1000;
+                    widget.product.quantityUnitOwned -=
+                        (_weightFromTextField / widget.product.unitWeight)
+                            .ceil();
+                    widget.product.quantityWeightOwned -=
+                        _weightFromTextField / 1000;
+                    if (widget.product.quantityWeightOwned == 0) {
+                      widget.product.quantityOwned = 0;
+                    }
+                  }
+                  if (widget.addProductToMeal != null) {
+                    widget.addProductToMeal!(widget.product, quantity, source);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(8),
+                  minimumSize: const Size(16, 16),
+                ),
+                child: const Icon(Icons.add, size: 16),
               ),
-              child: const Icon(Icons.add, size: 16),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
