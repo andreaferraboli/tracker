@@ -5,6 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/services/app_colors.dart';
+
 
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
@@ -310,23 +312,23 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
   Widget build(BuildContext context) {
     final List<Color> colors = [
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 34, 65, 98)
-          : const Color.fromARGB(255, 41, 36, 36),
+          ? AppColors.shoppingLight
+          : AppColors.shoppingDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 97, 3, 3)
-          : const Color.fromARGB(255, 97, 3, 3),
+          ? AppColors.addMealLight
+          : AppColors.addMealDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 89, 100, 117)
-          : const Color.fromARGB(255, 100, 100, 100),
+          ? AppColors.viewExpensesLight
+        : AppColors.viewExpensesDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 0, 126, 167)
-          : const Color.fromARGB(255, 150, 150, 150),
+          ? AppColors.inventoryLight
+          : AppColors.inventoryDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 45, 49, 66)
-          : const Color.fromARGB(255, 50, 50, 50),
+          ? AppColors.viewMealsLight
+          : AppColors.viewMealsDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 66, 12, 20)
-          : const Color.fromARGB(255, 66, 12, 20),
+          ? AppColors.recipeTipsLight
+          : AppColors.recipeTipsDark,
     ];
     return Scaffold(
       appBar: AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
@@ -345,7 +347,11 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           } else {
             final meals = snapshot.data!;
             final filteredMeals = _filterMeals(meals);
-
+            filteredMeals.sort((a, b) {
+              final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
+              final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
+              return aDate.compareTo(bDate);
+            });
             if (filteredMeals.isEmpty) {
               return Center(
                 child: Column(
@@ -443,11 +449,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    selectedPeriod == 'week'
-                        ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
-                        : selectedPeriod == 'month'
-                            ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                            : '${currentDate.year}',
+                    '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredMeals.map((meal) => meal.totalExpense).reduce((value, element) => value + element).toStringAsFixed(2)} €',
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -548,11 +550,21 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        MealDetailScreen(meal: meal),
+                                    builder: (context) => MealDetailScreen(meal: meal),
                                   ),
-                                );
+                                ).then((returnedMeal) {
+                                  if (returnedMeal != null) {
+                                    // Chiama la funzione desiderata, ad esempio updateMeal
+                                    _fetchMeals().then((meals) {
+                                      setState(() {
+                                        filteredMeals.clear();
+                                        filteredMeals.addAll(_filterMeals(meals));
+                                      });
+                                    });
+                                  }
+                                });
                               },
+
                             ),
                           ),
                         );

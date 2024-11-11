@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
+import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
@@ -61,14 +62,16 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
     List<Expense> filteredExpenses = [];
 
     if (selectedPeriod == 'week') {
-      final startOfWeek =
-          currentDate.subtract(Duration(days: currentDate.weekday - 1));
-      final endOfWeek = startOfWeek.add(const Duration(days: 6));
+      final startOfWeek = DateTime(currentDate.year, currentDate.month,
+          currentDate.day - (currentDate.weekday - 1));
+      final endOfWeek = startOfWeek.add(const Duration(days: 7));
+
       filteredExpenses = expenses.where((expense) {
         final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
-        return expenseDate
-                .isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
-            expenseDate.isBefore(endOfWeek.add(const Duration(days: 1)));
+        final isAfterStart =
+            expenseDate.isAfter(startOfWeek.subtract(const Duration(days: 1)));
+        final isBeforeEnd = expenseDate.isBefore(endOfWeek);
+        return isAfterStart && isBeforeEnd;
       }).toList();
     } else if (selectedPeriod == 'month') {
       filteredExpenses = expenses.where((expense) {
@@ -93,8 +96,8 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
 
     for (var expense in filteredExpenses) {
       for (var product in expense.products) {
-        categoryData[product.category] =
-            (categoryData[product.category] ?? 0) + product.price * product.quantity;
+        categoryData[product.category] = (categoryData[product.category] ?? 0) +
+            product.price * product.quantity;
       }
     }
 
@@ -131,7 +134,8 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
 
       for (var expense in filteredExpenses) {
         final expenseDate = DateFormat('dd-MM-yyyy').parse(expense.date);
-        final weekOfMonth = ((expenseDate.day - 1) ~/ 7) + 1;
+        var weekOfMonth = ((expenseDate.day - 1) ~/ 7) + 1;
+        weekOfMonth = weekOfMonth > 4 ? 4 : weekOfMonth;
         periodData['$weekOfMonth'] =
             (periodData['$weekOfMonth'] ?? 0) + expense.totalAmount;
       }
@@ -190,23 +194,23 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
   Widget build(BuildContext context) {
     final List<Color> colors = [
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 34, 65, 98)
-          : const Color.fromARGB(255, 41, 36, 36),
+          ? AppColors.shoppingLight
+          : AppColors.shoppingDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 97, 3, 3)
-          : const Color.fromARGB(255, 97, 3, 3),
+          ? AppColors.addMealLight
+          : AppColors.addMealDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 89, 100, 117)
-          : const Color.fromARGB(255, 100, 100, 100),
+          ? AppColors.viewExpensesLight
+          : AppColors.viewExpensesDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 0, 126, 167)
-          : const Color.fromARGB(255, 150, 150, 150),
+          ? AppColors.inventoryLight
+          : AppColors.inventoryDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 45, 49, 66)
-          : const Color.fromARGB(255, 50, 50, 50),
+          ? AppColors.viewMealsLight
+          : AppColors.viewMealsDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 66, 12, 20)
-          : const Color.fromARGB(255, 66, 12, 20),
+          ? AppColors.recipeTipsLight
+          : AppColors.recipeTipsDark,
     ];
     return Scaffold(
       appBar: AppBar(
@@ -228,8 +232,13 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
             );
           } else {
             final expenses = snapshot.data!;
-            final filteredExpenses = _filterExpensesByPeriod(expenses);
-
+            var filteredExpenses = _filterExpensesByPeriod(expenses);
+            //sort filtered expenses by date
+            filteredExpenses.sort((a, b) {
+              final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
+              final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
+              return aDate.compareTo(bDate);
+            });
             if (filteredExpenses.isEmpty) {
               return Center(
                 child: Column(
@@ -294,11 +303,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          selectedPeriod == 'week'
-                              ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
-                              : selectedPeriod == 'month'
-                                  ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                                  : '${currentDate.year}',
+                          '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredExpenses.map((expenses) => expenses.totalAmount).reduce((value, element) => value + element).toStringAsFixed(2)} €',
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -356,7 +361,16 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                                 builder: (context) =>
                                     ExpenseDetailScreen(expense: expense),
                               ),
-                            );
+                            ).then((returnedExpense) {
+                              if (returnedExpense != null) {
+                                _fetchExpenses().then((expenses) {
+                                  setState(() {
+                                    filteredExpenses =
+                                        _filterExpensesByPeriod(expenses);
+                                  });
+                                });
+                              }
+                            });
                           },
                           child: Card(
                             color: Theme.of(context).primaryColor,

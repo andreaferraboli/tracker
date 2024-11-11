@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:tracker/models/meal_type.dart';
 
 extension MealTypeL18n on MealType {
@@ -64,7 +65,45 @@ extension AppLocalizationsExtension on AppLocalizations {
         return category; // Ritorna la stringa originale se non è trovata
     }
   }
-
+  String colorLabel(BuildContext context, String colorName) {
+    switch (colorName) {
+      case 'primary':
+        return Intl.message(
+          'Primary Color',
+          name: 'primaryColor',
+          desc: 'Label for the primary color',
+          locale: Localizations.localeOf(context).toString(),
+        );
+      case 'onPrimary':
+        return Intl.message(
+          'On Primary Color',
+          name: 'onPrimaryColor',
+          desc: 'Label for the on primary color',
+          locale: Localizations.localeOf(context).toString(),
+        );
+      case 'secondary':
+        return Intl.message(
+          'Secondary Color',
+          name: 'secondaryColor',
+          desc: 'Label for the secondary color',
+          locale: Localizations.localeOf(context).toString(),
+        );
+      case 'appBarBackground':
+        return Intl.message(
+          'AppBar Background Color',
+          name: 'appBarBackgroundColor',
+          desc: 'Label for the AppBar background color',
+          locale: Localizations.localeOf(context).toString(),
+        );
+      default:
+        return Intl.message(
+          'Unknown Color',
+          name: 'unknownColor',
+          desc: 'Label for an unknown color',
+          locale: Localizations.localeOf(context).toString(),
+        );
+    }
+  }
   String getNutrientString(String nutrient) {
     switch (nutrient) {
       case 'Energy':

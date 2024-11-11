@@ -596,28 +596,18 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).textTheme.bodyLarge?.color),
+              color: Theme.of(context).appBarTheme.foregroundColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(
+        title: Text( widget.product != null
+            ? AppLocalizations.of(context)!.editProduct
+            :
           AppLocalizations.of(context)!.newProduct,
-          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+          style: TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.star_border,
-                color: Theme.of(context).textTheme.bodyLarge?.color),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.more_vert,
-                color: Theme.of(context).textTheme.bodyLarge?.color),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Container(
         color: Theme.of(context).scaffoldBackgroundColor,

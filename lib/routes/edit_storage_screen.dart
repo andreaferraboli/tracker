@@ -25,6 +25,7 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
   late String selectedIcon; // Cambiato a String
   List<String> filteredIcons = [];
   final TextEditingController searchController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
   // Definisce tutte le icone in una lista come stringhe
   final List<String> allIcons = IconsHelper.iconMap.keys.toList();
@@ -71,7 +72,7 @@ class _EditStorageScreenState extends State<EditStorageScreen> {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.storageName,
               ),
-              controller: TextEditingController(text: storageName),
+              controller: nameController..text = storageName,
               onChanged: (value) {
                 setState(() {
                   storageName = value;

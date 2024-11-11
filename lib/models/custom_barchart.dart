@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:tracker/services/app_colors.dart';
 
 class CustomBarChart extends StatelessWidget {
   final Map<String, double> periodData;
@@ -13,23 +14,23 @@ class CustomBarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Color> colors = [
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 34, 65, 98)
-          : const Color.fromARGB(255, 41, 36, 36),
+          ? AppColors.shoppingLight
+          : AppColors.shoppingDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 97, 3, 3)
-          : const Color.fromARGB(255, 97, 3, 3),
+          ? AppColors.addMealLight
+          : AppColors.addMealDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 89, 100, 117)
-          : const Color.fromARGB(255, 100, 100, 100),
+          ? AppColors.viewExpensesLight
+          : AppColors.viewExpensesDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 0, 126, 167)
-          : const Color.fromARGB(255, 150, 150, 150),
+          ? AppColors.inventoryLight
+          : AppColors.inventoryDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 45, 49, 66)
-          : const Color.fromARGB(255, 50, 50, 50),
+          ? AppColors.viewMealsLight
+          : AppColors.viewMealsDark,
       Theme.of(context).brightness == Brightness.light
-          ? const Color.fromARGB(255, 66, 12, 20)
-          : const Color.fromARGB(255, 66, 12, 20),
+          ? AppColors.recipeTipsLight
+          : AppColors.recipeTipsDark,
     ];
 
     final maxValue = periodData.values.reduce((a, b) => a > b ? a : b);

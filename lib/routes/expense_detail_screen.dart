@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
@@ -10,11 +12,78 @@ class ExpenseDetailScreen extends StatelessWidget {
   const ExpenseDetailScreen({Key? key, required this.expense})
       : super(key: key);
 
+  Future<void> deleteExpense(Expense expense) async {
+    // Recupera l'ID dell'utente
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final expensesDocRef =
+        FirebaseFirestore.instance.collection('expenses').doc(userId);
+
+    // Ottiene il documento delle spese
+    final expensesDoc = await expensesDocRef.get();
+
+    // Verifica se il documento esiste e contiene dati
+    if (!expensesDoc.exists || expensesDoc.data() == null) return;
+
+    // Recupera la lista delle spese
+    final expenses = (expensesDoc.data()!['expenses'] as List)
+        .map((expense) => Expense.fromJson(expense))
+        .toList();
+
+    // Rimuove la spesa specifica
+    expenses.removeWhere((e) => e.id == expense.id);
+
+    // Aggiorna il documento delle spese
+    await expensesDocRef
+        .update({'expenses': expenses.map((e) => e.toJson()).toList()});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.expenseDetailTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            color: Colors.red,
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(AppLocalizations.of(context)!.confirm),
+                    content: Text(
+                        AppLocalizations.of(context)!.confirmDeleteExpense),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(AppLocalizations.of(context)!.no),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      TextButton(
+                        child: Text(AppLocalizations.of(context)!.yes),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (confirm == true) {
+                await deleteExpense(expense);
+                Navigator.of(context).pop(expense);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.expenseDeleted),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

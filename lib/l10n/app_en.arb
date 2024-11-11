@@ -172,5 +172,22 @@
   "enterAmount": "Enter amount",
   "suggest": "Suggest",
   "noAvailableProducts": "No available products, try changing category or go shopping",
-  "quantityUnitOwned": "Units Owned"
+  "quantityUnitOwned": "Units Owned",
+  "editProduct": "Edit Product",
+  "mealDeleted": "Meal deleted successfully",
+  "expenseDeleted": "Expense deleted successfully",
+  "confirmDeleteExpense": "Are you sure you want to delete this expense?",
+  "no": "No",
+  "yes": "Yes",
+  "confirmDeleteMeal": "Are you sure you want to delete this meal?",
+  "modifyThemeColors": "Modify Theme Colors",
+  "customizeTheme": "Customize Theme",
+  "lightTheme": "Light Theme",
+  "darkTheme": "Dark Theme",
+  "primaryColor": "Primary Color",
+  "onPrimaryColor": "On Primary Color",
+  "secondaryColor": "Secondary Color",
+  "appBarBackgroundColor": "AppBar Background Color",
+  "selectColor": "Select Color",
+  "colorLabel": "{color}"
 }

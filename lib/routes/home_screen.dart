@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/main.dart'; // Supponendo che MyApp sia definito in main.dart
 
 class HomeScreen extends StatelessWidget {
@@ -14,23 +15,23 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shoppingColor = Theme.of(context).brightness == Brightness.light
-        ? const Color.fromARGB(255, 34, 65, 98)
-        : const Color.fromARGB(255, 41, 36, 36);
+        ? AppColors.shoppingLight
+        : AppColors.shoppingDark;
     final addMealColor = Theme.of(context).brightness == Brightness.light
-        ? const Color.fromARGB(255, 97, 3, 3)
-        : const Color.fromARGB(255, 97, 3, 3);
+        ? AppColors.addMealLight
+        : AppColors.addMealDark;
     final viewExpensesColor = Theme.of(context).brightness == Brightness.light
-        ? const Color.fromARGB(255, 89, 100, 117)
-        : const Color.fromARGB(255, 100, 100, 100);
+        ? AppColors.viewExpensesLight
+        : AppColors.viewExpensesDark;
     final inventoryColor = Theme.of(context).brightness == Brightness.light
-        ? const Color.fromARGB(255, 0, 126, 167)
-        : const Color.fromARGB(255, 150, 150, 150);
+        ? AppColors.inventoryLight
+        : AppColors.inventoryDark;
     final viewMealsColor = Theme.of(context).brightness == Brightness.light
-        ? const Color.fromARGB(255, 45, 49, 66)
-        : const Color.fromARGB(255, 50, 50, 50);
+        ? AppColors.viewMealsLight
+        : AppColors.viewMealsDark;
     final recipeTipsColor = Theme.of(context).brightness == Brightness.light
-        ? const Color.fromARGB(255, 66, 12, 20)
-        : const Color.fromARGB(255, 66, 12, 20);
+        ? AppColors.recipeTipsLight
+        : AppColors.recipeTipsDark;
 
     return Scaffold(
       appBar: AppBar(
@@ -117,6 +118,13 @@ class HomeScreen extends StatelessWidget {
                         : const Locale('it');
                 MyApp.setLocale(context, newLocale);
                 Navigator.pop(context); // Chiude il drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.format_paint),
+              title: Text(AppLocalizations.of(context)!.modifyThemeColors),
+              onTap: () {
+                Navigator.pushNamed(context, '/themeCustomization');
               },
             ),
             ListTile(
