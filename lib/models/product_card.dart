@@ -6,7 +6,7 @@ import '../routes/product_screen.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
-  final Function(Product, double, InputSource)? addProductToMeal;
+  final Function(Product, double)? addProductToMeal;
 
   const ProductCard({
     Key? key,
@@ -18,7 +18,6 @@ class ProductCard extends StatefulWidget {
   State<ProductCard> createState() => _ProductCardState();
 }
 
-enum InputSource { slider, weightField, unitsField }
 
 class _ProductCardState extends State<ProductCard> {
   double _sliderValue = 0; // Slider per la quantità unità
@@ -256,11 +255,9 @@ class _ProductCardState extends State<ProductCard> {
               // Bottone per aggiungere il prodotto
               ElevatedButton(
                 onPressed: () {
-                  InputSource source = InputSource.slider;
                   double quantity = 0;
                   if (_sliderValue > 0) {
-                    source = InputSource.slider;
-                    quantity = _sliderValue;
+                    quantity = _sliderValue*widget.product.unitWeight;
                     //todo: mi sa che devi spostare la logica di aggiornamento a valle
                     widget.product.quantityUnitOwned -= _sliderValue.toInt();
                     if (widget.product.quantityUnitOwned == 0) {
@@ -271,13 +268,11 @@ class _ProductCardState extends State<ProductCard> {
                     widget.product.quantityWeightOwned -=
                         _sliderValue * widget.product.unitWeight;
                   } else if (_unitsFromTextField > 0) {
-                    source = InputSource.unitsField;
-                    quantity = _unitsFromTextField.toDouble();
+                    quantity = _unitsFromTextField.toDouble()*widget.product.totalWeight;
                     widget.product.quantityOwned -= _unitsFromTextField;
                     widget.product.quantityWeightOwned -=
                         _unitsFromTextField * widget.product.totalWeight;
                   } else if (_weightFromTextField > 0) {
-                    source = InputSource.weightField;
                     quantity = _weightFromTextField / 1000;
                     widget.product.quantityUnitOwned -=
                         (_weightFromTextField / widget.product.unitWeight)
@@ -289,7 +284,7 @@ class _ProductCardState extends State<ProductCard> {
                     }
                   }
                   if (widget.addProductToMeal != null) {
-                    widget.addProductToMeal!(widget.product, quantity, source);
+                    widget.addProductToMeal!(widget.product, quantity);
                   }
                 },
                 style: ElevatedButton.styleFrom(

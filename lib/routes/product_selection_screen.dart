@@ -324,7 +324,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                 final product = filteredProducts[index];
                                 return ProductCard(
                                   product: product,
-                                  addProductToMeal: (product, quantity, inputSource) {
+                                  addProductToMeal: (product, quantity) {
                                     setState(() {
                                       //todo:cambia qua in modo che vada
                                       mealProducts.add(product.copyWith(

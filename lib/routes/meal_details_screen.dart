@@ -91,7 +91,7 @@ class MealDetailScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                                '${localizations.quantity}: ${product['quantitySelected']} kg'),
+                                '${localizations.quantity}: ${product['quantitySelected']?.toStringAsFixed(3)} kg'),
                             Text(
                                 '${localizations.price}: €${product['price']}'),
                           ],
