@@ -190,5 +190,15 @@
   "appBarBackgroundColor": "AppBar Background Color",
   "selectColor": "Select Color",
   "colorLabel": "{color}",
-  "daysUntilExpiration": "expiration"
+  "daysUntilExpiration": "expiration",
+  "delete": "Delete",
+  "confirmDelete": "Are you sure you want to delete this supermarket?",
+  "confirmDeleteMessage": "Are you sure you want to delete {name}?",
+  "newPassword": "New Password",
+  "updatePassword": "Update Password",
+  "passwordUpdated": "Password updated successfully!",
+  "errorUpdatingPassword": "Error updating password. Please try again.",
+  "currentPassword": "Current Password",
+  "confirmNewPassword": "Confirm New Password",
+  "incorrectCurrentPassword": "The current password is incorrect."
 }

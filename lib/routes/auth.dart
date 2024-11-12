@@ -20,6 +20,8 @@ class AuthPage extends ConsumerStatefulWidget {
 
 class _AuthPageState extends ConsumerState<AuthPage> {
   bool isLogin = true;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -58,7 +60,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         // Creazione documento principale dell'utente
         await userDocRef.set({
           "username": _usernameController.text.trim(),
-          "categories": await CategoryServices.getAndLoadCategoriesData(),
+          "supermarkets": [],
         });
 
 // Creazione documento per products
@@ -186,8 +188,20 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.password,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
                 ),
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return AppLocalizations.of(context)!.enterPassword;
@@ -201,8 +215,21 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                   controller: _confirmPasswordController,
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.confirmPassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isConfirmPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmPasswordVisible =
+                              !_isConfirmPasswordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_isConfirmPasswordVisible,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return AppLocalizations.of(context)!.confirmPassword;

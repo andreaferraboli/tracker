@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppColors {
+  static Color primaryLight = Color.fromARGB(255, 45, 49, 66);
+  static Color onPrimaryLight = Color.fromARGB(255, 234, 232, 255);
+  static Color secondaryLight = Colors.orange;
+  static Color appBarBackgroundLight = Color.fromARGB(255, 234, 232, 255);
+  static Color appBarForegroundLight = Color.fromARGB(255, 45, 49, 66);
+  static Color primaryDark = Color.fromARGB(255, 97, 3, 3);
+  static Color onPrimaryDark = Colors.white;
+  static Color secondaryDark = Color.fromARGB(255, 66, 12, 20);
+  static Color appBarBackgroundDark = Color.fromARGB(255, 97, 3, 3);
+  static Color appBarForegroundDark = Colors.white;
   static var shoppingLight = Color.fromARGB(255, 34, 65, 98);
   static var shoppingDark = Color.fromARGB(255, 41, 36, 36);
 
@@ -39,6 +49,17 @@ class AppColors {
 
 // Metodo per resettare tutti i colori ai valori originali
   static Future<void> resetAllColors() async {
+    //todo: i colori delle card vanno ma gli altri no
+    primaryLight = Color.fromARGB(255, 45, 49, 66);
+    onPrimaryLight = Color.fromARGB(255, 234, 232, 255);
+    secondaryLight = Colors.orange;
+    appBarBackgroundLight = Color.fromARGB(255, 234, 232, 255);
+    appBarForegroundLight = Color.fromARGB(255, 45, 49, 66);
+    primaryDark = Color.fromARGB(255, 97, 3, 3);
+    onPrimaryDark = Colors.white;
+    secondaryDark = Color.fromARGB(255, 66, 12, 20);
+    appBarBackgroundDark = Color.fromARGB(255, 97, 3, 3);
+    appBarForegroundDark = Colors.white;
     shoppingLight = Color.fromARGB(255, 34, 65, 98);
     shoppingDark = Color.fromARGB(255, 41, 36, 36);
     addMealLight = Color.fromARGB(255, 97, 3, 3);
@@ -56,6 +77,16 @@ class AppColors {
 
   // Metodo per salvare tutti i colori
   static Future<void> saveAllColors() async {
+    await saveColor('primaryLight', primaryLight);
+    await saveColor('onPrimaryLight', onPrimaryLight);
+    await saveColor('secondaryLight', secondaryLight);
+    await saveColor('appBarBackgroundLight', appBarBackgroundLight);
+    await saveColor('appBarForegroundLight', appBarForegroundLight);
+    await saveColor('primaryDark', primaryDark);
+    await saveColor('onPrimaryDark', onPrimaryDark);
+    await saveColor('secondaryDark', secondaryDark);
+    await saveColor('appBarBackgroundDark', appBarBackgroundDark);
+    await saveColor('appBarForegroundDark', appBarForegroundDark);
     await saveColor('shoppingLight', shoppingLight);
     await saveColor('shoppingDark', shoppingDark);
     await saveColor('addMealLight', addMealLight);
@@ -72,6 +103,20 @@ class AppColors {
 
   // Metodo per caricare tutti i colori
   static Future<void> loadAllColors() async {
+    primaryLight = await loadColor('primaryLight', primaryLight);
+    onPrimaryLight = await loadColor('onPrimaryLight', onPrimaryLight);
+    secondaryLight = await loadColor('secondaryLight', secondaryLight);
+    appBarBackgroundLight =
+        await loadColor('appBarBackgroundLight', appBarBackgroundLight);
+    appBarForegroundLight =
+        await loadColor('appBarForegroundLight', appBarForegroundLight);
+    primaryDark = await loadColor('primaryDark', primaryDark);
+    onPrimaryDark = await loadColor('onPrimaryDark', onPrimaryDark);
+    secondaryDark = await loadColor('secondaryDark', secondaryDark);
+    appBarBackgroundDark =
+        await loadColor('appBarBackgroundDark', appBarBackgroundDark);
+    appBarForegroundDark =
+        await loadColor('appBarForegroundDark', appBarForegroundDark);
     shoppingLight = await loadColor('shoppingLight', shoppingLight);
     shoppingDark = await loadColor('shoppingDark', shoppingDark);
     addMealLight = await loadColor('addMealLight', addMealLight);

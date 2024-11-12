@@ -56,26 +56,26 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.blue,
-    colorScheme: const ColorScheme.light(
-      primary: Color.fromARGB(255, 45, 49, 66),
-      onPrimary: Color.fromARGB(255, 234, 232, 255),
-      secondary: Colors.orange,
+    colorScheme: ColorScheme.light(
+      primary: AppColors.primaryLight,
+      onPrimary: AppColors.onPrimaryLight,
+      secondary: AppColors.secondaryLight,
     ),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color.fromARGB(255, 234, 232, 255),
-      foregroundColor: Color.fromARGB(255, 45, 49, 66),
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.appBarBackgroundLight,
+      foregroundColor: AppColors.appBarForegroundLight,
       elevation: 4,
       titleTextStyle: TextStyle(
-          color: Color.fromARGB(255, 45, 49, 66),
+          color: AppColors.appBarForegroundLight,
           fontWeight: FontWeight.bold,
           fontSize: 20),
     ),
-    iconTheme: const IconThemeData(color: Color.fromARGB(255, 45, 49, 66)),
+    iconTheme: IconThemeData(color: AppColors.primaryLight),
     scaffoldBackgroundColor: Colors.white,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 45, 49, 66),
-        foregroundColor: const Color.fromARGB(255, 234, 232, 255),
+        backgroundColor: AppColors.primaryLight,
+        foregroundColor: AppColors.onPrimaryLight,
       ),
     ),
     textTheme: const TextTheme(
@@ -90,24 +90,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   ThemeData _darkTheme = ThemeData(
     brightness: Brightness.dark,
     primarySwatch: Colors.deepPurple,
-    colorScheme: const ColorScheme.dark(
-      primary: Color.fromARGB(255, 97, 3, 3),
-      onPrimary: Colors.white,
-      secondary: Color.fromARGB(255, 66, 12, 20),
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.primaryDark,
+      onPrimary: AppColors.onPrimaryDark,
+      secondary: AppColors.secondaryDark,
     ),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color.fromARGB(255, 97, 3, 3),
-      foregroundColor: Colors.white,
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.appBarBackgroundDark,
+      foregroundColor: AppColors.appBarForegroundDark,
       elevation: 4,
+      titleTextStyle: TextStyle(
+          color: AppColors.appBarForegroundDark,
+          fontWeight: FontWeight.bold,
+          fontSize: 20),
     ),
     scaffoldBackgroundColor: Colors.black,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 97, 3, 3),
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primaryDark,
+        foregroundColor: AppColors.onPrimaryDark,
       ),
     ),
-    iconTheme: const IconThemeData(color: Color.fromARGB(255, 97, 3, 3)),
+    iconTheme: IconThemeData(color: AppColors.primaryDark),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white70),

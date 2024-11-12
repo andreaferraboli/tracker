@@ -4,13 +4,22 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/main.dart'; // Supponendo che MyApp sia definito in main.dart
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme;
   final User? user;
 
   const HomeScreen({super.key, required this.toggleTheme, this.user});
 
-  //init dove stampo a console user
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AppColors.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +46,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.home,
-          // Localizzazione del titolo "Home"
           style: TextStyle(
               color: Theme.of(context).appBarTheme.titleTextStyle?.color),
         ),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.menu), // Icona burger menu
+              icon: const Icon(Icons.menu),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -52,14 +60,13 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         actions: [
-          if (user == null)
+          if (widget.user == null)
             Row(
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
                     AppLocalizations.of(context)!.loginRegister,
-                    // Localizzazione per "accedi/registrati"
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -77,7 +84,7 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Text(
-                    user!.displayName ?? '',
+                    widget.user!.displayName ?? '',
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),
@@ -97,12 +104,12 @@ class HomeScreen extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).appBarTheme.backgroundColor,
               ),
               child: Text(
-                AppLocalizations.of(context)!.menu, // Localizzazione per "Menu"
-                style: const TextStyle(
-                  color: Colors.white,
+                AppLocalizations.of(context)!.menu,
+                style: TextStyle(
+                  color: Theme.of(context).appBarTheme.foregroundColor,
                   fontSize: 24,
                 ),
               ),
@@ -110,39 +117,44 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.language),
               title: Text(AppLocalizations.of(context)!.changeLanguage),
-              // Localizzazione per "Cambia lingua"
               onTap: () {
                 Locale newLocale =
-                    Localizations.localeOf(context).languageCode == 'it'
-                        ? const Locale('en')
-                        : const Locale('it');
+                Localizations.localeOf(context).languageCode == 'it'
+                    ? const Locale('en')
+                    : const Locale('it');
                 MyApp.setLocale(context, newLocale);
-                Navigator.pop(context); // Chiude il drawer
+                Navigator.pop(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.format_paint),
               title: Text(AppLocalizations.of(context)!.modifyThemeColors),
               onTap: () {
-                Navigator.pushNamed(context, '/themeCustomization');
+                Navigator.pushNamed(context, '/themeCustomization')
+                    .then((result) {
+                      print('Result: $result');
+                  if (result == 'reset') {
+                    print('Resetting colors');
+                    setState(() {});
+                  }
+                });
               },
             ),
             ListTile(
               leading: const Icon(Icons.brightness_6),
               title: Text(AppLocalizations.of(context)!.changeTheme),
-              // Localizzazione per "Cambia tema"
               onTap: () {
-                toggleTheme(); // Chiama la funzione per cambiare il tema
-                Navigator.pop(context); // Chiude il drawer
+                widget.toggleTheme();
+                Navigator.pop(context);
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: Text(AppLocalizations.of(context)!.logout),
-              // Localizzazione per "Logout"
               onTap: () {
-                FirebaseAuth.instance.signOut(); // Effettua il logout
-                Navigator.pop(context); // Chiude il drawer
+                FirebaseAuth.instance.signOut();
+                AppColors.resetAllColors();
+                Navigator.pop(context);
               },
             ),
           ],
@@ -158,42 +170,36 @@ class HomeScreen extends StatelessWidget {
           _buildMenuButton(
               context,
               AppLocalizations.of(context)!.shopping,
-              // Localizzazione per "Shopping"
               Icons.shopping_cart,
               '/shopping',
               shoppingColor),
           _buildMenuButton(
               context,
               AppLocalizations.of(context)!.addMeal,
-              // Localizzazione per "Add Meal"
               Icons.restaurant,
               '/addMeal',
               addMealColor),
           _buildMenuButton(
               context,
               AppLocalizations.of(context)!.viewExpenses,
-              // Localizzazione per "View Expenses"
               Icons.receipt_long,
               '/viewExpenses',
               viewExpensesColor),
           _buildMenuButton(
               context,
               AppLocalizations.of(context)!.inventory,
-              // Localizzazione per "Inventory"
               Icons.inventory,
               '/inventory',
               inventoryColor),
           _buildMenuButton(
               context,
               AppLocalizations.of(context)!.viewMeals,
-              // Localizzazione per "View Meals"
               Icons.fastfood,
               '/viewMeals',
               viewMealsColor),
           _buildMenuButton(
               context,
               AppLocalizations.of(context)!.recipeTips,
-              // Localizzazione per "Recipe Tips"
               Icons.food_bank_outlined,
               '/recipeTips',
               recipeTipsColor),
@@ -208,11 +214,11 @@ class HomeScreen extends StatelessWidget {
     return ElevatedButton(
       onPressed: route != null
           ? () {
-              Navigator.pushNamed(context, route);
-            }
-          : null, // Pulsante disabilitato se la route è null
+        Navigator.pushNamed(context, route);
+      }
+          : null,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color, // Colore del pulsante
+        backgroundColor: color,
         padding: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

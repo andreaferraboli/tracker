@@ -190,5 +190,15 @@
   "appBarBackgroundColor": "Colore di Sfondo AppBar",
   "selectColor": "Seleziona Colore",
   "colorLabel": "{color}",
-  "daysUntilExpiration": "scadenza"
+  "daysUntilExpiration": "scadenza",
+    "delete": "Elimina",
+  "confirmDelete": "Sei sicuro di voler eliminare questo supermercato?",
+    "confirmDeleteMessage": "Sei sicuro di voler eliminare {name}?",
+  "newPassword": "Nuova Password",
+  "updatePassword": "Aggiorna Password",
+  "passwordUpdated": "Password aggiornata con successo!",
+  "errorUpdatingPassword": "Errore durante l'aggiornamento della password. Riprova.",
+  "currentPassword": "Password Attuale",
+  "confirmNewPassword": "Conferma Nuova Password",
+  "incorrectCurrentPassword": "La password attuale è errata."
 }

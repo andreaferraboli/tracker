@@ -29,11 +29,37 @@ class ShoppingScreen extends ConsumerWidget {
       ),
     );
   }
-
+  void _showDeleteConfirmationDialog(BuildContext context, String name, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.confirmDelete),
+          content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(supermarketsListProvider.notifier).removeSupermarket(name);
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.delete),
+            ),
+          ],
+        );
+      },
+    );
+  }
   Widget _buildSupermarketCard(
       BuildContext context, String name, String imagePath, WidgetRef ref) {
     return GestureDetector(
       onTap: () => _navigateToSupermarket(context, name, ref),
+      onLongPress: () => _showDeleteConfirmationDialog(context, name, ref),
       child: Card(
         elevation: 4,
         child: Column(
