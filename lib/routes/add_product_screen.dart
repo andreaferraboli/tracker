@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
@@ -67,8 +68,10 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   String? selectedStore;
   File? _selectedImage;
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _quantityOwnedController =TextEditingController();
-  final TextEditingController _quantityUnitOwnedController =TextEditingController();
+  final TextEditingController _quantityOwnedController =
+      TextEditingController();
+  final TextEditingController _quantityUnitOwnedController =
+      TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _totalWeightController = TextEditingController();
   final TextEditingController _nameProductController = TextEditingController();
@@ -116,7 +119,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     }
     _quantityController.text = _productData['quantity'].toString();
     _quantityOwnedController.text = _productData['quantityOwned'].toString();
-    _quantityUnitOwnedController.text = _productData['quantityUnitOwned'].toString();
+    _quantityUnitOwnedController.text =
+        _productData['quantityUnitOwned'].toString();
     _imageUrlController.text = _productData['imageUrl'];
     _priceController.text = _productData['price'].toString();
     _totalWeightController.text = _productData['totalWeight'].toString();
@@ -548,7 +552,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     _productData['unitWeight'] =
         _productData['totalWeight'] / _productData['quantity'];
     _productData['quantityUnitOwned'] = _productData['quantity'];
-    _productData['quantityWeightOwned'] = _productData['totalWeight']*_productData['quantityOwned'];
+    _productData['quantityWeightOwned'] =
+        _productData['totalWeight'] * _productData['quantityOwned'];
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       user = FirebaseAuth.instance.currentUser;
@@ -602,11 +607,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               color: Theme.of(context).appBarTheme.foregroundColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text( widget.product != null
-            ? AppLocalizations.of(context)!.editProduct
-            :
-          AppLocalizations.of(context)!.newProduct,
-          style: TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
+        title: Text(
+          widget.product != null
+              ? AppLocalizations.of(context)!.editProduct
+              : AppLocalizations.of(context)!.newProduct,
+          style:
+              TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
         ),
       ),
       body: Container(
@@ -744,7 +750,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                               double.tryParse(value ?? '0') ?? 0.0;
                         });
                       }),
-                    ),Expanded(
+                    ),
+                    Expanded(
                       child: _buildTextField(
                           '${AppLocalizations.of(context)!.quantityUnitOwned}:',
                           _quantityUnitOwnedController, (value) {
@@ -775,6 +782,46 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       AppLocalizations.of(context)!.barcode,
                       _barcodeController,
                       (value) => _productData['barcode'] = value),
+                  Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.expirationDate,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.calendar_today,
+                            color: Theme.of(context).colorScheme.primary),
+                        onPressed: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: _productData['expirationDate']
+                                    .isNotEmpty
+                                ? DateTime.parse(_productData['expirationDate'])
+                                : DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (pickedDate != null) {
+                            setState(() {
+                              _productData['expirationDate'] =
+                                  pickedDate.toIso8601String();
+                            });
+                          }
+                        },
+                      ),
+                      Text(
+                        _productData['expirationDate'].isNotEmpty
+                            ? DateFormat('yyyy-MM-dd').format(
+                                DateTime.parse(_productData['expirationDate']))
+                            : '',
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ],
+                  ),
                   _buildBottomButtons(),
                 ],
               ),

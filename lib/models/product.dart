@@ -21,7 +21,7 @@ class Product {
   double totalWeight;
   double unitWeight;
   double unitPrice;
-
+  double sliderValue;
   // Costruttore
   Product({
     required this.productId,
@@ -46,6 +46,7 @@ class Product {
     this.unitWeight = 0,
     this.unitPrice = 0,
     this.selectedQuantity = 0,
+    this.sliderValue = 0,
   });
 
   // Metodo per la deserializzazione da JSON (fromJson)
@@ -104,7 +105,11 @@ class Product {
       'selectedQuantity': selectedQuantity,
     };
   }
-
+int daysUntilExpiration() {
+    final expiration = expirationDate.isNotEmpty ? DateTime.parse(expirationDate).add(const Duration(days:1)) : DateTime.now();
+    final now = DateTime.now();
+    return expiration.difference(now).inDays;
+  }
   Product copyWith({required double selectedQuantity}) {
     return Product(
       productId: productId,

@@ -182,7 +182,26 @@ class _ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
           AppLocalizations.of(context)!.customizeTheme,
           style:
               TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
-        ), // Localizzazione
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              _updateThemes();
+              Navigator.of(context).pop();
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            color: Colors.red,
+            onPressed: () {
+              AppColors.resetAllColors();
+              widget.onLightThemeChanged(widget.lightTheme);
+              widget.onDarkThemeChanged(widget.darkTheme);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],// Localizzazione
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -263,7 +282,6 @@ class _ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
                   _updateDarkColor(key, newColor);
                 }
               });
-              _updateThemes();
             }),
             child: CircleAvatar(backgroundColor: color),
           ),

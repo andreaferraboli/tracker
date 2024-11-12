@@ -189,6 +189,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         },
       ),
       routes: {
+        '/home': (context) => HomeScreen(
+              toggleTheme: _toggleTheme,
+            ),
         '/shopping': (context) => const ShoppingScreen(),
         '/user': (context) => const UserScreen(),
         '/addMeal': (context) => AddMealScreen(),

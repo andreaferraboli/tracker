@@ -20,7 +20,6 @@ class ProductCard extends StatefulWidget {
 
 
 class _ProductCardState extends State<ProductCard> {
-  double _sliderValue = 0; // Slider per la quantità unità
   double _weightFromTextField = 0; // Peso in grammi inserito nel TextField
   int _unitsFromTextField = 0; // Quantità in unità inserita nel TextField
   late TextEditingController _weightController;
@@ -47,11 +46,7 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   // Metodo per aggiornare le variabili dello Slider
-  void _updateSliderValue(double value) {
-    setState(() {
-      _sliderValue = value;
-    });
-  }
+
 
   // Metodo per validare il valore del peso inserito nel TextField
   void _validateWeight(String value) {
@@ -197,17 +192,20 @@ class _ProductCardState extends State<ProductCard> {
 
                     // Slider per selezionare la quantità
                     Slider(
-                      value: _sliderValue,
+                      value: widget.product.sliderValue,
                       min: 0,
                       max: maxQuantity,
                       divisions: widget.product.quantityUnitOwned > 0
                           ? widget.product.quantityUnitOwned
                           : null,
-                      label: '$_sliderValue',
+                      label: '${widget.product.sliderValue}',
                       onChanged: (value) {
-                        _updateSliderValue(value);
+                        setState(() {
+                          widget.product.sliderValue = value;
+                        });
                       },
                     ),
+
 
                     // Input peso e unità
                     Row(
@@ -256,41 +254,53 @@ class _ProductCardState extends State<ProductCard> {
               ElevatedButton(
                 onPressed: () {
                   double quantity = 0;
-                  if (_sliderValue > 0) {
-                    quantity = _sliderValue*widget.product.unitWeight;
-                    //todo: mi sa che devi spostare la logica di aggiornamento a valle
-                    widget.product.quantityUnitOwned -= _sliderValue.toInt();
+
+                  if (widget.product.sliderValue > 0) { // Usa widget.product.sliderValue al posto di _sliderValue
+                    quantity = widget.product.sliderValue * widget.product.unitWeight;
+
+                    // Logica per aggiornare il prodotto
+                    widget.product.quantityUnitOwned -= widget.product.sliderValue.toInt();
+
                     if (widget.product.quantityUnitOwned == 0) {
-                      widget.product.quantityOwned--;
-                      widget.product.quantityUnitOwned =
-                          widget.product.quantity;
+                      if (widget.product.quantityOwned > 0) {
+                        widget.product.quantityOwned--;
+                        widget.product.quantityUnitOwned = widget.product.quantity;
+                      }
                     }
+
                     widget.product.quantityWeightOwned -=
-                        _sliderValue * widget.product.unitWeight;
+                        widget.product.sliderValue * widget.product.unitWeight;
+
                   } else if (_unitsFromTextField > 0) {
-                    quantity = _unitsFromTextField.toDouble()*widget.product.totalWeight;
+                    quantity = _unitsFromTextField.toDouble() * widget.product.totalWeight;
+
                     widget.product.quantityOwned -= _unitsFromTextField;
                     widget.product.quantityWeightOwned -=
                         _unitsFromTextField * widget.product.totalWeight;
+
                   } else if (_weightFromTextField > 0) {
                     quantity = _weightFromTextField / 1000;
+
                     widget.product.quantityUnitOwned -=
-                        (_weightFromTextField / widget.product.unitWeight)
-                            .ceil();
-                    widget.product.quantityWeightOwned -=
-                        _weightFromTextField / 1000;
+                        (_weightFromTextField / widget.product.unitWeight).ceil();
+                    widget.product.quantityWeightOwned -= _weightFromTextField / 1000;
+
                     if (widget.product.quantityWeightOwned == 0) {
                       widget.product.quantityOwned = 0;
                     }
                   }
+
+                  // Aggiunge il prodotto al pasto, se la funzione addProductToMeal è definita
                   if (widget.addProductToMeal != null) {
                     widget.addProductToMeal!(widget.product, quantity);
                   }
                 },
+
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(8),
                   minimumSize: const Size(16, 16),
                 ),
+
                 child: const Icon(Icons.add, size: 16),
               ),
             ],

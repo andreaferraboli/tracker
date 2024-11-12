@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppColors {
-
   static var shoppingLight = Color.fromARGB(255, 34, 65, 98);
   static var shoppingDark = Color.fromARGB(255, 41, 36, 36);
 
@@ -24,6 +23,7 @@ class AppColors {
   static Future<void> initialize() async {
     await loadAllColors();
   }
+
   // Salva un colore in memoria
   static Future<void> saveColor(String key, Color color) async {
     final prefs = await SharedPreferences.getInstance();
@@ -35,6 +35,23 @@ class AppColors {
     final prefs = await SharedPreferences.getInstance();
     final colorValue = prefs.getInt(key);
     return colorValue != null ? Color(colorValue) : defaultColor;
+  }
+
+// Metodo per resettare tutti i colori ai valori originali
+  static Future<void> resetAllColors() async {
+    shoppingLight = Color.fromARGB(255, 34, 65, 98);
+    shoppingDark = Color.fromARGB(255, 41, 36, 36);
+    addMealLight = Color.fromARGB(255, 97, 3, 3);
+    addMealDark = Color.fromARGB(255, 97, 3, 3);
+    viewExpensesLight = Color.fromARGB(255, 89, 100, 117);
+    viewExpensesDark = Color.fromARGB(255, 100, 100, 100);
+    inventoryLight = Color.fromARGB(255, 0, 126, 167);
+    inventoryDark = Color.fromARGB(255, 150, 150, 150);
+    viewMealsLight = Color.fromARGB(255, 45, 49, 66);
+    viewMealsDark = Color.fromARGB(255, 50, 50, 50);
+    recipeTipsLight = Color.fromARGB(255, 66, 12, 20);
+    recipeTipsDark = Color.fromARGB(255, 66, 12, 20);
+    await saveAllColors();
   }
 
   // Metodo per salvare tutti i colori

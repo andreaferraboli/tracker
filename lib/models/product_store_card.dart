@@ -21,13 +21,13 @@ class ProductStoreCard extends StatelessWidget {
       },
       child: Card(
         child: SizedBox(
-          height: 150, // Regola l'altezza se necessario
+          height: 250, // Regola l'altezza se necessario
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 80,
+                  height: 60,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(product.imageUrl),
@@ -35,20 +35,53 @@ class ProductStoreCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Center(
-                  child: Text(
-                    product.productName,
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      product.productName,
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
-                Center(
-                  child: Text(
-                    '${AppLocalizations.of(context)!.quantity}: ${product.quantityOwned}',
-                    style: const TextStyle(fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      '${AppLocalizations.of(context)!.quantity}: ${product.quantityOwned}',
+                      style: const TextStyle(fontSize: 14),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "${AppLocalizations.of(context)!.daysUntilExpiration}: ",
+                          style: const TextStyle(fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '${product.daysUntilExpiration()}gg',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: product.daysUntilExpiration() <= 0
+                                ? Colors.red
+                                : product.daysUntilExpiration() < 7
+                                    ? Colors.orange
+                                    : Colors.green,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

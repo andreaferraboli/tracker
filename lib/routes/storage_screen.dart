@@ -45,14 +45,17 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
             productsArray[0]['productName'] != null) {
           for (var product in productsArray) {
             if (product['store'] == widget.name.toLowerCase() &&
-                product['quantityOwned'] > 0) {
+                (product['quantityOwned'] > 0 ||
+                    product['quantityUnitOwned'] > 0)) {
               productWidgets.add(
                 ProductStoreCard(product: Product.fromJson(product)),
               );
             }
           }
         }
-
+        productWidgets.sort((a, b) => a.product
+            .daysUntilExpiration()
+            .compareTo(b.product.daysUntilExpiration()));
         setState(() {
           storedProducts = productWidgets;
           originalProducts = productWidgets;

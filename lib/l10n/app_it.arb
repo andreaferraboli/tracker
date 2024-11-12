@@ -189,5 +189,6 @@
   "secondaryColor": "Colore Secondario",
   "appBarBackgroundColor": "Colore di Sfondo AppBar",
   "selectColor": "Seleziona Colore",
-  "colorLabel": "{color}"
+  "colorLabel": "{color}",
+  "daysUntilExpiration": "scadenza"
 }

@@ -58,7 +58,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         final List<Product> loadedProducts = [];
 
         for (var product in productsArray) {
-          if (product['quantityOwned'] > 0) {
+          if (product['quantityOwned'] > 0 ||
+              product['quantityUnitOwned'] > 0) {
             loadedProducts.add(Product.fromJson(product));
           }
         }

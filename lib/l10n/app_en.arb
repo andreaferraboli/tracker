@@ -189,5 +189,6 @@
   "secondaryColor": "Secondary Color",
   "appBarBackgroundColor": "AppBar Background Color",
   "selectColor": "Select Color",
-  "colorLabel": "{color}"
+  "colorLabel": "{color}",
+  "daysUntilExpiration": "expiration"
 }

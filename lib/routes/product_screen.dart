@@ -159,11 +159,18 @@ class ProductScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Center(
-              child: Text(
-                '${AppLocalizations.of(context)!.quantityOwned}: ${product.quantityOwned}',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  '${AppLocalizations.of(context)!.quantityOwned}: ${product.quantityOwned}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                Text(
+                  '${AppLocalizations.of(context)!.quantityUnitOwned}: ${product.quantityUnitOwned}',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Table(
