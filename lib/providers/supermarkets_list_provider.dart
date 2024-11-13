@@ -3,8 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SupermarketsNotifier extends StateNotifier<List<String>> {
-  SupermarketsNotifier() : super([]) {
-    _fetchSupermarkets(); // Chiama la funzione di fetch all'inizializzazione
+  SupermarketsNotifier() : super([]) {// Chiama la funzione di fetch all'inizializzazione
   }
 
   // Funzione per recuperare la lista dei supermercati da Firebase
@@ -44,6 +43,12 @@ class SupermarketsNotifier extends StateNotifier<List<String>> {
     await userDocRef.update({
       "supermarkets": FieldValue.arrayRemove([supermarket]),
     });
+  }
+  void resetSupermarkets() {
+    state = [];
+  }
+  void loadSupermarkets() {
+    _fetchSupermarkets();
   }
 }
 

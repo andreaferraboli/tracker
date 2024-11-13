@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/services/app_colors.dart';
-import 'package:tracker/main.dart'; // Supponendo che MyApp sia definito in main.dart
+import 'package:tracker/main.dart';
 
-class HomeScreen extends StatefulWidget {
+import '../providers/supermarkets_list_provider.dart'; // Supponendo che MyApp sia definito in main.dart
+
+class HomeScreen extends ConsumerStatefulWidget {
   final VoidCallback toggleTheme;
   final User? user;
 
@@ -14,15 +17,16 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
     AppColors.initialize();
+    ref.read(supermarketsListProvider.notifier).loadSupermarkets();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     final shoppingColor = Theme.of(context).brightness == Brightness.light
         ? AppColors.shoppingLight
         : AppColors.shoppingDark;
@@ -46,8 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.home,
-          style: TextStyle(
-              color: Theme.of(context).appBarTheme.titleTextStyle?.color),
+          style:
+              TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
         ),
         leading: Builder(
           builder: (BuildContext context) {
@@ -119,9 +123,9 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text(AppLocalizations.of(context)!.changeLanguage),
               onTap: () {
                 Locale newLocale =
-                Localizations.localeOf(context).languageCode == 'it'
-                    ? const Locale('en')
-                    : const Locale('it');
+                    Localizations.localeOf(context).languageCode == 'it'
+                        ? const Locale('en')
+                        : const Locale('it');
                 MyApp.setLocale(context, newLocale);
                 Navigator.pop(context);
               },
@@ -130,14 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.format_paint),
               title: Text(AppLocalizations.of(context)!.modifyThemeColors),
               onTap: () {
-                Navigator.pushNamed(context, '/themeCustomization')
-                    .then((result) {
-                      print('Result: $result');
-                  if (result == 'reset') {
-                    print('Resetting colors');
-                    setState(() {});
-                  }
-                });
+                Navigator.pushNamed(context, '/themeCustomization');
               },
             ),
             ListTile(
@@ -154,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 FirebaseAuth.instance.signOut();
                 AppColors.resetAllColors();
+                ref.read(supermarketsListProvider.notifier).resetSupermarkets();
                 Navigator.pop(context);
               },
             ),
@@ -167,42 +165,18 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         children: <Widget>[
-          _buildMenuButton(
-              context,
-              AppLocalizations.of(context)!.shopping,
-              Icons.shopping_cart,
-              '/shopping',
-              shoppingColor),
-          _buildMenuButton(
-              context,
-              AppLocalizations.of(context)!.addMeal,
-              Icons.restaurant,
-              '/addMeal',
-              addMealColor),
-          _buildMenuButton(
-              context,
-              AppLocalizations.of(context)!.viewExpenses,
-              Icons.receipt_long,
-              '/viewExpenses',
-              viewExpensesColor),
-          _buildMenuButton(
-              context,
-              AppLocalizations.of(context)!.inventory,
-              Icons.inventory,
-              '/inventory',
-              inventoryColor),
-          _buildMenuButton(
-              context,
-              AppLocalizations.of(context)!.viewMeals,
-              Icons.fastfood,
-              '/viewMeals',
-              viewMealsColor),
-          _buildMenuButton(
-              context,
-              AppLocalizations.of(context)!.recipeTips,
-              Icons.food_bank_outlined,
-              '/recipeTips',
-              recipeTipsColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.shopping,
+              Icons.shopping_cart, '/shopping', shoppingColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.addMeal,
+              Icons.restaurant, '/addMeal', addMealColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.viewExpenses,
+              Icons.receipt_long, '/viewExpenses', viewExpensesColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.inventory,
+              Icons.inventory, '/inventory', inventoryColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.viewMeals,
+              Icons.fastfood, '/viewMeals', viewMealsColor),
+          _buildMenuButton(context, AppLocalizations.of(context)!.recipeTips,
+              Icons.food_bank_outlined, '/recipeTips', recipeTipsColor),
         ],
       ),
     );
@@ -214,8 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return ElevatedButton(
       onPressed: route != null
           ? () {
-        Navigator.pushNamed(context, route);
-      }
+              Navigator.pushNamed(context, route);
+            }
           : null,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,

@@ -133,9 +133,8 @@ class _ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
             color: Colors.red,
             onPressed: () {
               AppColors.resetAllColors();
-              widget.onLightThemeChanged(widget.lightTheme);
-              widget.onDarkThemeChanged(widget.darkTheme);
-              Navigator.of(context).pop('reset');
+              _updateThemes();
+              Navigator.of(context).pop();
             },
           ),
         ],
