@@ -159,6 +159,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
             if (existingProduct != null) {
               existingProduct['quantityOwned'] += product.product.buyQuantity;
+              existingProduct['quantityWeightOwned'] +=
+                  product.product.buyQuantity * product.product.totalWeight;
             } else {
               productsList.add(product.product.toJson());
             }

@@ -33,6 +33,7 @@ class _ProductListItemState extends State<ProductListItem> {
   void _updateQuantity(int change) {
     setState(() {
       widget.product.buyQuantity += change;
+      widget.product.quantityWeightOwned += change*widget.product.totalWeight;
       if (widget.product.buyQuantity < 0) {
         widget.product.buyQuantity = 0;
       }

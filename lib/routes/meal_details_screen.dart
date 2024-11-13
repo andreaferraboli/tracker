@@ -3,9 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di avere il pacchetto flutter_localizations configurato
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
 
 import '../models/meal.dart';
+import '../models/product.dart';
 
 class MealDetailScreen extends StatelessWidget {
   final Meal meal;
@@ -142,29 +144,56 @@ class MealDetailScreen extends StatelessWidget {
                 itemCount: meal.products.length,
                 itemBuilder: (context, index) {
                   final product = meal.products[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        leading: CategoryServices.iconFromCategory(
-                            product['category']),
-                        title: Text(product['productName']),
-                        subtitle: Text(
-                            '${localizations.category}: ${localizations.translateCategory(product['category'])}'),
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                                '${localizations.quantity}: ${product['quantitySelected']?.toStringAsFixed(3)} kg'),
-                            Text(
-                                '${localizations.price}: €${product['price']}'),
-                          ],
+                  return GestureDetector(
+                    onTap: () async {
+                      DocumentReference productDocRef = FirebaseFirestore
+                          .instance
+                          .collection('products')
+                          .doc(FirebaseAuth.instance.currentUser!.uid);
+
+                      DocumentSnapshot snapshot = await productDocRef.get();
+                      var existingProduct, product;
+                      if (snapshot.exists) {
+                        final List<dynamic> productsList =
+                            snapshot['products'] ?? [];
+                        existingProduct = productsList.firstWhere(
+                                (p) =>
+                            p['productId'] ==
+                                meal.products[index]["idProdotto"],
+                            orElse: () => null);
+                        product = Product.fromJson(existingProduct);
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductScreen(product: product),
                         ),
-                        textColor: Theme.of(context).colorScheme.onPrimary,
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: ListTile(
+                          leading: CategoryServices.iconFromCategory(
+                              product['category']),
+                          title: Text(product['productName']),
+                          subtitle: Text(
+                              '${localizations.category}: ${localizations.translateCategory(product['category'])}'),
+                          trailing: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                  '${localizations.quantity}: ${product['quantitySelected']?.toStringAsFixed(3)} kg'),
+                              Text(
+                                  '${localizations.price}: €${product['price']}'),
+                            ],
+                          ),
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
                     ),
                   );

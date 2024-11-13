@@ -6,12 +6,14 @@ class ProductAddedToMeal extends StatefulWidget {
   final Product product;
   final double selectedQuantity;
   final Function(double)? onQuantityUpdated;
+  final VoidCallback? onDeleteProduct;
 
   const ProductAddedToMeal({
     Key? key,
     required this.product,
     required this.selectedQuantity,
     required this.onQuantityUpdated,
+    required this.onDeleteProduct,
   }) : super(key: key);
 
   @override
@@ -91,18 +93,18 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
                 children: [
                   Text(
                     widget.product.productName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${AppLocalizations.of(context)!.selectedQuantity}: ${widget.selectedQuantity.toStringAsFixed(3)} kg',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -110,8 +112,13 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
             ),
             const SizedBox(width: 16),
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.white),
+              icon: Icon(Icons.edit,color: Theme.of(context).colorScheme.onPrimary,
+              ),
               onPressed: _showEditQuantityDialog,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: widget.onDeleteProduct,
             ),
           ],
         ),

@@ -114,6 +114,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['supermarket'] =
           widget.supermarketName ?? ref.read(supermarketProvider);
       _productData['unit'] = 'kg';
+
       _productData['purchaseDate'] = DateTime.now().toString();
       _productData['productId'] = UniqueKey().toString();
     }
@@ -258,6 +259,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     // Garantisci un valore iniziale valido per selectedStore
     if (!stores.contains(selectedStore)) {
       selectedStore = stores.isNotEmpty ? stores[0] : '';
+      _productData['store'] = selectedStore;
     }
 
     return DropdownButton<String>(

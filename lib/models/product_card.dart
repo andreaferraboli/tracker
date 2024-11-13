@@ -254,7 +254,7 @@ class _ProductCardState extends State<ProductCard> {
                         widget.product.sliderValue > 0)
                     ? () {
                         double quantity = 0;
-
+                        //todo: bug qua, se faccio elimina non voglio che vengano fatte le modifiche
                         if (widget.product.sliderValue > 0) {
                           // Usa widget.product.sliderValue al posto di _sliderValue
                           quantity = widget.product.sliderValue *

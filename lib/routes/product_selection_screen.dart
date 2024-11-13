@@ -5,7 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
-
+import 'package:toastification/toastification.dart';
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
 import '../models/product.dart';
@@ -102,7 +102,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         if (index != -1) {
           products[index]['quantityOwned'] = mealProduct.quantityOwned;
           products[index]['quantityUnitOwned'] = mealProduct.quantityUnitOwned;
-          products[index]['quantityWeightOwned'] = mealProduct.quantityWeightOwned;
+          products[index]['quantityWeightOwned'] =
+              mealProduct.quantityWeightOwned;
         }
         return {
           'idProdotto': mealProduct.productId,
@@ -130,13 +131,21 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
           }
         ])
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pasto salvato con successo!'),
-          backgroundColor: Colors.green,
-        ),
+      toastification.show(
+        context: context,
+        type: ToastificationType.success,
+        style: ToastificationStyle.fillColored,
+        title:  Text('Pasto salvato con successo!'),
+        alignment: Alignment.topCenter,
+        autoCloseDuration: const Duration(seconds: 4),
+        borderRadius: BorderRadius.circular(100.0),
       );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text('Pasto salvato con successo!'),
+      //     backgroundColor: Colors.green,
+      //   ),
+      // );
       int count = 0;
       Navigator.of(context).popUntil((route) {
         return count++ == 2;
@@ -229,7 +238,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                onPressed: _saveMeal,
+                onPressed: mealProducts.isNotEmpty ? _saveMeal : null,
                 child: Text(AppLocalizations.of(context)!.save_meal),
               ),
               IconButton(
@@ -301,6 +310,16 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                           selectedQuantity: quantity);
                                     });
                                   },
+                                  onDeleteProduct: () {
+                                    if (product.selectedQuantity % product.unitWeight==0) {
+                                      product.quantityUnitOwned += (product.selectedQuantity/product.unitWeight) as int;
+                                    }
+                                    product.selectedQuantity = 0;
+                                    setState(() {
+                                      filteredProducts.add(product);
+                                      mealProducts.remove(product);
+                                    });
+                                  },
                                 );
                               },
                             ),
@@ -314,7 +333,11 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                     initiallyExpanded: true,
                     leading: const Icon(Icons.list),
                     children: filteredProducts.isEmpty
-                         ? [Center(child: Text(AppLocalizations.of(context)!.noAvailableProducts))]
+                        ? [
+                            Center(
+                                child: Text(AppLocalizations.of(context)!
+                                    .noAvailableProducts))
+                          ]
                         : [
                             ListView.builder(
                               shrinkWrap: true,
