@@ -18,7 +18,6 @@ class ProductCard extends StatefulWidget {
   State<ProductCard> createState() => _ProductCardState();
 }
 
-
 class _ProductCardState extends State<ProductCard> {
   double _weightFromTextField = 0; // Peso in grammi inserito nel TextField
   int _unitsFromTextField = 0; // Quantità in unità inserita nel TextField
@@ -46,7 +45,6 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   // Metodo per aggiornare le variabili dello Slider
-
 
   // Metodo per validare il valore del peso inserito nel TextField
   void _validateWeight(String value) {
@@ -206,7 +204,6 @@ class _ProductCardState extends State<ProductCard> {
                       },
                     ),
 
-
                     // Input peso e unità
                     Row(
                       children: [
@@ -252,55 +249,63 @@ class _ProductCardState extends State<ProductCard> {
 
               // Bottone per aggiungere il prodotto
               ElevatedButton(
-                onPressed: () {
-                  double quantity = 0;
+                onPressed: (_weightFromTextField > 0 ||
+                        _unitsFromTextField > 0 ||
+                        widget.product.sliderValue > 0)
+                    ? () {
+                        double quantity = 0;
 
-                  if (widget.product.sliderValue > 0) { // Usa widget.product.sliderValue al posto di _sliderValue
-                    quantity = widget.product.sliderValue * widget.product.unitWeight;
+                        if (widget.product.sliderValue > 0) {
+                          // Usa widget.product.sliderValue al posto di _sliderValue
+                          quantity = widget.product.sliderValue *
+                              widget.product.unitWeight;
 
-                    // Logica per aggiornare il prodotto
-                    widget.product.quantityUnitOwned -= widget.product.sliderValue.toInt();
+                          // Logica per aggiornare il prodotto
+                          widget.product.quantityUnitOwned -=
+                              widget.product.sliderValue.toInt();
 
-                    if (widget.product.quantityUnitOwned == 0) {
-                      if (widget.product.quantityOwned > 0) {
-                        widget.product.quantityOwned--;
-                        widget.product.quantityUnitOwned = widget.product.quantity;
+                          if (widget.product.quantityUnitOwned == 0) {
+                            if (widget.product.quantityOwned > 0) {
+                              widget.product.quantityOwned--;
+                              widget.product.quantityUnitOwned =
+                                  widget.product.quantity;
+                            }
+                          }
+
+                          widget.product.quantityWeightOwned -=
+                              widget.product.sliderValue *
+                                  widget.product.unitWeight;
+                        } else if (_unitsFromTextField > 0) {
+                          quantity = _unitsFromTextField.toDouble() *
+                              widget.product.totalWeight;
+
+                          widget.product.quantityOwned -= _unitsFromTextField;
+                          widget.product.quantityWeightOwned -=
+                              _unitsFromTextField * widget.product.totalWeight;
+                        } else if (_weightFromTextField > 0) {
+                          quantity = _weightFromTextField / 1000;
+
+                          widget.product.quantityUnitOwned -=
+                              (_weightFromTextField / widget.product.unitWeight)
+                                  .ceil();
+                          widget.product.quantityWeightOwned -=
+                              _weightFromTextField / 1000;
+
+                          if (widget.product.quantityWeightOwned == 0) {
+                            widget.product.quantityOwned = 0;
+                          }
+                        }
+
+                        // Aggiunge il prodotto al pasto, se la funzione addProductToMeal è definita
+                        if (widget.addProductToMeal != null) {
+                          widget.addProductToMeal!(widget.product, quantity);
+                        }
                       }
-                    }
-
-                    widget.product.quantityWeightOwned -=
-                        widget.product.sliderValue * widget.product.unitWeight;
-
-                  } else if (_unitsFromTextField > 0) {
-                    quantity = _unitsFromTextField.toDouble() * widget.product.totalWeight;
-
-                    widget.product.quantityOwned -= _unitsFromTextField;
-                    widget.product.quantityWeightOwned -=
-                        _unitsFromTextField * widget.product.totalWeight;
-
-                  } else if (_weightFromTextField > 0) {
-                    quantity = _weightFromTextField / 1000;
-
-                    widget.product.quantityUnitOwned -=
-                        (_weightFromTextField / widget.product.unitWeight).ceil();
-                    widget.product.quantityWeightOwned -= _weightFromTextField / 1000;
-
-                    if (widget.product.quantityWeightOwned == 0) {
-                      widget.product.quantityOwned = 0;
-                    }
-                  }
-
-                  // Aggiunge il prodotto al pasto, se la funzione addProductToMeal è definita
-                  if (widget.addProductToMeal != null) {
-                    widget.addProductToMeal!(widget.product, quantity);
-                  }
-                },
-
+                    : null,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(8),
                   minimumSize: const Size(16, 16),
                 ),
-
                 child: const Icon(Icons.add, size: 16),
               ),
             ],
