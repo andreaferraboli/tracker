@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/models/image_processor.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/api_client.dart';
@@ -33,7 +34,7 @@ class _ProductListItemState extends State<ProductListItem> {
   void _updateQuantity(int change) {
     setState(() {
       widget.product.buyQuantity += change;
-      widget.product.quantityWeightOwned += change*widget.product.totalWeight;
+      widget.product.quantityWeightOwned += change * widget.product.totalWeight;
       if (widget.product.buyQuantity < 0) {
         widget.product.buyQuantity = 0;
       }
@@ -67,8 +68,8 @@ class _ProductListItemState extends State<ProductListItem> {
               if (widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
                   FutureBuilder<Widget>(
-                    future: ApiClient.getImageWithRemovedBackground(
-                        widget.product.imageUrl, widget.product.category),
+                    future: ImageProcessor
+                        .removeWhiteBackground(widget.product.imageUrl),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {
@@ -197,10 +198,12 @@ class _ProductListItemState extends State<ProductListItem> {
                                     ?.backgroundColor
                                     ?.resolve({}),
                             child: IconButton(
-                              icon: Icon(Icons.add,
-                                  color: !widget.selected
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.primary,),
+                              icon: Icon(
+                                Icons.add,
+                                color: !widget.selected
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
                               iconSize: 30.0,
                               padding: const EdgeInsets.all(10.0),
                               onPressed: () {

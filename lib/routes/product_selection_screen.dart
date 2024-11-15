@@ -100,6 +100,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         int index = products.indexWhere(
             (product) => product['productId'] == mealProduct.productId);
         if (index != -1) {
+          //todo:terzo passo della funzione, la modifica vera deve essere qua
           products[index]['quantityOwned'] = mealProduct.quantityOwned;
           products[index]['quantityUnitOwned'] = mealProduct.quantityUnitOwned;
           products[index]['quantityWeightOwned'] =
@@ -312,7 +313,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                   },
                                   onDeleteProduct: () {
                                     if (product.selectedQuantity % product.unitWeight==0) {
-                                      product.quantityUnitOwned += (product.selectedQuantity/product.unitWeight) as int;
+                                      product.quantityUnitOwned += (product.selectedQuantity/product.unitWeight).ceil();
                                     }
                                     product.selectedQuantity = 0;
                                     setState(() {
@@ -348,6 +349,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                 final product = filteredProducts[index];
                                 return ProductCard(
                                   product: product,
+                                  //todo: secondo passo della funzione
                                   addProductToMeal: (product, quantity) {
                                     setState(() {
                                       //todo:cambia qua in modo che vada

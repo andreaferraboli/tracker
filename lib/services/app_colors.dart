@@ -49,7 +49,6 @@ class AppColors {
 
 // Metodo per resettare tutti i colori ai valori originali
   static Future<void> resetAllColors() async {
-    //todo: i colori delle card vanno ma gli altri no
     primaryLight = Color.fromARGB(255, 45, 49, 66);
     onPrimaryLight = Color.fromARGB(255, 234, 232, 255);
     secondaryLight = Colors.orange;

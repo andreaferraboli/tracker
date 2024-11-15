@@ -134,7 +134,9 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    double maxQuantity = widget.product.quantityUnitOwned.toDouble();
+    double maxQuantity = widget.product.quantityUnitOwned > 0
+        ? widget.product.quantityUnitOwned.toDouble()
+        : 0;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -254,11 +256,12 @@ class _ProductCardState extends State<ProductCard> {
                         widget.product.sliderValue > 0)
                     ? () {
                         double quantity = 0;
-                        //todo: bug qua, se faccio elimina non voglio che vengano fatte le modifiche
+//todo: primo step io chiamo questa funzione, bug qua, se faccio elimina non voglio che vengano fatte le modifiche
                         if (widget.product.sliderValue > 0) {
                           // Usa widget.product.sliderValue al posto di _sliderValue
-                          quantity = widget.product.sliderValue *
-                              widget.product.unitWeight;
+                          quantity = double.parse((widget.product.sliderValue *
+                                  widget.product.unitWeight)
+                              .toStringAsFixed(3)); // Mantieni 3 cifre decimali
 
                           // Logica per aggiornare il prodotto
                           widget.product.quantityUnitOwned -=
@@ -272,24 +275,30 @@ class _ProductCardState extends State<ProductCard> {
                             }
                           }
 
-                          widget.product.quantityWeightOwned -=
-                              widget.product.sliderValue *
-                                  widget.product.unitWeight;
+                          widget.product.quantityWeightOwned -= double.parse(
+                              (widget.product.sliderValue *
+                                      widget.product.unitWeight)
+                                  .toStringAsFixed(3));
                         } else if (_unitsFromTextField > 0) {
-                          quantity = _unitsFromTextField.toDouble() *
-                              widget.product.totalWeight;
+                          quantity = double.parse(
+                              (_unitsFromTextField.toDouble() *
+                                      widget.product.totalWeight)
+                                  .toStringAsFixed(3));
 
                           widget.product.quantityOwned -= _unitsFromTextField;
-                          widget.product.quantityWeightOwned -=
-                              _unitsFromTextField * widget.product.totalWeight;
+                          widget.product.quantityWeightOwned -= double.parse(
+                              (_unitsFromTextField * widget.product.totalWeight)
+                                  .toStringAsFixed(3));
                         } else if (_weightFromTextField > 0) {
-                          quantity = _weightFromTextField / 1000;
+                          quantity = double.parse(
+                              (_weightFromTextField / 1000).toStringAsFixed(3));
 
                           widget.product.quantityUnitOwned -=
-                              (_weightFromTextField / widget.product.unitWeight)
-                                  .ceil();
-                          widget.product.quantityWeightOwned -=
-                              _weightFromTextField / 1000;
+                              ((_weightFromTextField /
+                                      widget.product.unitWeight)
+                                  .ceil());
+                          widget.product.quantityWeightOwned -= double.parse(
+                              (_weightFromTextField / 1000).toStringAsFixed(3));
 
                           if (widget.product.quantityWeightOwned == 0) {
                             widget.product.quantityOwned = 0;
