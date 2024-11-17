@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/meal.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 
@@ -386,18 +388,93 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             ),
             TextButton(
               child: Text(AppLocalizations.of(context)!.suggest),
-              onPressed: () {
+              onPressed: () async {
+                //todo: implementa la logica di suggerimento
                 List<ProductListItem> suggestedProducts = [];
                 double currentSum = 0.0;
 
-                for (var product in originalProducts) {
-                  if (currentSum + product.product.price <= budget) {
-                    product.setSelected(true);
-                    suggestedProducts.add(product);
-                    currentSum += product.product.price;
+                try {
+                  // Recupera l'ID dell'utente attuale
+                  final userId = FirebaseAuth.instance.currentUser!.uid;
+
+                  // Recupera i dati dei pasti dall'utente
+                  final mealsDocRef = FirebaseFirestore.instance
+                      .collection('meals')
+                      .doc(userId);
+                  final mealsDoc = await mealsDocRef.get();
+
+                  // Controlla se il documento dei pasti esiste e contiene dati
+                  if (!mealsDoc.exists || mealsDoc.data() == null) return;
+
+                  // Mappa i dati dei pasti in oggetti Meal
+                  final meals = (mealsDoc.data()!['meals'] as List)
+                      .map((meal) => Meal.fromJson(meal))
+                      .toList();
+
+                  // Mappa per aggregare i consumi dei prodotti (productId -> quantità totale consumata)
+                  Map<String, double> productConsumption = {};
+
+                  // Trova il range temporale (numero di settimane di dati)
+                  DateTime firstDate = DateTime.parse(meals.first.date);
+                  DateTime lastDate = DateTime.parse(meals.last.date);
+                  int totalWeeks =
+                      ((lastDate.difference(firstDate).inDays) / 7).ceil();
+
+                  // Itera su tutti i pasti per calcolare i consumi aggregati
+                  for (var meal in meals) {
+                    for (var product in meal.products) {
+                      final productId = product['idProdotto'] as String;
+                      final quantity = product['quantitySelected'] as double;
+
+                      // Aggiorna il consumo totale del prodotto
+                      productConsumption.update(
+                          productId, (value) => value + quantity,
+                          ifAbsent: () => quantity);
+                    }
                   }
+
+                  // Calcola la media settimanale per ciascun prodotto
+                  Map<String, double> weeklyAverageConsumption =
+                      productConsumption.map((key, value) {
+                    return MapEntry(key, value / totalWeeks);
+                  });
+
+                  // Costanti per il calcolo di N
+                  const double epsilon = 0.1; // Fattore di scalatura
+                  const double alpha = 1.0; // Esponente
+
+                  // Suggerisci prodotti basandoti sulla formula
+                  for (var product in originalProducts) {
+                    final productId = product.product.productId;
+
+                    // Quantità posseduta attualmente
+                    double quantityOwned = product.product.quantityOwned;
+
+                    // Consumo settimanale medio
+                    double weeklyConsumption =
+                        weeklyAverageConsumption[productId] ?? 0.0;
+
+                    // Calcolo di N
+                    double necessityScore = 0.0;
+                    if (weeklyConsumption > 0) {
+                      necessityScore = quantityOwned /
+                          (epsilon * pow(weeklyConsumption, alpha));
+                    }
+
+                    // Aggiungi il prodotto ai suggeriti se il punteggio di necessità è alto
+                    if (necessityScore < 1.0 &&
+                        currentSum + product.product.price <= budget) {
+                      product.setSelected(true);
+                      suggestedProducts.add(product);
+                      currentSum += product.product.price;
+                    }
+                  }
+                } catch (e) {
+                  // Log dell'errore
+                  print('Errore durante il recupero dei pasti: $e');
                 }
 
+// Aggiorna lo stato con i prodotti selezionati e chiudi il dialog
                 setState(() {
                   selectedProducts = suggestedProducts;
                 });
