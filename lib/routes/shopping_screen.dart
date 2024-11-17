@@ -29,13 +29,16 @@ class ShoppingScreen extends ConsumerWidget {
       ),
     );
   }
-  void _showDeleteConfirmationDialog(BuildContext context, String name, WidgetRef ref) {
+
+  void _showDeleteConfirmationDialog(
+      BuildContext context, String name, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.confirmDelete),
-          content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
+          content:
+              Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
           actions: [
             TextButton(
               onPressed: () {
@@ -45,7 +48,9 @@ class ShoppingScreen extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () {
-                ref.read(supermarketsListProvider.notifier).removeSupermarket(name);
+                ref
+                    .read(supermarketsListProvider.notifier)
+                    .removeSupermarket(name);
                 Navigator.of(context).pop();
               },
               child: Text(AppLocalizations.of(context)!.delete),
@@ -55,6 +60,7 @@ class ShoppingScreen extends ConsumerWidget {
       },
     );
   }
+
   Widget _buildSupermarketCard(
       BuildContext context, String name, String imagePath, WidgetRef ref) {
     return GestureDetector(

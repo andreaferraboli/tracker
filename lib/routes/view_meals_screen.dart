@@ -6,8 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/app_colors.dart';
-
-
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
 import '../models/period_selector.dart';
@@ -319,7 +317,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           : AppColors.addMealDark,
       Theme.of(context).brightness == Brightness.light
           ? AppColors.viewExpensesLight
-        : AppColors.viewExpensesDark,
+          : AppColors.viewExpensesDark,
       Theme.of(context).brightness == Brightness.light
           ? AppColors.inventoryLight
           : AppColors.inventoryDark,
@@ -550,7 +548,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MealDetailScreen(meal: meal),
+                                    builder: (context) =>
+                                        MealDetailScreen(meal: meal),
                                   ),
                                 ).then((returnedMeal) {
                                   if (returnedMeal != null) {
@@ -558,13 +557,13 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                                     _fetchMeals().then((meals) {
                                       setState(() {
                                         filteredMeals.clear();
-                                        filteredMeals.addAll(_filterMeals(meals));
+                                        filteredMeals
+                                            .addAll(_filterMeals(meals));
                                       });
                                     });
                                   }
                                 });
                               },
-
                             ),
                           ),
                         );

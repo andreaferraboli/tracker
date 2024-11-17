@@ -1,10 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/main.dart';
+import 'package:tracker/services/app_colors.dart';
 
+import '../models/expense.dart';
+import '../models/product.dart';
+import '../providers/category_provider.dart';
+import '../providers/expenses_provider.dart';
+import '../providers/products_provider.dart';
+import '../providers/stores_provider.dart';
 import '../providers/supermarkets_list_provider.dart'; // Supponendo che MyApp sia definito in main.dart
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -22,11 +29,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     AppColors.initialize();
-    ref.read(supermarketsListProvider.notifier).loadSupermarkets();
+    if (widget.user != null) {
+      loadUserData();
+    }
+  }
+
+  Future<void> loadUserData() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    List<String> supermarkets = [];
+    List<Map<String, dynamic>> stores = [];
+
+    // Recupero del documento utente
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userDoc.exists) {
+      // Caricamento della lista dei supermercati
+      supermarkets = List<String>.from(userDoc.data()?['supermarkets'] ?? []);
+
+      // Caricamento della lista degli store
+      stores = List<Map<String, dynamic>>.from(userDoc.data()?['stores'] ?? []);
+    }
+
+    // Recupero dei prodotti
+    final productsDocRef =
+        FirebaseFirestore.instance.collection('products').doc(userId);
+    final productsDoc = await productsDocRef.get();
+    final products = (productsDoc.data()?['products'] as List?)
+            ?.map((product) => Product.fromJson(product))
+            .toList() ??
+        [];
+
+    // Recupero delle categorie
+    final categoriesDocRef =
+        FirebaseFirestore.instance.collection('categories').doc(userId);
+    final categoriesDoc = await categoriesDocRef.get();
+    final categories = (categoriesDoc.data()?['categories'] as List?)
+            ?.map((category) => Category.fromJson(category))
+            .toList() ??
+        [];
+
+    // Recupero delle spese
+    final expensesDocRef =
+        FirebaseFirestore.instance.collection('expenses').doc(userId);
+    final expensesDoc = await expensesDocRef.get();
+    final expenses = (expensesDoc.data()?['expenses'] as List?)
+            ?.map((expense) => Expense.fromJson(expense))
+            .toList() ??
+        [];
+
+    // Caricamento nei provider
+    ref.read(storesProvider.notifier).loadStores(stores);
+    ref
+        .read(supermarketsListProvider.notifier)
+        .addAllSupermarkets(supermarkets);
+    ref.read(productsProvider.notifier).loadProducts(products);
+    ref.read(categoriesProvider.notifier).loadCategories(categories);
+    ref.read(expensesProvider.notifier).loadExpenses(expenses);
   }
 
   @override
-  Widget build(BuildContext context)  {
+  Widget build(BuildContext context) {
     final shoppingColor = Theme.of(context).brightness == Brightness.light
         ? AppColors.shoppingLight
         : AppColors.shoppingDark;

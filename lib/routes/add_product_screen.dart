@@ -12,8 +12,10 @@ import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
 
 import '../models/product.dart';
+import '../providers/stores_provider.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
+import '../services/icons_helper.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
   final String? supermarketName;
@@ -63,7 +65,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   };
 
   List<String> categories = [];
-  List<String> stores = [];
+  var stores = [];
   String? selectedCategory;
   String? selectedStore;
   File? _selectedImage;
@@ -71,6 +73,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final TextEditingController _quantityOwnedController =
       TextEditingController();
   final TextEditingController _quantityUnitOwnedController =
+      TextEditingController();
+  final TextEditingController _quantityWeightOwnedController =
       TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _totalWeightController = TextEditingController();
@@ -85,7 +89,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     super.initState();
     _loadCategories();
 
-    stores = ["fridge", "pantry", "freezer", "other"];
+    stores = ref.read(storesProvider);
     if (widget.product != null) {
       _productData['barcode'] = widget.product!.barcode;
       _productData['category'] = widget.product!.category;
@@ -122,6 +126,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     _quantityOwnedController.text = _productData['quantityOwned'].toString();
     _quantityUnitOwnedController.text =
         _productData['quantityUnitOwned'].toString();
+    _quantityWeightOwnedController.text =
+        _productData['quantityWeightOwned'].toString();
     _imageUrlController.text = _productData['imageUrl'];
     _priceController.text = _productData['price'].toString();
     _totalWeightController.text = _productData['totalWeight'].toString();
@@ -134,6 +140,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     _quantityController.dispose();
     _quantityOwnedController.dispose();
     _quantityUnitOwnedController.dispose();
+    _quantityWeightOwnedController.dispose();
     _imageUrlController.dispose();
     _priceController.dispose();
     _totalWeightController.dispose();
@@ -257,8 +264,8 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   Widget _buildStoreSelector() {
     // Garantisci un valore iniziale valido per selectedStore
-    if (!stores.contains(selectedStore)) {
-      selectedStore = stores.isNotEmpty ? stores[0] : '';
+    if (!stores.any((store) => store['name'] == selectedStore)) {
+      selectedStore = stores.isNotEmpty ? stores[0]['name'] : '';
       _productData['store'] = selectedStore;
     }
 
@@ -269,20 +276,22 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       dropdownColor: Theme.of(context).scaffoldBackgroundColor,
       items: stores.map((store) {
         return DropdownMenuItem<String>(
-          value: store,
+          value: store['name'],
           child: Row(
             children: [
               SizedBox(
                 width: 50,
                 height: 50,
                 child: Icon(
-                  Icons.store, // Puoi sostituire l'icona se necessario
+                  IconsHelper.iconMap[store['icon']],
+                  // Utilizza l'icona specifica dello store
                   color: Theme.of(context).iconTheme.color,
                 ),
               ),
               const SizedBox(width: 10),
               Text(
-                AppLocalizations.of(context)!.getStorageTitle(store),
+                AppLocalizations.of(context)!.getStorageTitle(store['name']),
+                // Mostra il nome dello store
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -765,6 +774,24 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       }),
                     ),
                   ]),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: _buildTextField(
+                              '${AppLocalizations.of(context)!.quantityWeightOwned}:',
+                              _quantityWeightOwnedController, (value) {
+                            setState(() {
+                              value = value?.replaceAll(',', '.');
+                              _productData['quantityWeightOwned'] =
+                                  double.tryParse(value ?? '0') ?? 0.0;
+                            });
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
                   Row(
                     children: [
                       Flexible(

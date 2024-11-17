@@ -89,6 +89,7 @@
   "category": "Category",
   "store": "Store",
   "quantityOwned": "Quantity Owned",
+  "quantityWeightOwned": "total weight owned",
   "macronutrients": "Macronutrients",
   "valuesPer100g": "Values (100g)",
   "expirationDate": "Expiration Date",
@@ -200,5 +201,9 @@
   "errorUpdatingPassword": "Error updating password. Please try again.",
   "currentPassword": "Current Password",
   "confirmNewPassword": "Confirm New Password",
-  "incorrectCurrentPassword": "The current password is incorrect."
+  "incorrectCurrentPassword": "The current password is incorrect.",
+  "noRecipesFound": "No recipes found",
+  "loadRecipeScreen": "Load Recipe Screen",
+  "filterRecipes": "Filter Recipes",
+  "selectProducts": "Select products you want to use in the recipe"
 }

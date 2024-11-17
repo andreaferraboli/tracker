@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
-import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
 import 'package:tracker/routes/expense_detail_screen.dart';
+import 'package:tracker/services/app_colors.dart';
 
 import '../models/period_selector.dart';
 

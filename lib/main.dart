@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
+import 'package:tracker/routes/filter_recipes_screen.dart';
 import 'package:tracker/routes/recipe_tips_screen.dart';
 import 'package:tracker/routes/theme_customizations.dart';
 import 'package:tracker/routes/user_screen.dart';
@@ -202,7 +203,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         '/viewExpenses': (context) => const ViewExpensesScreen(),
         '/inventory': (context) => const InventoryScreen(),
         '/viewMeals': (context) => const ViewMealsScreen(),
-        '/recipeTips': (context) => const RecipeTipsScreen(),
+        '/recipeTips': (context) => FilterRecipesScreen(),
         '/themeCustomization': (context) => ThemeCustomizationScreen(
           lightTheme: _lightTheme,
           darkTheme: _darkTheme,

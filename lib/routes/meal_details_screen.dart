@@ -157,8 +157,8 @@ class MealDetailScreen extends StatelessWidget {
                         final List<dynamic> productsList =
                             snapshot['products'] ?? [];
                         existingProduct = productsList.firstWhere(
-                                (p) =>
-                            p['productId'] ==
+                            (p) =>
+                                p['productId'] ==
                                 meal.products[index]["idProdotto"],
                             orElse: () => null);
                         product = Product.fromJson(existingProduct);

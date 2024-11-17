@@ -172,7 +172,8 @@
   "enterAmount": "Inserisci l'importo",
   "suggest": "Suggerisci",
   "noAvailableProducts": "Nessun prodotto disponibile, prova a cambiare categoria o fare la spesa",
-  "quantityUnitOwned": "Unità possedute:",
+  "quantityUnitOwned": "Unità possedute",
+  "quantityWeightOwned": "Peso totale posseduto",
   "editProduct": "Modifica Prodotto",
   "mealDeleted": "Pasto eliminato con successo",
   "expenseDeleted": "Spesa eliminata con successo",
@@ -200,5 +201,9 @@
   "errorUpdatingPassword": "Errore durante l'aggiornamento della password. Riprova.",
   "currentPassword": "Password Attuale",
   "confirmNewPassword": "Conferma Nuova Password",
-  "incorrectCurrentPassword": "La password attuale è errata."
+  "incorrectCurrentPassword": "La password attuale è errata.",
+  "noRecipesFound": "Nessuna ricetta trovata",
+  "loadRecipeScreen": "Carica Schermata Ricetta",
+  "filterRecipes": "Filtra Ricette",
+  "selectProducts": "Seleziona prodotti che vuoi aggiungere alla ricetta"
 }

@@ -3,13 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tracker/models/product.dart';
-import 'package:tracker/providers/category_provider.dart';
-import 'package:tracker/providers/products_provider.dart';
-import 'package:tracker/services/category_services.dart';
-
-import '../models/expense.dart';
-import '../providers/expenses_provider.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
   const AuthPage({super.key});
@@ -35,7 +28,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        loadUserData();
       } else {
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
@@ -61,6 +53,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         await userDocRef.set({
           "username": _usernameController.text.trim(),
           "supermarkets": [],
+          "stores": [
+            {"name": "fridge", "icon": "kitchen"},
+            {"name": "pantry", "icon": "storage"},
+            {"name": "freezer", "icon": "ac_unit"}
+          ],
         });
 
 // Creazione documento per products
@@ -98,38 +95,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
         ),
       );
     }
-  }
-
-  Future<void> loadUserData() async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-
-    final productsDocRef =
-        FirebaseFirestore.instance.collection('products').doc(userId);
-    final productsDoc = await productsDocRef.get();
-    final products = (productsDoc.data()?['products'] as List?)
-            ?.map((product) => Product.fromJson(product))
-            .toList() ??
-        [];
-
-    final categoriesDocRef =
-        FirebaseFirestore.instance.collection('categories').doc(userId);
-    final categoriesDoc = await categoriesDocRef.get();
-    final categories = (categoriesDoc.data()?['categories'] as List?)
-            ?.map((category) => Category.fromJson(category))
-            .toList() ??
-        [];
-
-    final expensesDocRef =
-        FirebaseFirestore.instance.collection('expenses').doc(userId);
-    final expensesDoc = await expensesDocRef.get();
-    final expenses = (expensesDoc.data()?['expenses'] as List?)
-            ?.map((expense) => Expense.fromJson(expense))
-            .toList() ??
-        [];
-
-    ref.read(productsProvider.notifier).loadProducts(products);
-    ref.read(categoriesProvider.notifier).loadCategories(categories);
-    ref.read(expensesProvider.notifier).loadExpenses(expenses);
   }
 
   @override

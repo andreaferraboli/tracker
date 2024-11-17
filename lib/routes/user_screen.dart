@@ -13,9 +13,11 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   final user = FirebaseAuth.instance.currentUser;
   String? username;
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _isLoading = true;
 
   // Variabili di stato per la visibilità delle password
@@ -75,7 +77,8 @@ class _UserScreenState extends State<UserScreen> {
       } catch (e) {
         if (e is FirebaseAuthException && e.code == 'invalid-credential') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!.incorrectCurrentPassword),
+            content:
+                Text(AppLocalizations.of(context)!.incorrectCurrentPassword),
           ));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -100,89 +103,100 @@ class _UserScreenState extends State<UserScreen> {
         padding: const EdgeInsets.all(16.0),
         child: user != null
             ? _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${AppLocalizations.of(context)!.name}: $username',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${AppLocalizations.of(context)!.email}: ${user?.email}',
-            ),
-            const SizedBox(height: 16),
+                ? Center(child: CircularProgressIndicator())
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.name}: $username',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${AppLocalizations.of(context)!.email}: ${user?.email}',
+                      ),
+                      const SizedBox(height: 16),
 
-            // Campo per la password corrente
-            TextField(
-              controller: _currentPasswordController,
-              obscureText: !_isCurrentPasswordVisible,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.currentPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isCurrentPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
+                      // Campo per la password corrente
+                      TextField(
+                        controller: _currentPasswordController,
+                        obscureText: !_isCurrentPasswordVisible,
+                        decoration: InputDecoration(
+                          labelText:
+                              AppLocalizations.of(context)!.currentPassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isCurrentPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isCurrentPasswordVisible =
+                                    !_isCurrentPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
 
-            // Campo per la nuova password
-            TextField(
-              controller: _newPasswordController,
-              obscureText: !_isNewPasswordVisible,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.newPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isNewPasswordVisible = !_isNewPasswordVisible;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
+                      // Campo per la nuova password
+                      TextField(
+                        controller: _newPasswordController,
+                        obscureText: !_isNewPasswordVisible,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.newPassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isNewPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isNewPasswordVisible = !_isNewPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
 
-            // Campo per confermare la nuova password
-            TextField(
-              controller: _confirmPasswordController,
-              obscureText: !_isConfirmPasswordVisible,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.confirmNewPassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
+                      // Campo per confermare la nuova password
+                      TextField(
+                        controller: _confirmPasswordController,
+                        obscureText: !_isConfirmPasswordVisible,
+                        decoration: InputDecoration(
+                          labelText:
+                              AppLocalizations.of(context)!.confirmNewPassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
 
-            ElevatedButton(
-              onPressed: _reauthenticateAndChangePassword,
-              child: Text(AppLocalizations.of(context)!.updatePassword),
-            ),
-          ],
-        )
+                      ElevatedButton(
+                        onPressed: _reauthenticateAndChangePassword,
+                        child:
+                            Text(AppLocalizations.of(context)!.updatePassword),
+                      ),
+                    ],
+                  )
             : Center(
-          child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
-        ),
+                child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
+              ),
       ),
     );
   }

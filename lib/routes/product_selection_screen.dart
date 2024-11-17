@@ -3,13 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:toastification/toastification.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
-import 'package:toastification/toastification.dart';
+
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
 import '../models/product.dart';
 import '../models/product_card.dart';
+import '../models/quantiy_update_type.dart';
 
 class ProductSelectionScreen extends StatefulWidget {
   final MealType mealType;
@@ -58,8 +60,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         final List<Product> loadedProducts = [];
 
         for (var product in productsArray) {
-          if (product['quantityOwned'] > 0 ||
-              product['quantityUnitOwned'] > 0) {
+          if (product['quantityWeightOwned'] > 0) {
             loadedProducts.add(Product.fromJson(product));
           }
         }
@@ -100,12 +101,98 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         int index = products.indexWhere(
             (product) => product['productId'] == mealProduct.productId);
         if (index != -1) {
-          //todo:terzo passo della funzione, la modifica vera deve essere qua
-          products[index]['quantityOwned'] = mealProduct.quantityOwned;
-          products[index]['quantityUnitOwned'] = mealProduct.quantityUnitOwned;
-          products[index]['quantityWeightOwned'] =
-              mealProduct.quantityWeightOwned;
+          // Controlla il tipo di aggiornamento della quantità
+          switch (mealProduct.quantityUpdateType) {
+            case QuantityUpdateType.slider:
+              // Aggiorna quantità in unità
+              products[index]['quantityUnitOwned'] -=
+                  (mealProduct.selectedQuantity / mealProduct.unitWeight)
+                      .round();
+              products[index]['quantityWeightOwned'] -=
+                  mealProduct.selectedQuantity;
+              if (products[index]['quantityUnitOwned'] <= 0) {
+                // Aggiorna il conteggio totale se le unità raggiungono zero
+                products[index]['quantityOwned'] -= 1;
+                products[index]['quantityUnitOwned'] = mealProduct.quantity;
+              }
+              mealProduct.selectedQuantity *= mealProduct.unitWeight;
+              break;
+
+            case QuantityUpdateType.weight:
+              // Aggiorna quantità in base al peso
+
+              if (products[index]['quantityWeightOwned'] >=
+                  mealProduct.unitWeight) {
+                if (mealProduct.selectedQuantity <=
+                    mealProduct.unitWeight * mealProduct.quantityUnitOwned) {
+                  products[index]['quantityUnitOwned'] -=
+                      (mealProduct.selectedQuantity / mealProduct.unitWeight)
+                          .ceil();
+                  if (products[index]['quantityUnitOwned'] <= 0) {
+                    products[index]['quantityOwned'] -= 1;
+                    products[index]['quantityUnitOwned'] = mealProduct.quantity;
+                  }
+                } else {
+                  products[index]['quantityOwned'] -= 1;
+                  if ((products[index]['quantityWeightOwned'] -
+                              mealProduct.selectedQuantity) %
+                          mealProduct.totalWeight ==
+                      0) {
+                    products[index]['quantityUnitOwned'] = mealProduct.quantity;
+                  } else {
+                    products[index]['quantityUnitOwned'] = mealProduct
+                            .quantity -
+                        ((mealProduct.selectedQuantity / mealProduct.unitWeight)
+                                .ceil() -
+                            mealProduct.quantityUnitOwned);
+                  }
+                }
+              }
+              products[index]['quantityWeightOwned'] -= double.parse(
+                  (mealProduct.selectedQuantity).toStringAsFixed(3));
+              if (products[index]['quantityWeightOwned'] <= 0) {
+                // Aggiorna il conteggio totale se il peso raggiunge zero
+                products[index]['quantityOwned'] = 0;
+                products[index]['quantityUnitOwned'] = 0;
+                products[index]['quantityWeightOwned'] = 0;
+              }
+              break;
+
+            case QuantityUpdateType.units:
+              // Aggiorna quantità totale
+              products[index]['quantityOwned'] -=
+                  mealProduct.selectedQuantity ~/ mealProduct.totalWeight;
+              products[index]['quantityWeightOwned'] -=
+                  mealProduct.selectedQuantity;
+              if (products[index]['quantityOwned'] <= 0 &&
+                  products[index]['quantityWeightOwned'] <=
+                      mealProduct.unitWeight) {
+                products[index]['quantityOwned'] = 0;
+                products[index]['quantityUnitOwned'] = 0;
+              }
+              mealProduct.selectedQuantity *= mealProduct.totalWeight;
+              break;
+
+            default:
+              // Gestione per tipi di aggiornamento non definiti
+              print('Tipo di aggiornamento non supportato');
+          }
+
+          products[index]['quantityWeightOwned'] = double.parse((products[index]
+                              ['quantityWeightOwned'])
+                          .toStringAsFixed(3))
+                      .toString()
+                      .endsWith('9') ||
+                  double.parse((products[index]['quantityWeightOwned'])
+                          .toStringAsFixed(3))
+                      .toString()
+                      .endsWith('1')
+              ? double.parse(
+                  (products[index]['quantityWeightOwned']).toStringAsFixed(2))
+              : double.parse(
+                  (products[index]['quantityWeightOwned']).toStringAsFixed(3));
         }
+
         return {
           'idProdotto': mealProduct.productId,
           'productName': mealProduct.productName,
@@ -136,17 +223,11 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
         context: context,
         type: ToastificationType.success,
         style: ToastificationStyle.fillColored,
-        title:  Text('Pasto salvato con successo!'),
+        title: Text('Pasto salvato con successo!'),
         alignment: Alignment.topCenter,
         autoCloseDuration: const Duration(seconds: 4),
         borderRadius: BorderRadius.circular(100.0),
       );
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text('Pasto salvato con successo!'),
-      //     backgroundColor: Colors.green,
-      //   ),
-      // );
       int count = 0;
       Navigator.of(context).popUntil((route) {
         return count++ == 2;
@@ -312,9 +393,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                     });
                                   },
                                   onDeleteProduct: () {
-                                    if (product.selectedQuantity % product.unitWeight==0) {
-                                      product.quantityUnitOwned += (product.selectedQuantity/product.unitWeight).ceil();
-                                    }
+                                    product.quantityUpdateType = null;
                                     product.selectedQuantity = 0;
                                     setState(() {
                                       filteredProducts.add(product);
@@ -349,10 +428,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                                 final product = filteredProducts[index];
                                 return ProductCard(
                                   product: product,
-                                  //todo: secondo passo della funzione
                                   addProductToMeal: (product, quantity) {
                                     setState(() {
-                                      //todo:cambia qua in modo che vada
                                       mealProducts.add(product.copyWith(
                                           selectedQuantity: quantity));
                                       originalProducts.remove(product);

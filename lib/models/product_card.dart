@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/models/quantiy_update_type.dart';
 
 import '../routes/product_screen.dart';
 
@@ -9,10 +10,10 @@ class ProductCard extends StatefulWidget {
   final Function(Product, double)? addProductToMeal;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.addProductToMeal,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -255,61 +256,85 @@ class _ProductCardState extends State<ProductCard> {
                         _unitsFromTextField > 0 ||
                         widget.product.sliderValue > 0)
                     ? () {
-                        double quantity = 0;
 //todo: primo step io chiamo questa funzione, bug qua, se faccio elimina non voglio che vengano fatte le modifiche
+                        double quantity = 0;
+
+                        // Determina il tipo di aggiornamento
                         if (widget.product.sliderValue > 0) {
-                          // Usa widget.product.sliderValue al posto di _sliderValue
+                          widget.product.quantityUpdateType = QuantityUpdateType.slider;
                           quantity = double.parse((widget.product.sliderValue *
                                   widget.product.unitWeight)
-                              .toStringAsFixed(3)); // Mantieni 3 cifre decimali
-
-                          // Logica per aggiornare il prodotto
-                          widget.product.quantityUnitOwned -=
-                              widget.product.sliderValue.toInt();
-
-                          if (widget.product.quantityUnitOwned == 0) {
-                            if (widget.product.quantityOwned > 0) {
-                              widget.product.quantityOwned--;
-                              widget.product.quantityUnitOwned =
-                                  widget.product.quantity;
-                            }
-                          }
-
-                          widget.product.quantityWeightOwned -= double.parse(
-                              (widget.product.sliderValue *
-                                      widget.product.unitWeight)
-                                  .toStringAsFixed(3));
+                              .toStringAsFixed(3));
                         } else if (_unitsFromTextField > 0) {
-                          quantity = double.parse(
-                              (_unitsFromTextField.toDouble() *
-                                      widget.product.totalWeight)
-                                  .toStringAsFixed(3));
-
-                          widget.product.quantityOwned -= _unitsFromTextField;
-                          widget.product.quantityWeightOwned -= double.parse(
-                              (_unitsFromTextField * widget.product.totalWeight)
-                                  .toStringAsFixed(3));
+                          widget.product.quantityUpdateType = QuantityUpdateType.units;
+                          quantity = _unitsFromTextField.toDouble()*widget.product.totalWeight;
                         } else if (_weightFromTextField > 0) {
+                          widget.product.quantityUpdateType = QuantityUpdateType.weight;
                           quantity = double.parse(
                               (_weightFromTextField / 1000).toStringAsFixed(3));
-
-                          widget.product.quantityUnitOwned -=
-                              ((_weightFromTextField /
-                                      widget.product.unitWeight)
-                                  .ceil());
-                          widget.product.quantityWeightOwned -= double.parse(
-                              (_weightFromTextField / 1000).toStringAsFixed(3));
-
-                          if (widget.product.quantityWeightOwned == 0) {
-                            widget.product.quantityOwned = 0;
-                          }
                         }
 
-                        // Aggiunge il prodotto al pasto, se la funzione addProductToMeal è definita
+                        // Aggiungi il prodotto al pasto
                         if (widget.addProductToMeal != null) {
-                          widget.addProductToMeal!(widget.product, quantity);
+                          widget.addProductToMeal!(
+                              widget.product, quantity);
                         }
                       }
+
+//                         double quantity = 0;
+//                         if (widget.product.sliderValue > 0) {
+//                           // Usa widget.product.sliderValue al posto di _sliderValue
+//                           quantity = double.parse((widget.product.sliderValue *
+//                                   widget.product.unitWeight)
+//                               .toStringAsFixed(3)); // Mantieni 3 cifre decimali
+//
+//                           // Logica per aggiornare il prodotto
+//                           widget.product.quantityUnitOwned -=
+//                               widget.product.sliderValue.toInt();
+//
+//                           if (widget.product.quantityUnitOwned == 0) {
+//                             if (widget.product.quantityOwned > 0) {
+//                               widget.product.quantityOwned--;
+//                               widget.product.quantityUnitOwned =
+//                                   widget.product.quantity;
+//                             }
+//                           }
+//
+//                           widget.product.quantityWeightOwned -= double.parse(
+//                               (widget.product.sliderValue *
+//                                       widget.product.unitWeight)
+//                                   .toStringAsFixed(3));
+//                         } else if (_unitsFromTextField > 0) {
+//                           quantity = double.parse(
+//                               (_unitsFromTextField.toDouble() *
+//                                       widget.product.totalWeight)
+//                                   .toStringAsFixed(3));
+//
+//                           widget.product.quantityOwned -= _unitsFromTextField;
+//                           widget.product.quantityWeightOwned -= double.parse(
+//                               (_unitsFromTextField * widget.product.totalWeight)
+//                                   .toStringAsFixed(3));
+//                         } else if (_weightFromTextField > 0) {
+//                           quantity = double.parse(
+//                               (_weightFromTextField / 1000).toStringAsFixed(3));
+//
+//                           widget.product.quantityUnitOwned -=
+//                               ((_weightFromTextField /
+//                                       widget.product.unitWeight)
+//                                   .ceil());
+//                           widget.product.quantityWeightOwned -= double.parse(
+//                               (_weightFromTextField / 1000).toStringAsFixed(3));
+//
+//                           if (widget.product.quantityWeightOwned == 0) {
+//                             widget.product.quantityOwned = 0;
+//                           }
+//                         }
+//
+//                         // Aggiunge il prodotto al pasto, se la funzione addProductToMeal è definita
+//                         if (widget.addProductToMeal != null) {
+//                           widget.addProductToMeal!(widget.product, quantity);
+//                         }
+//                       }
                     : null,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(8),
