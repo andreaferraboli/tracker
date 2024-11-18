@@ -531,8 +531,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         List<dynamic> products = userDoc['products'];
         //
         // for (Map<String, dynamic> product in products) {
-        //   product['quantityUnitOwned'] = product['quantity'];
-        //   product['quantityWeightOwned'] = product['totalWeight']*product['quantityOwned'];
+        //   product['quantityOwned']=0;
+        //   product['quantityUnitOwned'] = 0;
+        //   product['quantityWeightOwned'] = 0;
         // }
 
 // Trova il prodotto da rimuovere confrontando il productId

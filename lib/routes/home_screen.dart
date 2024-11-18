@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/main.dart';
+import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/services/app_colors.dart';
 
 import '../models/expense.dart';
+import '../models/meal.dart';
 import '../models/product.dart';
 import '../providers/category_provider.dart';
 import '../providers/expenses_provider.dart';
@@ -59,7 +61,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ?.map((product) => Product.fromJson(product))
             .toList() ??
         [];
-
+// Recupero dei pasti
+    final mealsDocRef =
+    FirebaseFirestore.instance.collection('meals').doc(userId);
+    final mealsDoc = await mealsDocRef.get();
+    final meals = (mealsDoc.data()?['meals'] as List?)
+        ?.map((meal) => Meal.fromJson(meal))
+        .toList() ??
+        [];
     // Recupero delle categorie
     final categoriesDocRef =
         FirebaseFirestore.instance.collection('categories').doc(userId);
@@ -80,9 +89,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Caricamento nei provider
     ref.read(storesProvider.notifier).loadStores(stores);
-    ref
-        .read(supermarketsListProvider.notifier)
-        .addAllSupermarkets(supermarkets);
+    ref.read(supermarketsListProvider.notifier).addAllSupermarkets(supermarkets);
+    ref.read(mealsProvider.notifier).loadMeals(meals);
     ref.read(productsProvider.notifier).loadProducts(products);
     ref.read(categoriesProvider.notifier).loadCategories(categories);
     ref.read(expensesProvider.notifier).loadExpenses(expenses);

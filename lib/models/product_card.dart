@@ -256,7 +256,6 @@ class _ProductCardState extends State<ProductCard> {
                         _unitsFromTextField > 0 ||
                         widget.product.sliderValue > 0)
                     ? () {
-//todo: primo step io chiamo questa funzione, bug qua, se faccio elimina non voglio che vengano fatte le modifiche
                         double quantity = 0;
 
                         // Determina il tipo di aggiornamento

@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
+import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:uuid/uuid.dart';
 
@@ -161,6 +162,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
             if (existingProduct != null) {
               existingProduct['quantityOwned'] += product.product.buyQuantity;
+              existingProduct['quantityUnitOwned'] +=product.product.quantity;
               existingProduct['quantityWeightOwned'] +=
                   product.product.buyQuantity * product.product.totalWeight;
             } else {
@@ -389,140 +391,19 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             TextButton(
               child: Text(AppLocalizations.of(context)!.suggest),
               onPressed: () async {
-                List<ProductListItem> suggestedProducts = [];
-                double currentSum = 0.0;
-                totalBalance = 0.0;
+                List<ProductListItem> suggestedProducts =
+                    await suggestProductsWithinBudget(budget);
 
-                try {
-                  // Recupero dei dati come prima
-                  final userId = FirebaseAuth.instance.currentUser!.uid;
-                  final mealsDocRef = FirebaseFirestore.instance
-                      .collection('meals')
-                      .doc(userId);
-                  final mealsDoc = await mealsDocRef.get();
-
-                  if (!mealsDoc.exists || mealsDoc.data() == null) return;
-
-                  final meals = (mealsDoc.data()!['meals'] as List)
-                      .map((meal) => Meal.fromJson(meal))
+                setState(() {
+                  selectedProducts = suggestedProducts;
+                  purchasedProducts = purchasedProducts
+                      .where(
+                        (product) => !suggestedProducts.any((suggested) =>
+                            suggested.product.productId ==
+                            product.product.productId),
+                      )
                       .toList();
-                  //todo: implementare la logica per suggerire i prodotti
-                  // Mappa per aggregare i consumi dei prodotti (productId -> quantità totale consumata)
-                  Map<String, double> productConsumption = {};
-
-                  // Trova il range temporale (numero di settimane di dati)
-                  DateTime firstDate = meals
-                      .map((meal) => DateTime.parse(meal.date))
-                      .reduce((a, b) => a.isBefore(b) ? a : b);
-                  DateTime lastDate = meals
-                      .map((meal) => DateTime.parse(meal.date))
-                      .reduce((a, b) => a.isAfter(b) ? a : b);
-                  int totalWeeks =
-                      ((lastDate.difference(firstDate).inDays) / 7).ceil();
-
-                  // Itera su tutti i pasti per calcolare i consumi aggregati
-                  for (var meal in meals) {
-                    for (var product in meal.products) {
-                      final productId = product['idProdotto'] as String;
-                      final quantity = product['quantitySelected'] as double;
-
-                      // Aggiorna il consumo totale del prodotto
-                      productConsumption.update(
-                        productId,
-                        (value) => value + quantity,
-                        ifAbsent: () => quantity,
-                      );
-                    }
-                  }
-
-                  // Calcola la media settimanale per ciascun prodotto
-                  Map<String, double> weeklyAverageConsumption =
-                      productConsumption.map((key, value) {
-                    return MapEntry(key, value / totalWeeks);
-                  });
-
-                  // Costanti per il calcolo di N
-                  const double epsilon = 0.1; // Fattore di scalatura
-                  const double alpha = 1.0; // Esponente
-
-                  // Lista temporanea per i punteggi di necessità
-                  List<Map<String, dynamic>> necessityScores = [];
-
-                  // Calcola il punteggio di necessità per ciascun prodotto
-                  for (var product in originalProducts) {
-                    final productId = product.product.productId;
-
-                    // Quantità posseduta attualmente
-                    double quantityOwned = product.product.quantityOwned;
-
-                    // Consumo settimanale medio
-                    double weeklyConsumption =
-                        weeklyAverageConsumption[productId] ?? 0.0;
-
-                    // Calcolo di N
-                    double necessityScore = 0.0;
-                    if (weeklyConsumption > 0) {
-                      necessityScore =
-                          (weeklyConsumption / (epsilon * quantityOwned)) *
-                              alpha;
-                    }
-
-                    // Aggiungi il prodotto con il suo punteggio alla lista temporanea
-                    necessityScores.add({
-                      'product': product,
-                      'necessityScore': necessityScore,
-                    });
-                  }
-
-                  // Ordina i prodotti per necessityScore decrescente
-                  necessityScores.sort((a, b) =>
-                      b['necessityScore'].compareTo(a['necessityScore']));
-
-                  // Filtra e aggiungi i prodotti suggeriti
-                  // Filtra e aggiungi i prodotti suggeriti
-                  for (var entry in necessityScores) {
-                    var product = entry['product'];
-                    var necessityScore = entry['necessityScore'];
-
-                    // Consumo settimanale medio
-                    double weeklyConsumption = weeklyAverageConsumption[product.product.productId] ?? 0.0;
-
-                    // Quantità posseduta attualmente
-                    double quantityWeightOwned = product.product.quantityWeightOwned;
-
-                    // Calcola la quantità da acquistare per coprire una settimana
-                    int quantityToBuy = (weeklyConsumption - quantityWeightOwned).abs().ceil();
-
-                    // Calcola il costo per la quantità da acquistare
-                    double totalCost = product.product.price * quantityToBuy;
-
-                    // Verifica se rientra nel budget
-                    if (currentSum + totalCost <= budget) {
-                      product.updateQuantity(quantityToBuy);
-                      product.product.buyQuantity = quantityToBuy; // Imposta la quantità calcolata
-                      product.setSelected(true);
-                      if (quantityToBuy > 0) {
-                        suggestedProducts.add(product);
-                      }
-                      currentSum += totalCost;
-                      _updateTotalBalance(totalCost);
-                    }
-                  }
-                  // Aggiorna lo stato con i prodotti selezionati e chiudi il dialog
-                  setState(() {
-                    selectedProducts = suggestedProducts;
-                    // Rimuovi i prodotti suggeriti da purchasedProducts
-                    purchasedProducts = purchasedProducts
-                        .where((product) => !suggestedProducts.any(
-                            (suggested) =>
-                                suggested.product.productId ==
-                                product.product.productId))
-                        .toList();
-                  });
-                } catch (e) {
-                  // Log dell'errore
-                  print('Errore durante il recupero dei pasti: $e');
-                }
+                });
 
                 Navigator.of(context).pop();
               },
@@ -532,6 +413,139 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       },
     );
   }
+  Future<List<ProductListItem>> suggestProductsWithinBudget(double budget) async {
+    List<ProductListItem> suggestedProducts = [];
+    double currentSum = 0.0;
+    List<Meal> meals = ref.read(mealsProvider);
+
+    try {
+      // Mappa per aggregare i consumi dei prodotti (productId -> quantità totale consumata)
+      Map<String, double> productConsumption = {};
+
+      // Se non ci sono pasti, seleziona randomicamente dai prodotti originali
+      if (meals.isEmpty) {
+        while (currentSum < budget) {
+          var randomProduct = (originalProducts.toList()..shuffle()).first;
+          double cost = randomProduct.product.price;
+
+          if (currentSum + cost <= budget) {
+            randomProduct.updateQuantity(1);
+            randomProduct.product.buyQuantity = 1;
+            randomProduct.setSelected(true);
+            suggestedProducts.add(randomProduct);
+            currentSum += cost;
+            _updateTotalBalance(cost);
+          } else {
+            break;
+          }
+        }
+        return suggestedProducts;
+      }
+
+      // Trova il range temporale (numero di settimane di dati)
+      DateTime firstDate = meals
+          .map((meal) => DateTime.parse(meal.date))
+          .reduce((a, b) => a.isBefore(b) ? a : b);
+      DateTime lastDate = meals
+          .map((meal) => DateTime.parse(meal.date))
+          .reduce((a, b) => a.isAfter(b) ? a : b);
+      int totalWeeks = ((lastDate.difference(firstDate).inDays) / 7).ceil();
+
+      // Calcola i consumi aggregati
+      for (var meal in meals) {
+        for (var product in meal.products) {
+          final productId = product['idProdotto'] as String;
+          final quantity = product['quantitySelected'] as double;
+          productConsumption.update(
+            productId,
+                (value) => value + quantity,
+            ifAbsent: () => quantity,
+          );
+        }
+      }
+
+      // Calcola la media settimanale per ciascun prodotto
+      Map<String, double> weeklyAverageConsumption = productConsumption.map(
+            (key, value) => MapEntry(key, value / totalWeeks),
+      );
+
+      // Calcola il punteggio di necessità per ciascun prodotto
+      const double epsilon = 0.1; // Fattore di scalatura
+      const double alpha = 1.0; // Esponente
+      List<Map<String, dynamic>> necessityScores = [];
+
+      for (var product in originalProducts) {
+        final productId = product.product.productId;
+        double quantityOwned = product.product.quantityOwned;
+        double weeklyConsumption = weeklyAverageConsumption[productId] ?? 0.0;
+
+        double necessityScore = 0.0;
+        if (weeklyConsumption > 0) {
+          necessityScore =
+              (weeklyConsumption / (epsilon * quantityOwned)) * alpha;
+        }
+
+        necessityScores.add({
+          'product': product,
+          'necessityScore': necessityScore,
+        });
+      }
+
+      // Ordina i prodotti per necessityScore decrescente
+      necessityScores.sort((a, b) =>
+          b['necessityScore'].compareTo(a['necessityScore']));
+
+      // Seleziona i prodotti fino a raggiungere il budget
+      for (var entry in necessityScores) {
+        var product = entry['product'];
+        double weeklyConsumption =
+            weeklyAverageConsumption[product.product.productId] ?? 0.0;
+        double quantityWeightOwned = product.product.quantityWeightOwned;
+
+        int quantityToBuy =
+        (weeklyConsumption - quantityWeightOwned).abs().ceil();
+        double totalCost = product.product.price * quantityToBuy;
+
+        if (currentSum + totalCost <= budget) {
+          product.updateQuantity(quantityToBuy);
+          product.product.buyQuantity = quantityToBuy;
+          product.setSelected(true);
+          if (quantityToBuy > 0) {
+            suggestedProducts.add(product);
+          }
+          currentSum += totalCost;
+          _updateTotalBalance(totalCost);
+        }
+      }
+
+      // Se il budget non è stato raggiunto, aggiungi prodotti casuali dagli originalProducts
+      if (currentSum < budget) {
+        var remainingBudget = budget - currentSum;
+
+        for (var product in (originalProducts.toList()..shuffle())) {
+          double cost = product.product.price;
+
+          if (currentSum + cost <= budget) {
+            product.updateQuantity(1);
+            product.product.buyQuantity = 1;
+            product.setSelected(true);
+            suggestedProducts.add(product);
+            currentSum += cost;
+            _updateTotalBalance(cost);
+          }
+
+          if (currentSum >= budget) {
+            break;
+          }
+        }
+      }
+    } catch (e) {
+      print('Errore durante il recupero dei pasti: $e');
+    }
+
+    return suggestedProducts;
+  }
+
 
   @override
   Widget build(BuildContext context) {
