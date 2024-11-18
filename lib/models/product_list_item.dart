@@ -22,16 +22,24 @@ class ProductListItem extends StatefulWidget {
     this.selected = false,
   });
 
+  final GlobalKey<_ProductListItemState> _key = GlobalKey();
+
   void setSelected(bool value) {
     selected = value;
+  }
+
+  // Metodo per chiamare updateQuantity sullo stato
+  void updateQuantity(int change) {
+    _key.currentState?.updateQuantity(change);
   }
 
   @override
   _ProductListItemState createState() => _ProductListItemState();
 }
 
+
 class _ProductListItemState extends State<ProductListItem> {
-  void _updateQuantity(int change) {
+  void updateQuantity(int change) {
     setState(() {
       widget.product.buyQuantity += change;
       widget.product.quantityWeightOwned += change * widget.product.totalWeight;
@@ -169,7 +177,7 @@ class _ProductListItemState extends State<ProductListItem> {
                               iconSize: 30.0,
                               padding: const EdgeInsets.all(10.0),
                               onPressed: () {
-                                _updateQuantity(-1);
+                                updateQuantity(-1);
                               },
                             ),
                           ),
@@ -207,7 +215,7 @@ class _ProductListItemState extends State<ProductListItem> {
                               iconSize: 30.0,
                               padding: const EdgeInsets.all(10.0),
                               onPressed: () {
-                                _updateQuantity(1);
+                                updateQuantity(1);
                               },
                             ),
                           ),

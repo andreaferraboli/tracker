@@ -389,34 +389,34 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             TextButton(
               child: Text(AppLocalizations.of(context)!.suggest),
               onPressed: () async {
-                //todo: implementa la logica di suggerimento
                 List<ProductListItem> suggestedProducts = [];
                 double currentSum = 0.0;
+                totalBalance = 0.0;
 
                 try {
-                  // Recupera l'ID dell'utente attuale
+                  // Recupero dei dati come prima
                   final userId = FirebaseAuth.instance.currentUser!.uid;
-
-                  // Recupera i dati dei pasti dall'utente
                   final mealsDocRef = FirebaseFirestore.instance
                       .collection('meals')
                       .doc(userId);
                   final mealsDoc = await mealsDocRef.get();
 
-                  // Controlla se il documento dei pasti esiste e contiene dati
                   if (!mealsDoc.exists || mealsDoc.data() == null) return;
 
-                  // Mappa i dati dei pasti in oggetti Meal
                   final meals = (mealsDoc.data()!['meals'] as List)
                       .map((meal) => Meal.fromJson(meal))
                       .toList();
-
+                  //todo: implementare la logica per suggerire i prodotti
                   // Mappa per aggregare i consumi dei prodotti (productId -> quantità totale consumata)
                   Map<String, double> productConsumption = {};
 
                   // Trova il range temporale (numero di settimane di dati)
-                  DateTime firstDate = DateTime.parse(meals.first.date);
-                  DateTime lastDate = DateTime.parse(meals.last.date);
+                  DateTime firstDate = meals
+                      .map((meal) => DateTime.parse(meal.date))
+                      .reduce((a, b) => a.isBefore(b) ? a : b);
+                  DateTime lastDate = meals
+                      .map((meal) => DateTime.parse(meal.date))
+                      .reduce((a, b) => a.isAfter(b) ? a : b);
                   int totalWeeks =
                       ((lastDate.difference(firstDate).inDays) / 7).ceil();
 
@@ -428,8 +428,10 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
                       // Aggiorna il consumo totale del prodotto
                       productConsumption.update(
-                          productId, (value) => value + quantity,
-                          ifAbsent: () => quantity);
+                        productId,
+                        (value) => value + quantity,
+                        ifAbsent: () => quantity,
+                      );
                     }
                   }
 
@@ -443,7 +445,10 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   const double epsilon = 0.1; // Fattore di scalatura
                   const double alpha = 1.0; // Esponente
 
-                  // Suggerisci prodotti basandoti sulla formula
+                  // Lista temporanea per i punteggi di necessità
+                  List<Map<String, dynamic>> necessityScores = [];
+
+                  // Calcola il punteggio di necessità per ciascun prodotto
                   for (var product in originalProducts) {
                     final productId = product.product.productId;
 
@@ -457,27 +462,68 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     // Calcolo di N
                     double necessityScore = 0.0;
                     if (weeklyConsumption > 0) {
-                      necessityScore = quantityOwned /
-                          (epsilon * pow(weeklyConsumption, alpha));
+                      necessityScore =
+                          (weeklyConsumption / (epsilon * quantityOwned)) *
+                              alpha;
                     }
 
-                    // Aggiungi il prodotto ai suggeriti se il punteggio di necessità è alto
-                    if (necessityScore < 1.0 &&
-                        currentSum + product.product.price <= budget) {
+                    // Aggiungi il prodotto con il suo punteggio alla lista temporanea
+                    necessityScores.add({
+                      'product': product,
+                      'necessityScore': necessityScore,
+                    });
+                  }
+
+                  // Ordina i prodotti per necessityScore decrescente
+                  necessityScores.sort((a, b) =>
+                      b['necessityScore'].compareTo(a['necessityScore']));
+
+                  // Filtra e aggiungi i prodotti suggeriti
+                  // Filtra e aggiungi i prodotti suggeriti
+                  for (var entry in necessityScores) {
+                    var product = entry['product'];
+                    var necessityScore = entry['necessityScore'];
+
+                    // Consumo settimanale medio
+                    double weeklyConsumption = weeklyAverageConsumption[product.product.productId] ?? 0.0;
+
+                    // Quantità posseduta attualmente
+                    double quantityWeightOwned = product.product.quantityWeightOwned;
+
+                    // Calcola la quantità da acquistare per coprire una settimana
+                    int quantityToBuy = (weeklyConsumption - quantityWeightOwned).abs().ceil();
+
+                    // Calcola il costo per la quantità da acquistare
+                    double totalCost = product.product.price * quantityToBuy;
+
+                    // Verifica se rientra nel budget
+                    if (currentSum + totalCost <= budget) {
+                      product.updateQuantity(quantityToBuy);
+                      product.product.buyQuantity = quantityToBuy; // Imposta la quantità calcolata
                       product.setSelected(true);
-                      suggestedProducts.add(product);
-                      currentSum += product.product.price;
+                      if (quantityToBuy > 0) {
+                        suggestedProducts.add(product);
+                      }
+                      currentSum += totalCost;
+                      _updateTotalBalance(totalCost);
                     }
                   }
+                  // Aggiorna lo stato con i prodotti selezionati e chiudi il dialog
+                  setState(() {
+                    selectedProducts = suggestedProducts;
+                    // Rimuovi i prodotti suggeriti da purchasedProducts
+                    purchasedProducts = purchasedProducts
+                        .where((product) => !suggestedProducts.any(
+                            (suggested) =>
+                                suggested.product.productId ==
+                                product.product.productId))
+                        .toList();
+                  });
                 } catch (e) {
                   // Log dell'errore
                   print('Errore durante il recupero dei pasti: $e');
                 }
 
-// Aggiorna lo stato con i prodotti selezionati e chiudi il dialog
-                setState(() {
-                  selectedProducts = suggestedProducts;
-                });
                 Navigator.of(context).pop();
               },
             ),
