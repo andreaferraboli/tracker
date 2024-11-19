@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -158,46 +159,74 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Widget _buildValueInput() {
-    return TextFormField(
-        controller: _priceController,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge?.color,
-          fontSize: 24,
-        ),
-        decoration: InputDecoration(
-          labelText: AppLocalizations.of(context)!.price,
-          labelStyle: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          ),
-          suffixText: '€',
-          suffixStyle: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color:
-                  Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+    return Platform.isIOS
+        ? CupertinoTextField(
+            controller: _priceController,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontSize: 24,
             ),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color:
-                  Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
+            placeholder: AppLocalizations.of(context)!.price,
+            suffix: Text(
+              '€',
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
             ),
-          ),
-        ),
-        keyboardType: TextInputType.number,
-        onChanged: (value) {
-          setState(() {
-            //prendi le virgole e sostituiscile con i punti
-            value = value.replaceAll(',', '.');
-            _productData['price'] = double.tryParse(value) ?? 0.0;
-          });
-        },
-        onSaved: (value) {
-          value = value?.replaceAll(',', '.') ?? '';
-          _productData['price'] = double.tryParse(value) ?? 0.0;
-        });
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                // prendi le virgole e sostituiscile con i punti
+                value = value.replaceAll(',', '.');
+                _productData['price'] = double.tryParse(value) ?? 0.0;
+              });
+            },
+            onSubmitted: (value) {
+              value = value.replaceAll(',', '.') ?? '';
+              _productData['price'] = double.tryParse(value) ?? 0.0;
+            },
+          )
+        : TextFormField(
+            controller: _priceController,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontSize: 24,
+            ),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.price,
+              labelStyle: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+              suffixText: '€',
+              suffixStyle: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
+                ),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      Colors.black,
+                ),
+              ),
+            ),
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                // prendi le virgole e sostituiscile con i punti
+                value = value.replaceAll(',', '.');
+                _productData['price'] = double.tryParse(value) ?? 0.0;
+              });
+            },
+            onSaved: (value) {
+              value = value?.replaceAll(',', '.') ?? '';
+              _productData['price'] = double.tryParse(value) ?? 0.0;
+            },
+          );
   }
 
   Future<void> _loadCategories() async {
@@ -222,45 +251,82 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       selectedCategory = categories.isNotEmpty ? categories[0] : '';
     }
 
-    return DropdownButton<String>(
-      itemHeight: null,
-      isExpanded: true,
-      value: selectedCategory,
-      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-      items: categories.map((category) {
-        return DropdownMenuItem<String>(
-          value: category,
-          child: Row(
-            children: [
-              SizedBox(
-                width: 40, // Dimensioni ridotte per adattarsi meglio
-                height: 40,
-                child: CategoryServices.iconFromCategory(category),
-              ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  AppLocalizations.of(context)!.translateCategory(category),
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  ),
+    return Platform.isIOS
+        ? CupertinoPicker(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            itemExtent: 32.0,
+            onSelectedItemChanged: (int index) {
+              setState(() {
+                selectedCategory = categories[index];
+                _productData['category'] = selectedCategory;
+              });
+            },
+            children: categories.map((category) {
+              return Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CategoryServices.iconFromCategory(category),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .translateCategory(category),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-      onChanged: (value) {
-        if (value != null) {
-          setState(() {
-            selectedCategory = value;
-            _productData['category'] = selectedCategory;
-          });
-        }
-      },
-      underline: const SizedBox(),
-    );
+              );
+            }).toList(),
+          )
+        : DropdownButton<String>(
+            itemHeight: null,
+            isExpanded: true,
+            value: selectedCategory,
+            dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+            items: categories.map((category) {
+              return DropdownMenuItem<String>(
+                value: category,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CategoryServices.iconFromCategory(category),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .translateCategory(category),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  selectedCategory = value;
+                  _productData['category'] = selectedCategory;
+                });
+              }
+            },
+            underline: const SizedBox(),
+          );
   }
 
   Widget _buildStoreSelector() {
@@ -270,192 +336,106 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['store'] = selectedStore;
     }
 
-    return DropdownButton<String>(
-      itemHeight: null,
-      isExpanded: true,
-      value: selectedStore,
-      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-      items: stores.map((store) {
-        return DropdownMenuItem<String>(
-          value: store['name'],
-          child: Row(
-            children: [
-              SizedBox(
-                width: 50,
-                height: 50,
-                child: Icon(
-                  IconsHelper.iconMap[store['icon']],
-                  // Utilizza l'icona specifica dello store
-                  color: Theme.of(context).iconTheme.color,
+    return Platform.isIOS
+        ? CupertinoPicker(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            itemExtent: 32.0,
+            onSelectedItemChanged: (int index) {
+              setState(() {
+                selectedStore = stores[index]['name'];
+                _productData['store'] = selectedStore;
+              });
+            },
+            children: stores.map((store) {
+              return Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Icon(
+                        IconsHelper.iconMap[store['icon']],
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        AppLocalizations.of(context)!
+                            .getStorageTitle(store['name']),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                AppLocalizations.of(context)!.getStorageTitle(store['name']),
-                // Mostra il nome dello store
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge?.color,
+              );
+            }).toList(),
+          )
+        : DropdownButton<String>(
+            itemHeight: null,
+            isExpanded: true,
+            value: selectedStore,
+            dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+            items: stores.map((store) {
+              return DropdownMenuItem<String>(
+                value: store['name'],
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Icon(
+                        IconsHelper.iconMap[store['icon']],
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .getStorageTitle(store['name']),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-      onChanged: (value) {
-        if (value != null) {
-          setState(() {
-            selectedStore = value;
-            _productData['store'] = selectedStore;
-          });
-        }
-      },
-      underline: const SizedBox(),
-    );
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  selectedStore = value;
+                  _productData['store'] = selectedStore;
+                });
+              }
+            },
+            underline: const SizedBox(),
+          );
   }
 
   Widget _buildTextField(String label, TextEditingController controller,
       Function(String?) onChange) {
-    return TextFormField(
-      controller: controller,
-      style: TextStyle(
-        color: Theme.of(context).textTheme.bodyLarge?.color,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge?.color,
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
-          ),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
-          ),
-        ),
-      ),
-      onChanged: onChange,
-    );
-  }
-
-  Widget _buildMacronutrientTable() {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height *
-            0.5, // Set max height to 50% of screen height
-      ),
-      child: widget.product != null
-          ? MacronutrientTable(
-              _setDynamicMacronutrients, widget.product!.macronutrients)
-          : MacronutrientTable(_setDynamicMacronutrients),
-    );
-  }
-
-  Widget _buildQuantityInput() {
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.remove),
-          onPressed: () {
-            setState(() {
-              _productData['quantity'] = (_productData['quantity'] as int) > 0
-                  ? (_productData['quantity'] as int) - 1
-                  : 0;
-              _quantityController.text = _productData['quantity'].toString();
-            });
-          },
-        ),
-        Expanded(
-          child: TextFormField(
-            textAlign: TextAlign.center,
+    return Platform.isIOS
+        ? CupertinoTextField(
+            controller: controller,
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyLarge?.color,
-              fontSize: 24,
             ),
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.quantity,
-              labelStyle: TextStyle(
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-            keyboardType: TextInputType.number,
-            controller: _quantityController,
-            onChanged: (value) {
-              setState(() {
-                _productData['quantity'] = int.tryParse(value) ?? 0;
-              });
-            },
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            setState(() {
-              _productData['quantity'] = (_productData['quantity'] as int) + 1;
-              _quantityController.text = _productData['quantity'].toString();
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildImageInput() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: ImageInput(
-        onPickImage: (image) {
-          setState(() {
-            _selectedImage = image;
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _buildBottomButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: widget.product == null ? _saveProduct : _updateProduct,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-            child: Text(widget.product == null
-                ? AppLocalizations.of(context)!.save
-                : AppLocalizations.of(context)!.update),
-          ),
-        ),
-      ],
-    );
-  }
-
-  //funzione per creare il widget per inserire a mano imageUrl del prodotto
-  Widget _buildImageUrlInput() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextFormField(
-            controller: _imageUrlController,
+            placeholder: label,
+            onChanged: onChange,
+          )
+        : TextFormField(
+            controller: controller,
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
             decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.imageUrl,
+              labelText: label,
               labelStyle: TextStyle(
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
@@ -472,23 +452,261 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                 ),
               ),
             ),
-            onSaved: (value) {
-              setState(() {
-                _productData['imageUrl'] = value;
-              });
-            },
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.save, color: Theme.of(context).colorScheme.primary),
-          onPressed: () {
-            setState(() {
-              _productData['imageUrl'] = _imageUrlController.text;
-            });
-          },
-        ),
-      ],
+            onChanged: onChange,
+          );
+  }
+
+  Widget _buildMacronutrientTable() {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height *
+            0.5, // Set max height to 50% of screen height
+      ),
+      child: widget.product != null
+          ? MacronutrientTable(
+              _setDynamicMacronutrients, widget.product!.macronutrients)
+          : MacronutrientTable(_setDynamicMacronutrients),
     );
+  }
+
+  Widget _buildQuantityInput() {
+    return Platform.isIOS
+        ? Row(
+            children: [
+              CupertinoButton(
+                child: const Icon(CupertinoIcons.minus),
+                onPressed: () {
+                  setState(() {
+                    _productData['quantity'] =
+                        (_productData['quantity'] as int) > 0
+                            ? (_productData['quantity'] as int) - 1
+                            : 0;
+                    _quantityController.text =
+                        _productData['quantity'].toString();
+                  });
+                },
+              ),
+              Expanded(
+                child: CupertinoTextField(
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontSize: 24,
+                  ),
+                  placeholder: AppLocalizations.of(context)!.quantity,
+                  controller: _quantityController,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    setState(() {
+                      _productData['quantity'] = int.tryParse(value) ?? 0;
+                    });
+                  },
+                ),
+              ),
+              CupertinoButton(
+                child: const Icon(CupertinoIcons.plus),
+                onPressed: () {
+                  setState(() {
+                    _productData['quantity'] =
+                        (_productData['quantity'] as int) + 1;
+                    _quantityController.text =
+                        _productData['quantity'].toString();
+                  });
+                },
+              ),
+            ],
+          )
+        : Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: () {
+                  setState(() {
+                    _productData['quantity'] =
+                        (_productData['quantity'] as int) > 0
+                            ? (_productData['quantity'] as int) - 1
+                            : 0;
+                    _quantityController.text =
+                        _productData['quantity'].toString();
+                  });
+                },
+              ),
+              Expanded(
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontSize: 24,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.quantity,
+                    labelStyle: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  controller: _quantityController,
+                  onChanged: (value) {
+                    setState(() {
+                      _productData['quantity'] = int.tryParse(value) ?? 0;
+                    });
+                  },
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {
+                  setState(() {
+                    _productData['quantity'] =
+                        (_productData['quantity'] as int) + 1;
+                    _quantityController.text =
+                        _productData['quantity'].toString();
+                  });
+                },
+              ),
+            ],
+          );
+  }
+
+  Widget _buildImageInput() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: ImageInput(
+        onPickImage: (image) {
+          setState(() {
+            _selectedImage = image;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildBottomButtons() {
+    return Platform.isIOS
+        ? Row(
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  color: Theme.of(context).colorScheme.primary,
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: CupertinoButton(
+                  onPressed:
+                      widget.product == null ? _saveProduct : _updateProduct,
+                  color: Theme.of(context).colorScheme.primary,
+                  child: Text(widget.product == null
+                      ? AppLocalizations.of(context)!.save
+                      : AppLocalizations.of(context)!.update),
+                ),
+              ),
+            ],
+          )
+        : Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed:
+                      widget.product == null ? _saveProduct : _updateProduct,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  child: Text(widget.product == null
+                      ? AppLocalizations.of(context)!.save
+                      : AppLocalizations.of(context)!.update),
+                ),
+              ),
+            ],
+          );
+  }
+
+  //funzione per creare il widget per inserire a mano imageUrl del prodotto
+  Widget _buildImageUrlInput() {
+    return Platform.isIOS
+        ? Row(
+            children: [
+              Expanded(
+                child: CupertinoTextField(
+                  controller: _imageUrlController,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                  placeholder: AppLocalizations.of(context)!.imageUrl,
+                  onChanged: (value) {
+                    setState(() {
+                      _productData['imageUrl'] = value;
+                    });
+                  },
+                ),
+              ),
+              CupertinoButton(
+                child: Icon(CupertinoIcons.check_mark,
+                    color: Theme.of(context).colorScheme.primary),
+                onPressed: () {
+                  setState(() {
+                    _productData['imageUrl'] = _imageUrlController.text;
+                  });
+                },
+              ),
+            ],
+          )
+        : Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _imageUrlController,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.imageUrl,
+                    labelStyle: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Theme.of(context).textTheme.bodyLarge?.color ??
+                            Colors.black,
+                      ),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Theme.of(context).textTheme.bodyLarge?.color ??
+                            Colors.black,
+                      ),
+                    ),
+                  ),
+                  onSaved: (value) {
+                    setState(() {
+                      _productData['imageUrl'] = value;
+                    });
+                  },
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.save,
+                    color: Theme.of(context).colorScheme.primary),
+                onPressed: () {
+                  setState(() {
+                    _productData['imageUrl'] = _imageUrlController.text;
+                  });
+                },
+              ),
+            ],
+          );
   }
 
   //scrivi _updateProduct per aggiornare il prodotto nel database
@@ -547,7 +765,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         await userDocRef.update({
           "products": products,
         });
-        ToastNotifier.showError('Prodotto aggiornato con successo!');
+        ToastNotifier.showSuccess(context, 'Prodotto aggiornato con successo!');
         int count = 0;
         Navigator.of(context).popUntil((route) {
           return count++ == 2;
@@ -565,9 +783,13 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         _productData['price'] / _productData['quantity'];
     _productData['unitWeight'] =
         _productData['totalWeight'] / _productData['quantity'];
-    _productData['quantityUnitOwned'] = _productData['quantity'];
-    _productData['quantityWeightOwned'] =
-        _productData['totalWeight'] * _productData['quantityOwned'];
+    if (_productData['quantityUnitOwned'] == 0) {
+      _productData['quantityUnitOwned'] = _productData['quantity'];
+    }
+    if (_productData['quantityWeightOwned'] == 0) {
+      _productData['quantityWeightOwned'] =
+          _productData['totalWeight'] * _productData['quantityOwned'];
+    }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       user = FirebaseAuth.instance.currentUser;
@@ -609,250 +831,306 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).appBarTheme.foregroundColor),
-          onPressed: () => Navigator.of(context).pop(),
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(
+            widget.product != null
+                ? AppLocalizations.of(context)!.editProduct
+                : AppLocalizations.of(context)!.newProduct,
+            style: TextStyle(
+              color: CupertinoTheme.of(context).primaryColor,
+            ),
+          ),
+          leading: CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Icon(
+              CupertinoIcons.back,
+              color: CupertinoTheme.of(context).primaryColor,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-        title: Text(
-          widget.product != null
-              ? AppLocalizations.of(context)!.editProduct
-              : AppLocalizations.of(context)!.newProduct,
-          style:
-              TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
+        child: SafeArea(
+          child: _buildForm(context),
         ),
-      ),
-      body: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 3, // 60% of the row
-                        child: _buildTextField(
-                            AppLocalizations.of(context)!.productName,
-                            _nameProductController,
-                            (value) => _productData['productName'] = value),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back,
+                color: Theme.of(context).appBarTheme.foregroundColor),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text(
+            widget.product != null
+                ? AppLocalizations.of(context)!.editProduct
+                : AppLocalizations.of(context)!.newProduct,
+            style:
+                TextStyle(color: Theme.of(context).appBarTheme.foregroundColor),
+          ),
+        ),
+        body: _buildForm(context),
+      );
+    }
+  }
+
+  Widget _buildForm(BuildContext context) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3, // 60% of the row
+                      child: _buildTextField(
+                          AppLocalizations.of(context)!.productName,
+                          _nameProductController,
+                          (value) => _productData['productName'] = value),
+                    ),
+                    Expanded(
+                      flex: 2, // 40% of the row
+                      child: _productData['imageUrl'] == null ||
+                              _productData['imageUrl'].isEmpty
+                          ? _buildImageInput()
+                          : Image.network(_productData['imageUrl']),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 4, // 30% of the row
+                      child: _buildQuantityInput(),
+                    ),
+                    const Spacer(flex: 1), // 10% of the row
+                    Expanded(
+                      flex: 2, // 30% of the row
+                      child: _buildValueInput(),
+                    ),
+                    const Spacer(flex: 1), // 10% of the row
+                    Expanded(
+                      flex: 2, // 20% of the row
+                      child: ValueListenableBuilder(
+                        valueListenable: ValueNotifier(_productData['price'] /
+                            (_productData['quantity'] > 0
+                                ? _productData['quantity']
+                                : 1)),
+                        builder: (context, value, child) {
+                          return Text(
+                            'C/U: €${value.toStringAsFixed(3)}',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          );
+                        },
                       ),
-                      Expanded(
-                        flex: 2, // 40% of the row
-                        child: _productData['imageUrl'] == null ||
-                                _productData['imageUrl'].isEmpty
-                            ? _buildImageInput()
-                            : Image.network(_productData['imageUrl']),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 4, // 30% of the row
+                      child: _buildTextField(
+                          '${AppLocalizations.of(context)!.totalWeight} (kg/l)',
+                          _totalWeightController, (value) {
+                        setState(() {
+                          value = value?.replaceAll(',', '.');
+                          _productData['totalWeight'] =
+                              double.tryParse(value ?? '0') ?? 0.0;
+                        });
+                      }),
+                    ),
+                    const Spacer(flex: 1), // 10% of the row
+                    Expanded(
+                      flex: 2, // 30% of the row
+                      child: ValueListenableBuilder(
+                        valueListenable: ValueNotifier(_productData['price'] /
+                            (_productData['totalWeight'] > 0
+                                ? _productData['totalWeight']
+                                : 1)),
+                        builder: (context, value, child) {
+                          return Text(
+                            '€/kg: €${value.toStringAsFixed(3)}',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          );
+                        },
                       ),
-                    ],
+                    ),
+                    const Spacer(flex: 1), // 10% of the row
+                    Expanded(
+                      flex: 2, // 20% of the row
+                      child: ValueListenableBuilder(
+                        valueListenable: ValueNotifier(
+                            _productData['totalWeight'] /
+                                (_productData['quantity'] > 0
+                                    ? _productData['quantity']
+                                    : 1)),
+                        builder: (context, value, child) {
+                          return Text(
+                            '${AppLocalizations.of(context)!.unitWeight}: ${value > 1 ? value.toStringAsFixed(3) + ' Kg' : (value * 1000).toStringAsFixed(3) + ' g'}',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(children: [
+                  Expanded(
+                    child: _buildTextField(
+                        '${AppLocalizations.of(context)!.quantityOwned}:',
+                        _quantityOwnedController, (value) {
+                      setState(() {
+                        value = value?.replaceAll(',', '.');
+                        _productData['quantityOwned'] =
+                            double.tryParse(value ?? '0') ?? 0.0;
+                      });
+                    }),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4, // 30% of the row
-                        child: _buildQuantityInput(),
-                      ),
-                      const Spacer(flex: 1), // 10% of the row
-                      Expanded(
-                        flex: 2, // 30% of the row
-                        child: _buildValueInput(),
-                      ),
-                      const Spacer(flex: 1), // 10% of the row
-                      Expanded(
-                        flex: 2, // 20% of the row
-                        child: ValueListenableBuilder(
-                          valueListenable: ValueNotifier(_productData['price'] /
-                              (_productData['quantity'] > 0
-                                  ? _productData['quantity']
-                                  : 1)),
-                          builder: (context, value, child) {
-                            return Text(
-                              'C/U: €${value.toStringAsFixed(3)}',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                  Expanded(
+                    child: _buildTextField(
+                        '${AppLocalizations.of(context)!.quantityUnitOwned}:',
+                        _quantityUnitOwnedController, (value) {
+                      setState(() {
+                        value = value?.replaceAll(',', '.');
+                        _productData['quantityUnitOwned'] =
+                            double.tryParse(value ?? '0') ?? 0.0;
+                      });
+                    }),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4, // 30% of the row
+                ]),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Center(
                         child: _buildTextField(
-                            '${AppLocalizations.of(context)!.totalWeight} (kg/l)',
-                            _totalWeightController, (value) {
+                            '${AppLocalizations.of(context)!.quantityWeightOwned}:',
+                            _quantityWeightOwnedController, (value) {
                           setState(() {
                             value = value?.replaceAll(',', '.');
-                            _productData['totalWeight'] =
+                            _productData['quantityWeightOwned'] =
                                 double.tryParse(value ?? '0') ?? 0.0;
                           });
                         }),
                       ),
-                      const Spacer(flex: 1), // 10% of the row
-                      Expanded(
-                        flex: 2, // 30% of the row
-                        child: ValueListenableBuilder(
-                          valueListenable: ValueNotifier(_productData['price'] /
-                              (_productData['totalWeight'] > 0
-                                  ? _productData['totalWeight']
-                                  : 1)),
-                          builder: (context, value, child) {
-                            return Text(
-                              '€/kg: €${value.toStringAsFixed(3)}',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const Spacer(flex: 1), // 10% of the row
-                      Expanded(
-                        flex: 2, // 20% of the row
-                        child: ValueListenableBuilder(
-                          valueListenable: ValueNotifier(
-                              _productData['totalWeight'] /
-                                  (_productData['quantity'] > 0
-                                      ? _productData['quantity']
-                                      : 1)),
-                          builder: (context, value, child) {
-                            return Text(
-                              '${AppLocalizations.of(context)!.unitWeight}: ${value > 1 ? value.toStringAsFixed(3) + ' Kg' : (value * 1000).toStringAsFixed(3) + ' g'}',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(children: [
-                    Expanded(
-                      child: _buildTextField(
-                          '${AppLocalizations.of(context)!.quantityOwned}:',
-                          _quantityOwnedController, (value) {
-                        setState(() {
-                          value = value?.replaceAll(',', '.');
-                          _productData['quantityOwned'] =
-                              double.tryParse(value ?? '0') ?? 0.0;
-                        });
-                      }),
                     ),
-                    Expanded(
-                      child: _buildTextField(
-                          '${AppLocalizations.of(context)!.quantityUnitOwned}:',
-                          _quantityUnitOwnedController, (value) {
-                        setState(() {
-                          value = value?.replaceAll(',', '.');
-                          _productData['quantityUnitOwned'] =
-                              double.tryParse(value ?? '0') ?? 0.0;
-                        });
-                      }),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child: _buildCategorySelector(),
                     ),
-                  ]),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: _buildTextField(
-                              '${AppLocalizations.of(context)!.quantityWeightOwned}:',
-                              _quantityWeightOwnedController, (value) {
-                            setState(() {
-                              value = value?.replaceAll(',', '.');
-                              _productData['quantityWeightOwned'] =
-                                  double.tryParse(value ?? '0') ?? 0.0;
-                            });
-                          }),
-                        ),
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child: _buildStoreSelector(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildMacronutrientTable(),
+                _buildImageUrlInput(),
+                _buildTextField(
+                    AppLocalizations.of(context)!.barcode,
+                    _barcodeController,
+                    (value) => _productData['barcode'] = value),
+                Row(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.expirationDate,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Flexible(
-                        fit: FlexFit.tight,
-                        child: _buildCategorySelector(),
+                    ),
+                    Platform.isIOS
+                        ? CupertinoButton(
+                            child: Icon(CupertinoIcons.calendar,
+                                color: Theme.of(context).colorScheme.primary),
+                            onPressed: () async {
+                              DateTime? pickedDate =
+                                  await showCupertinoModalPopup(
+                                context: context,
+                                builder: (context) => Container(
+                                  height: 250,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  child: CupertinoDatePicker(
+                                    initialDateTime:
+                                        _productData['expirationDate']
+                                                .isNotEmpty
+                                            ? DateTime.parse(
+                                                _productData['expirationDate'])
+                                            : DateTime.now(),
+                                    mode: CupertinoDatePickerMode.date,
+                                    onDateTimeChanged: (DateTime dateTime) {
+                                      setState(() {
+                                        _productData['expirationDate'] =
+                                            dateTime.toIso8601String();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : IconButton(
+                            icon: Icon(Icons.calendar_today,
+                                color: Theme.of(context).colorScheme.primary),
+                            onPressed: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate:
+                                    _productData['expirationDate'].isNotEmpty
+                                        ? DateTime.parse(
+                                            _productData['expirationDate'])
+                                        : DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                setState(() {
+                                  _productData['expirationDate'] =
+                                      pickedDate.toIso8601String();
+                                });
+                              }
+                            },
+                          ),
+                    Text(
+                      _productData['expirationDate'].isNotEmpty
+                          ? DateFormat('yyyy-MM-dd').format(
+                              DateTime.parse(_productData['expirationDate']))
+                          : '',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
-                      Flexible(
-                        fit: FlexFit.tight,
-                        child: _buildStoreSelector(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildMacronutrientTable(),
-                  _buildImageUrlInput(),
-                  _buildTextField(
-                      AppLocalizations.of(context)!.barcode,
-                      _barcodeController,
-                      (value) => _productData['barcode'] = value),
-                  Row(
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.expirationDate,
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.calendar_today,
-                            color: Theme.of(context).colorScheme.primary),
-                        onPressed: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: _productData['expirationDate']
-                                    .isNotEmpty
-                                ? DateTime.parse(_productData['expirationDate'])
-                                : DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2101),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              _productData['expirationDate'] =
-                                  pickedDate.toIso8601String();
-                            });
-                          }
-                        },
-                      ),
-                      Text(
-                        _productData['expirationDate'].isNotEmpty
-                            ? DateFormat('yyyy-MM-dd').format(
-                                DateTime.parse(_productData['expirationDate']))
-                            : '',
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                  _buildBottomButtons(),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                _buildBottomButtons(),
+              ],
             ),
           ),
         ),

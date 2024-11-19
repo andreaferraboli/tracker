@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -17,6 +18,7 @@ class AddMealScreen extends StatelessWidget {
     Color pranzoColor = const Color.fromRGBO(243, 238, 13, 1.0);
     Color merendaColor = const Color.fromRGBO(236, 124, 38, 1.0);
     Color cenaColor = const Color.fromRGBO(0, 194, 0, 1.0);
+
     final List<MealType> mealTypes = [
       MealType(
         name: 'Breakfast',
@@ -43,12 +45,12 @@ class AddMealScreen extends StatelessWidget {
         color: cenaColor,
       ),
     ];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.insertMealType),
-        elevation: 0,
+
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(AppLocalizations.of(context)!.insertMealType),
       ),
-      body: Padding(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +93,7 @@ class AddMealScreen extends StatelessWidget {
   void _showProductSelection(BuildContext context, MealType mealType) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => ProductSelectionScreen(mealType: mealType),
       ),
     );

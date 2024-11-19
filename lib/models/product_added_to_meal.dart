@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; // Importa Cupertino per iOS
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 
@@ -19,54 +20,96 @@ class ProductAddedToMeal extends StatefulWidget {
   @override
   State<ProductAddedToMeal> createState() => _ProductAddedToMealState();
 }
-//todo: riparti da qua per implementare ios
+
 class _ProductAddedToMealState extends State<ProductAddedToMeal> {
   void _showEditQuantityDialog() {
     double tempQuantity = widget.selectedQuantity;
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.editQuantity),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.quantityInKg,
+    // Verifica la piattaforma per scegliere il dialog appropriato
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text(AppLocalizations.of(context)!.editQuantity),
+            content: Column(
+              children: [
+                CupertinoTextField(
+                  placeholder: AppLocalizations.of(context)!.quantityInKg,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    tempQuantity =
+                        double.tryParse(value) ?? widget.selectedQuantity;
+                  },
+                  controller: TextEditingController(
+                    text: widget.selectedQuantity.toStringAsFixed(2),
+                  ),
                 ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  tempQuantity =
-                      double.tryParse(value) ?? widget.selectedQuantity;
+              ],
+            ),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onQuantityUpdated?.call(tempQuantity);
                 },
-                controller: TextEditingController(
-                  text: widget.selectedQuantity.toStringAsFixed(2),
-                ),
+                child: Text(AppLocalizations.of(context)!.confirm),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.cancel),
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.editQuantity),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.quantityInKg,
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    tempQuantity =
+                        double.tryParse(value) ?? widget.selectedQuantity;
+                  },
+                  controller: TextEditingController(
+                    text: widget.selectedQuantity.toStringAsFixed(2),
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.onQuantityUpdated?.call(tempQuantity);
-              },
-              child: Text(AppLocalizations.of(context)!.confirm),
-            ),
-          ],
-        );
-      },
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onQuantityUpdated?.call(tempQuantity);
+                },
+                child: Text(AppLocalizations.of(context)!.confirm),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Card(
       color: Theme.of(context).colorScheme.primary,
       margin: const EdgeInsets.only(bottom: 12),
@@ -111,17 +154,37 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
               ),
             ),
             const SizedBox(width: 16),
-            IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).colorScheme.onPrimary,
+            if (isIOS)
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: Icon(
+                  CupertinoIcons.pencil,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                onPressed: _showEditQuantityDialog,
+              )
+            else
+              IconButton(
+                icon: Icon(
+                  Icons.edit,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                onPressed: _showEditQuantityDialog,
               ),
-              onPressed: _showEditQuantityDialog,
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: widget.onDeleteProduct,
-            ),
+            if (isIOS)
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(
+                  CupertinoIcons.delete,
+                  color: CupertinoColors.destructiveRed,
+                ),
+                onPressed: widget.onDeleteProduct,
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: widget.onDeleteProduct,
+              ),
           ],
         ),
       ),

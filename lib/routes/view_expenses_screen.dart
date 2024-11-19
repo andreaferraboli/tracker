@@ -374,7 +374,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                             });
                           },
                           child: Card(
-                            color: Theme.of(context).primaryColor,
+                            color: Theme.of(context).colorScheme.primary,
                             elevation: 4,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -402,7 +402,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                                 ),
                                 trailing: Icon(
                                   Icons.arrow_forward_ios,
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                             ),

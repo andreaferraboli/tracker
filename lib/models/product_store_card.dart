@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
@@ -10,11 +11,17 @@ class ProductStoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          isIOS
+              ? CupertinoPageRoute(
+            builder: (context) => ProductScreen(product: product),
+          )
+              : MaterialPageRoute(
             builder: (context) => ProductScreen(product: product),
           ),
         );
@@ -74,8 +81,8 @@ class ProductStoreCard extends StatelessWidget {
                             color: product.daysUntilExpiration() <= 0
                                 ? Colors.red
                                 : product.daysUntilExpiration() < 7
-                                    ? Colors.orange
-                                    : Colors.green,
+                                ? Colors.orange
+                                : Colors.green,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

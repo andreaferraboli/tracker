@@ -599,7 +599,11 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     ),
                     // Pulsante reset filtri e ricerca
                     IconButton(
-                      onPressed: _showAiDialog,
+                      onPressed: () {
+                        setState(() {
+                          purchasedProducts = originalProducts;
+                        });
+                      },
                       icon: Icon(Icons.refresh,
                           color: Theme.of(context).iconTheme.color),
                     ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
@@ -115,22 +116,34 @@ class _ProductCardState extends State<ProductCard> {
   // Mostra un dialog di errore
   void _showErrorDialog() {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.error),
-          content: Text(AppLocalizations.of(context)!.invalidValue),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.ok),
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return Theme.of(context).platform == TargetPlatform.iOS
+              ? CupertinoAlertDialog(
+                  title: Text(AppLocalizations.of(context)!.error),
+                  content: Text(AppLocalizations.of(context)!.invalidValue),
+                  actions: <Widget>[
+                    CupertinoDialogAction(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(AppLocalizations.of(context)!.ok),
+                    ),
+                  ],
+                )
+              : AlertDialog(
+                  title: Text(AppLocalizations.of(context)!.error),
+                  content: Text(AppLocalizations.of(context)!.invalidValue),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(AppLocalizations.of(context)!.ok),
+                    ),
+                  ],
+                );
+        });
   }
 
   @override
@@ -192,20 +205,34 @@ class _ProductCardState extends State<ProductCard> {
                     const SizedBox(height: 8),
 
                     // Slider per selezionare la quantità
-                    Slider(
-                      value: widget.product.sliderValue,
-                      min: 0,
-                      max: maxQuantity,
-                      divisions: widget.product.quantityUnitOwned > 0
-                          ? widget.product.quantityUnitOwned
-                          : null,
-                      label: '${widget.product.sliderValue}',
-                      onChanged: (value) {
-                        setState(() {
-                          widget.product.sliderValue = value;
-                        });
-                      },
-                    ),
+                    Theme.of(context).platform == TargetPlatform.iOS
+                        ? CupertinoSlider(
+                            value: widget.product.sliderValue,
+                            min: 0,
+                            max: maxQuantity,
+                            divisions: widget.product.quantityUnitOwned > 0
+                                ? widget.product.quantityUnitOwned
+                                : null,
+                            onChanged: (value) {
+                              setState(() {
+                                widget.product.sliderValue = value;
+                              });
+                            },
+                          )
+                        : Slider(
+                            value: widget.product.sliderValue,
+                            min: 0,
+                            max: maxQuantity,
+                            divisions: widget.product.quantityUnitOwned > 0
+                                ? widget.product.quantityUnitOwned
+                                : null,
+                            label: '${widget.product.sliderValue}',
+                            onChanged: (value) {
+                              setState(() {
+                                widget.product.sliderValue = value;
+                              });
+                            },
+                          ),
 
                     // Input peso e unità
                     Row(
@@ -213,34 +240,59 @@ class _ProductCardState extends State<ProductCard> {
                         Text(AppLocalizations.of(context)!.weightInGrams),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              hintText:
-                                  AppLocalizations.of(context)!.weightInGrams,
-                            ),
-                            controller: _weightController,
-                            focusNode: _weightFocusNode,
-                            onChanged: (value) {
-                              _validateWeight(value);
-                            },
-                          ),
+                          child:
+                              Theme.of(context).platform == TargetPlatform.iOS
+                                  ? CupertinoTextField(
+                                      keyboardType: TextInputType.number,
+                                      placeholder: AppLocalizations.of(context)!
+                                          .weightInGrams,
+                                      controller: _weightController,
+                                      focusNode: _weightFocusNode,
+                                      onChanged: (value) {
+                                        _validateWeight(value);
+                                      },
+                                    )
+                                  : TextField(
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        hintText: AppLocalizations.of(context)!
+                                            .weightInGrams,
+                                      ),
+                                      controller: _weightController,
+                                      focusNode: _weightFocusNode,
+                                      onChanged: (value) {
+                                        _validateWeight(value);
+                                      },
+                                    ),
                         ),
                         const SizedBox(width: 8),
                         Text(AppLocalizations.of(context)!.units),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: TextField(
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              hintText: AppLocalizations.of(context)!.units,
-                            ),
-                            controller: _unitsController,
-                            focusNode: _unitsFocusNode,
-                            onChanged: (value) {
-                              _validateUnits(value);
-                            },
-                          ),
+                          child:
+                              Theme.of(context).platform == TargetPlatform.iOS
+                                  ? CupertinoTextField(
+                                      keyboardType: TextInputType.number,
+                                      placeholder:
+                                          AppLocalizations.of(context)!.units,
+                                      controller: _unitsController,
+                                      focusNode: _unitsFocusNode,
+                                      onChanged: (value) {
+                                        _validateUnits(value);
+                                      },
+                                    )
+                                  : TextField(
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            AppLocalizations.of(context)!.units,
+                                      ),
+                                      controller: _unitsController,
+                                      focusNode: _unitsFocusNode,
+                                      onChanged: (value) {
+                                        _validateUnits(value);
+                                      },
+                                    ),
                         ),
                       ],
                     ),
@@ -251,99 +303,78 @@ class _ProductCardState extends State<ProductCard> {
               const SizedBox(width: 8),
 
               // Bottone per aggiungere il prodotto
-              ElevatedButton(
-                onPressed: (_weightFromTextField > 0 ||
-                        _unitsFromTextField > 0 ||
-                        widget.product.sliderValue > 0)
-                    ? () {
-                        double quantity = 0;
-
-                        // Determina il tipo di aggiornamento
-                        if (widget.product.sliderValue > 0) {
-                          widget.product.quantityUpdateType =
-                              QuantityUpdateType.slider;
-                          quantity = double.parse((widget.product.sliderValue *
-                                  widget.product.unitWeight)
-                              .toStringAsFixed(3));
-                        } else if (_unitsFromTextField > 0) {
-                          widget.product.quantityUpdateType =
-                              QuantityUpdateType.units;
-                          quantity = _unitsFromTextField.toDouble() *
-                              widget.product.totalWeight;
-                        } else if (_weightFromTextField > 0) {
-                          widget.product.quantityUpdateType =
-                              QuantityUpdateType.weight;
-                          quantity = double.parse(
-                              (_weightFromTextField / 1000).toStringAsFixed(3));
-                        }
-
-                        // Aggiungi il prodotto al pasto
-                        if (widget.addProductToMeal != null) {
-                          widget.addProductToMeal!(widget.product, quantity);
-                        }
-                      }
-
-//                         double quantity = 0;
-//                         if (widget.product.sliderValue > 0) {
-//                           // Usa widget.product.sliderValue al posto di _sliderValue
-//                           quantity = double.parse((widget.product.sliderValue *
-//                                   widget.product.unitWeight)
-//                               .toStringAsFixed(3)); // Mantieni 3 cifre decimali
-//
-//                           // Logica per aggiornare il prodotto
-//                           widget.product.quantityUnitOwned -=
-//                               widget.product.sliderValue.toInt();
-//
-//                           if (widget.product.quantityUnitOwned == 0) {
-//                             if (widget.product.quantityOwned > 0) {
-//                               widget.product.quantityOwned--;
-//                               widget.product.quantityUnitOwned =
-//                                   widget.product.quantity;
-//                             }
-//                           }
-//
-//                           widget.product.quantityWeightOwned -= double.parse(
-//                               (widget.product.sliderValue *
-//                                       widget.product.unitWeight)
-//                                   .toStringAsFixed(3));
-//                         } else if (_unitsFromTextField > 0) {
-//                           quantity = double.parse(
-//                               (_unitsFromTextField.toDouble() *
-//                                       widget.product.totalWeight)
-//                                   .toStringAsFixed(3));
-//
-//                           widget.product.quantityOwned -= _unitsFromTextField;
-//                           widget.product.quantityWeightOwned -= double.parse(
-//                               (_unitsFromTextField * widget.product.totalWeight)
-//                                   .toStringAsFixed(3));
-//                         } else if (_weightFromTextField > 0) {
-//                           quantity = double.parse(
-//                               (_weightFromTextField / 1000).toStringAsFixed(3));
-//
-//                           widget.product.quantityUnitOwned -=
-//                               ((_weightFromTextField /
-//                                       widget.product.unitWeight)
-//                                   .ceil());
-//                           widget.product.quantityWeightOwned -= double.parse(
-//                               (_weightFromTextField / 1000).toStringAsFixed(3));
-//
-//                           if (widget.product.quantityWeightOwned == 0) {
-//                             widget.product.quantityOwned = 0;
-//                           }
-//                         }
-//
-//                         // Aggiunge il prodotto al pasto, se la funzione addProductToMeal è definita
-//                         if (widget.addProductToMeal != null) {
-//                           widget.addProductToMeal!(widget.product, quantity);
-//                         }
-//                       }
-                    : null,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(8),
-                  minimumSize: const Size(16, 16),
-                ),
-                child: const Icon(Icons.add, size: 16),
-              ),
+              Theme.of(context).platform == TargetPlatform.iOS
+                  ? CupertinoButton(
+                      onPressed: (_weightFromTextField > 0 ||
+                              _unitsFromTextField > 0 ||
+                              widget.product.sliderValue > 0)
+                          ? () {
+                              double quantity = 0;
+                              if (widget.product.sliderValue > 0) {
+                                widget.product.quantityUpdateType =
+                                    QuantityUpdateType.slider;
+                                quantity = double.parse(
+                                    (widget.product.sliderValue *
+                                            widget.product.unitWeight)
+                                        .toStringAsFixed(3));
+                              } else if (_unitsFromTextField > 0) {
+                                widget.product.quantityUpdateType =
+                                    QuantityUpdateType.units;
+                                quantity = _unitsFromTextField.toDouble() *
+                                    widget.product.totalWeight;
+                              } else if (_weightFromTextField > 0) {
+                                widget.product.quantityUpdateType =
+                                    QuantityUpdateType.weight;
+                                quantity = double.parse(
+                                    (_weightFromTextField / 1000)
+                                        .toStringAsFixed(3));
+                              }
+                              if (widget.addProductToMeal != null) {
+                                widget.addProductToMeal!(
+                                    widget.product, quantity);
+                              }
+                            }
+                          : null,
+                      padding: const EdgeInsets.all(8),
+                      child: const Icon(CupertinoIcons.add, size: 16),
+                    )
+                  : ElevatedButton(
+                      onPressed: (_weightFromTextField > 0 ||
+                              _unitsFromTextField > 0 ||
+                              widget.product.sliderValue > 0)
+                          ? () {
+                              double quantity = 0;
+                              if (widget.product.sliderValue > 0) {
+                                widget.product.quantityUpdateType =
+                                    QuantityUpdateType.slider;
+                                quantity = double.parse(
+                                    (widget.product.sliderValue *
+                                            widget.product.unitWeight)
+                                        .toStringAsFixed(3));
+                              } else if (_unitsFromTextField > 0) {
+                                widget.product.quantityUpdateType =
+                                    QuantityUpdateType.units;
+                                quantity = _unitsFromTextField.toDouble() *
+                                    widget.product.totalWeight;
+                              } else if (_weightFromTextField > 0) {
+                                widget.product.quantityUpdateType =
+                                    QuantityUpdateType.weight;
+                                quantity = double.parse(
+                                    (_weightFromTextField / 1000)
+                                        .toStringAsFixed(3));
+                              }
+                              if (widget.addProductToMeal != null) {
+                                widget.addProductToMeal!(
+                                    widget.product, quantity);
+                              }
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(8),
+                        minimumSize: const Size(16, 16),
+                      ),
+                      child: const Icon(Icons.add, size: 16),
+                    ),
             ],
           ),
         ),

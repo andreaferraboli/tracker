@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
@@ -50,11 +51,17 @@ class _ProductListItemState extends State<ProductListItem> {
 
   @override
   Widget build(BuildContext context) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          isIOS
+              ? CupertinoPageRoute(
+            builder: (context) => ProductScreen(product: widget.product),
+          )
+              : MaterialPageRoute(
             builder: (context) => ProductScreen(product: widget.product),
           ),
         );
@@ -84,7 +91,7 @@ class _ProductListItemState extends State<ProductListItem> {
                               widget.product.category);
                         }
                       } else {
-                        return const CircularProgressIndicator();
+                        return const CupertinoActivityIndicator();
                       }
                     },
                   )
@@ -123,14 +130,14 @@ class _ProductListItemState extends State<ProductListItem> {
                       style: TextStyle(
                         color: widget.selected
                             ? Theme.of(context)
-                                .colorScheme
-                                .onPrimary
-                                .withOpacity(0.9)
+                            .colorScheme
+                            .onPrimary
+                            .withOpacity(0.9)
                             : Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.color
-                                ?.withOpacity(0.9),
+                            .textTheme
+                            .bodyLarge
+                            ?.color
+                            ?.withOpacity(0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -160,13 +167,13 @@ class _ProductListItemState extends State<ProductListItem> {
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
                                 : Theme.of(context)
-                                    .elevatedButtonTheme
-                                    .style
-                                    ?.backgroundColor
-                                    ?.resolve({}),
+                                .elevatedButtonTheme
+                                .style
+                                ?.backgroundColor
+                                ?.resolve({}),
                             child: IconButton(
                               icon: Icon(
-                                Icons.remove,
+                                isIOS ? CupertinoIcons.minus : Icons.remove,
                                 color: !widget.selected
                                     ? Theme.of(context).colorScheme.onPrimary
                                     : Theme.of(context).colorScheme.primary,
@@ -180,31 +187,31 @@ class _ProductListItemState extends State<ProductListItem> {
                           ),
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Text('${widget.product.buyQuantity}',
                                 style: TextStyle(
                                     fontSize: 20.0,
                                     color: widget.selected
                                         ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
+                                        .colorScheme
+                                        .onPrimary
                                         : Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color)),
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color)),
                           ),
                           Material(
                             shape: const CircleBorder(),
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
                                 : Theme.of(context)
-                                    .elevatedButtonTheme
-                                    .style
-                                    ?.backgroundColor
-                                    ?.resolve({}),
+                                .elevatedButtonTheme
+                                .style
+                                ?.backgroundColor
+                                ?.resolve({}),
                             child: IconButton(
                               icon: Icon(
-                                Icons.add,
+                                isIOS ? CupertinoIcons.plus : Icons.add,
                                 color: !widget.selected
                                     ? Theme.of(context).colorScheme.onPrimary
                                     : Theme.of(context).colorScheme.primary,

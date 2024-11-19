@@ -528,7 +528,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).colorScheme.primary,
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             child: ListTile(
