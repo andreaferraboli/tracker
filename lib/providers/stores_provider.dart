@@ -1,11 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracker/services/icons_helper.dart';
 
 final storesProvider =
-StateNotifierProvider<StoresNotifier, List<Map<String, dynamic>>>((ref) {
+    StateNotifierProvider<StoresNotifier, List<Map<String, dynamic>>>((ref) {
   return StoresNotifier();
 });
 

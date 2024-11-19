@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:toastification/toastification.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
 
@@ -12,6 +11,7 @@ import '../models/meal_type.dart';
 import '../models/product.dart';
 import '../models/product_card.dart';
 import '../models/quantiy_update_type.dart';
+import '../services/toast_notifier.dart';
 
 class ProductSelectionScreen extends StatefulWidget {
   final MealType mealType;
@@ -73,10 +73,10 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
               .toList(); // Lista filtrata
         });
       } else {
-        print('Nessun documento trovato per l\'utente.');
+        ToastNotifier.showError('Nessun documento trovato per l\'utente.');
       }
     } catch (error) {
-      print('Errore nel recupero dei prodotti: $error');
+      ToastNotifier.showError('Errore nel recupero dei prodotti: $error');
     }
   }
 
@@ -115,7 +115,6 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                 products[index]['quantityOwned'] -= 1;
                 products[index]['quantityUnitOwned'] = mealProduct.quantity;
               }
-              mealProduct.selectedQuantity *= mealProduct.unitWeight;
               break;
 
             case QuantityUpdateType.weight:
@@ -170,14 +169,15 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
                 products[index]['quantityOwned'] = 0;
                 products[index]['quantityUnitOwned'] = 0;
               }
-              mealProduct.selectedQuantity *= mealProduct.totalWeight;
               break;
 
             default:
               // Gestione per tipi di aggiornamento non definiti
-              print('Tipo di aggiornamento non supportato');
+              ToastNotifier.showError('Tipo di aggiornamento non supportato');
           }
-
+          if (products[index]['quantityOwned'] <= 0) {
+            products[index]['quantityUnitOwned'] = 0;
+          }
           products[index]['quantityWeightOwned'] = double.parse((products[index]
                               ['quantityWeightOwned'])
                           .toStringAsFixed(3))
@@ -219,21 +219,14 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
           }
         ])
       });
-      toastification.show(
-        context: context,
-        type: ToastificationType.success,
-        style: ToastificationStyle.fillColored,
-        title: Text('Pasto salvato con successo!'),
-        alignment: Alignment.topCenter,
-        autoCloseDuration: const Duration(seconds: 4),
-        borderRadius: BorderRadius.circular(100.0),
-      );
+      ToastNotifier.showSuccess(
+          context, AppLocalizations.of(context)!.mealSavedSuccessfully);
       int count = 0;
       Navigator.of(context).popUntil((route) {
         return count++ == 2;
       });
     } catch (e) {
-      print('Errore durante il salvataggio del pasto: $e');
+      ToastNotifier.showError('Errore durante il salvataggio del pasto: $e');
     }
   }
 

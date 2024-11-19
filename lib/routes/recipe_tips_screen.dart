@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import per multilingua
 import 'package:http/http.dart' as http;
+import 'package:tracker/services/toast_notifier.dart';
 
 class RecipeTipsScreen extends StatefulWidget {
   final List<String> ingredientNames;
@@ -41,11 +42,11 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
             recipes = data.map((e) => e as Map<String, dynamic>).toList();
           });
         } else {
-          print('Errore API: ${response.statusCode}');
+          ToastNotifier.showError('Errore API: ${response.statusCode}');
         }
       }
     } catch (e) {
-      print('Errore: $e');
+      ToastNotifier.showError('Errore: $e');
     }
   }
 
@@ -67,57 +68,55 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
               itemCount: recipes.length,
               itemBuilder: (context, index) {
                 final recipe = recipes[index];
-                return Container(
-                  margin: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).colorScheme.primary,
-                        blurRadius: 2,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  height: 800,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        child: recipe['image']?.isNotEmpty == true
-                            ? Image.network(
-                          recipe['image']!,
-                          width: double.infinity,
-                          height: 150,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(Icons.broken_image, size: 50),
-                            );
-                          },
-                        )
-                            : const Center(
-                          child: Icon(Icons.no_photography, size: 50),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                        child: Text(
-                          recipe['title']?.toString() ?? 'Unknown Recipe',
-                          style: const TextStyle(
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                            height: 1.2,
+                  elevation: 4,
+                  child: SizedBox(
+                    width: 150, // Larghezza fissa della card
+                    height: 200, // Altezza fissa della card
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 2, // Prende 3/5 dello spazio disponibile
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
+                              image: recipe['image']?.isNotEmpty == true
+                                  ? DecorationImage(
+                                image: NetworkImage(recipe['image']!),
+                                fit: BoxFit.cover,
+                              )
+                                  : null,
+                            ),
+                            child: recipe['image']?.isNotEmpty != true
+                                ? const Center(
+                              child: Icon(Icons.no_photography, size: 50),
+                            )
+                                : null,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              recipe['title']?.toString() ?? 'Unknown Recipe',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

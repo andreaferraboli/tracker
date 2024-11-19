@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di a
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 import '../models/meal.dart';
 import '../models/product.dart';
@@ -79,11 +80,8 @@ class MealDetailScreen extends StatelessWidget {
               if (confirm == true) {
                 await deleteMeal(meal);
                 Navigator.of(context).pop(meal);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(AppLocalizations.of(context)!.mealDeleted),
-                  ),
-                );
+                ToastNotifier.showSuccess(
+                    context, AppLocalizations.of(context)!.mealDeleted);
               }
             },
           ),

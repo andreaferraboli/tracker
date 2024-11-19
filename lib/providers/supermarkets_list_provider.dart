@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 class SupermarketsNotifier extends StateNotifier<List<String>> {
   SupermarketsNotifier() : super([]) {
@@ -22,7 +23,7 @@ class SupermarketsNotifier extends StateNotifier<List<String>> {
         state = supermarkets; // Imposta lo stato con la lista recuperata
       }
     } catch (e) {
-      print("Errore nel recupero dei supermercati: $e");
+      ToastNotifier.showError("Errore nel recupero dei supermercati: $e");
     }
   }
 
@@ -39,7 +40,7 @@ class SupermarketsNotifier extends StateNotifier<List<String>> {
 
   // Funzione per aggiungere più supermercati
   void addAllSupermarkets(List<String> supermarkets) async {
-    state = [...state, ...supermarkets];
+    state = supermarkets;
   }
 
   // Funzione per rimuovere un supermercato

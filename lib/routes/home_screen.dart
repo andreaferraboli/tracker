@@ -63,11 +63,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         [];
 // Recupero dei pasti
     final mealsDocRef =
-    FirebaseFirestore.instance.collection('meals').doc(userId);
+        FirebaseFirestore.instance.collection('meals').doc(userId);
     final mealsDoc = await mealsDocRef.get();
     final meals = (mealsDoc.data()?['meals'] as List?)
-        ?.map((meal) => Meal.fromJson(meal))
-        .toList() ??
+            ?.map((meal) => Meal.fromJson(meal))
+            .toList() ??
         [];
     // Recupero delle categorie
     final categoriesDocRef =
@@ -89,7 +89,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Caricamento nei provider
     ref.read(storesProvider.notifier).loadStores(stores);
-    ref.read(supermarketsListProvider.notifier).addAllSupermarkets(supermarkets);
+    ref
+        .read(supermarketsListProvider.notifier)
+        .addAllSupermarkets(supermarkets);
     ref.read(mealsProvider.notifier).loadMeals(meals);
     ref.read(productsProvider.notifier).loadProducts(products);
     ref.read(categoriesProvider.notifier).loadCategories(categories);

@@ -65,6 +65,7 @@ extension AppLocalizationsExtension on AppLocalizations {
         return category; // Ritorna la stringa originale se non è trovata
     }
   }
+
   String colorLabel(BuildContext context, String colorName) {
     switch (colorName) {
       case 'primary':
@@ -104,6 +105,7 @@ extension AppLocalizationsExtension on AppLocalizations {
         );
     }
   }
+
   String getNutrientString(String nutrient) {
     switch (nutrient) {
       case 'Energy':

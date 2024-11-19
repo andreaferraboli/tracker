@@ -16,6 +16,7 @@ import '../providers/stores_provider.dart';
 import '../providers/supermarket_provider.dart';
 import '../services/category_services.dart';
 import '../services/icons_helper.dart';
+import '../services/toast_notifier.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
   final String? supermarketName;
@@ -546,13 +547,14 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         await userDocRef.update({
           "products": products,
         });
-        print('Prodotto aggiornato con successo!');
+        ToastNotifier.showError('Prodotto aggiornato con successo!');
         int count = 0;
         Navigator.of(context).popUntil((route) {
           return count++ == 2;
         });
       } catch (e) {
-        print('Errore durante l\'aggiornamento del prodotto: $e');
+        ToastNotifier.showError(
+            'Errore durante l\'aggiornamento del prodotto: $e');
       }
     }
   }
@@ -596,15 +598,11 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         await userDocRef.update({
           "products": FieldValue.arrayUnion([_productData])
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.successAddProduct),
-            backgroundColor: Colors.green,
-          ),
-        );
+        ToastNotifier.showSuccess(
+            context, AppLocalizations.of(context)!.successAddProduct);
         Navigator.of(context).pop();
       } catch (e) {
-        print('Errore durante l\'aggiunta del prodotto: $e');
+        ToastNotifier.showError('Errore durante l\'aggiunta del prodotto: $e');
       }
     }
   }

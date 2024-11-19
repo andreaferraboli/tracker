@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/add_product_screen.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 class ProductScreen extends StatelessWidget {
   final Product product;
@@ -32,16 +33,13 @@ class ProductScreen extends StatelessWidget {
             "products": products,
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Prodotto eliminato con successo!'),
-              backgroundColor: Colors.green,
-            ),
-          );
+          ToastNotifier.showSuccess(context,
+              AppLocalizations.of(context)!.productDeletedSuccessfully);
 
           Navigator.of(context).pop();
         } catch (e) {
-          print('Errore durante l\'eliminazione del prodotto: $e');
+          ToastNotifier.showError(
+              'Errore durante l\'eliminazione del prodotto: $e');
         }
       }
     }

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
   const AuthPage({super.key});
@@ -31,11 +32,8 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       } else {
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.passwordsDoNotMatch),
-            ),
-          );
+          ToastNotifier.showError(
+              AppLocalizations.of(context)!.passwordsDoNotMatch);
           return;
         }
 
@@ -79,20 +77,15 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             .set({"meals": []});
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isLogin
-                ? AppLocalizations.of(context)!.loginSuccess
-                : AppLocalizations.of(context)!.signupSuccess,
-          ),
-        ),
+      ToastNotifier.showSuccess(
+        context,
+        isLogin
+            ? AppLocalizations.of(context)!.loginSuccess
+            : AppLocalizations.of(context)!.signupSuccess,
       );
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${AppLocalizations.of(context)!.error}: ${e.message}'),
-        ),
+      ToastNotifier.showError(
+        '${AppLocalizations.of(context)!.error}: ${e.message}',
       );
     }
   }

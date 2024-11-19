@@ -260,23 +260,26 @@ class _ProductCardState extends State<ProductCard> {
 
                         // Determina il tipo di aggiornamento
                         if (widget.product.sliderValue > 0) {
-                          widget.product.quantityUpdateType = QuantityUpdateType.slider;
+                          widget.product.quantityUpdateType =
+                              QuantityUpdateType.slider;
                           quantity = double.parse((widget.product.sliderValue *
                                   widget.product.unitWeight)
                               .toStringAsFixed(3));
                         } else if (_unitsFromTextField > 0) {
-                          widget.product.quantityUpdateType = QuantityUpdateType.units;
-                          quantity = _unitsFromTextField.toDouble()*widget.product.totalWeight;
+                          widget.product.quantityUpdateType =
+                              QuantityUpdateType.units;
+                          quantity = _unitsFromTextField.toDouble() *
+                              widget.product.totalWeight;
                         } else if (_weightFromTextField > 0) {
-                          widget.product.quantityUpdateType = QuantityUpdateType.weight;
+                          widget.product.quantityUpdateType =
+                              QuantityUpdateType.weight;
                           quantity = double.parse(
                               (_weightFromTextField / 1000).toStringAsFixed(3));
                         }
 
                         // Aggiungi il prodotto al pasto
                         if (widget.addProductToMeal != null) {
-                          widget.addProductToMeal!(
-                              widget.product, quantity);
+                          widget.addProductToMeal!(widget.product, quantity);
                         }
                       }
 

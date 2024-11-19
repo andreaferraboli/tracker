@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/category_services.dart';
+import 'dart:io';
 
 import '../models/meal_type.dart';
 
@@ -27,7 +29,6 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
   @override
   void initState() {
     super.initState();
-    // Carica le categorie predefinite in base al tipo di pasto selezionato
     selectedCategories = widget.categories;
   }
 
@@ -38,23 +39,72 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
     });
   }
 
-  // Funzione per aprire il dialog di personalizzazione delle categorie
   void _openCustomizeCategoriesDialog() async {
-    // Recupera le categorie disponibili
     List<String> availableCategories =
-        await CategoryServices.getCategoryNames();
+    await CategoryServices.getCategoryNames();
 
-    // Mostra il dialogo
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return Platform.isIOS
+            ? CupertinoAlertDialog(
+          title: Text(AppLocalizations.of(context)!.customizeCategories),
+          content: SizedBox(
+            width: 200,
+            height: 500,
+            child: CupertinoScrollbar(
+              child: ListView(
+                shrinkWrap: true,
+                children: availableCategories.map((category) {
+                  return Row(
+                    children: [
+                      CupertinoSwitch(
+                        value: selectedCategories.contains(category),
+                        onChanged: (bool value) {
+                          setState(() {
+                            if (value) {
+                              if (selectedCategories.length < 4) {
+                                selectedCategories.add(category);
+                              }
+                            } else {
+                              selectedCategories.remove(category);
+                            }
+                          });
+                        },
+                      ),
+                      Text(AppLocalizations.of(context)!
+                          .translateCategory(category)),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                setState(() {
+                  widget.onCategoriesUpdated?.call(selectedCategories);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.save),
+            ),
+          ],
+        )
+            : AlertDialog(
           title: Text(AppLocalizations.of(context)!.customizeCategories),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setDialogState) {
               return Container(
-                width: 200, // Imposta una larghezza fissa
-                height: 500, // Imposta un'altezza fissa
+                width: 200,
+                height: 500,
                 child: ListView(
                   shrinkWrap: true,
                   children: availableCategories.map((category) {
@@ -84,17 +134,16 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Chiudi il dialogo senza salvare
+                Navigator.of(context).pop();
               },
               child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () {
-                // Aggiorna le categorie selezionate nel widget principale
                 setState(() {
                   widget.onCategoriesUpdated?.call(selectedCategories);
                 });
-                Navigator.of(context).pop(); // Chiudi il dialogo e salva
+                Navigator.of(context).pop();
               },
               child: Text(AppLocalizations.of(context)!.save),
             ),
@@ -104,7 +153,6 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
     );
   }
 
-  // Funzione per rimuovere tutte le categorie selezionate
   void _clearCategories() {
     setState(() {
       selectedCategories.clear();
@@ -119,9 +167,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
         Expanded(
           child: Wrap(
             spacing: 4.0,
-            // Spazio orizzontale tra i Chip
             runSpacing: 4.0,
-            // Spazio verticale tra le righe di Chip
             alignment: WrapAlignment.center,
             runAlignment: WrapAlignment.center,
             children: selectedCategories.map((category) {

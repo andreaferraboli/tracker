@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +12,7 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
+import 'package:tracker/services/toast_notifier.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/meal.dart';
@@ -73,12 +73,12 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         // Salva la stringa JSON nel file specificato
         debugPrint(jsonString);
 
-        print('Dati salvati con successo in $jsonFilePath');
+        ToastNotifier.showError('Dati salvati con successo in $jsonFilePath');
       } else {
-        print('Nessun documento trovato per l\'utente.');
+        ToastNotifier.showError('Nessun documento trovato per l\'utente.');
       }
     } catch (e) {
-      print('Errore durante il salvataggio dei dati: $e');
+      ToastNotifier.showError('Errore durante il salvataggio dei dati: $e');
     }
   }
 
@@ -96,9 +96,9 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     try {
       // Aggiorna il documento esistente aggiungendo i prodotti all'array "products"
       await userDocRef.update({"products": FieldValue.arrayUnion(products)});
-      print('Prodotti aggiunti con successo!');
+      ToastNotifier.showError('Prodotti aggiunti con successo!');
     } catch (e) {
-      print('Errore durante l\'aggiunta dei prodotti: $e');
+      ToastNotifier.showError('Errore durante l\'aggiunta dei prodotti: $e');
     }
   }
 
@@ -110,9 +110,10 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
     try {
       await userDocRef.update({"products": FieldValue.delete()});
-      print('Prodotti eliminati con successo!');
+      ToastNotifier.showError('Prodotti eliminati con successo!');
     } catch (e) {
-      print('Errore durante l\'eliminazione dei prodotti: $e');
+      ToastNotifier.showError(
+          'Errore durante l\'eliminazione dei prodotti: $e');
     }
     try {
       userDocRef = FirebaseFirestore.instance
@@ -122,7 +123,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         "products": [],
       });
     } catch (e) {
-      print('Errore durante l\'impostazione dei prodotti: $e');
+      ToastNotifier.showError(
+          'Errore durante l\'impostazione dei prodotti: $e');
     }
   }
 
@@ -162,7 +164,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
             if (existingProduct != null) {
               existingProduct['quantityOwned'] += product.product.buyQuantity;
-              existingProduct['quantityUnitOwned'] +=product.product.quantity;
+              existingProduct['quantityUnitOwned'] += product.product.quantity;
               existingProduct['quantityWeightOwned'] +=
                   product.product.buyQuantity * product.product.totalWeight;
             } else {
@@ -190,15 +192,11 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         ])
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.expenseSaved),
-          backgroundColor: Colors.green,
-        ),
-      );
+      ToastNotifier.showSuccess(
+          context, AppLocalizations.of(context)!.expenseSaved);
       Navigator.pop(context);
     } catch (e) {
-      print('Errore durante il salvataggio della spesa: $e');
+      ToastNotifier.showError('Errore durante il salvataggio della spesa: $e');
     }
   }
 
@@ -236,10 +234,10 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           selectedProducts = [];
         });
       } else {
-        print('Nessun documento trovato per l\'utente.');
+        ToastNotifier.showError('Nessun documento trovato per l\'utente.');
       }
     }, onError: (error) {
-      print('Errore nel recupero dei prodotti: $error');
+      ToastNotifier.showError('Errore nel recupero dei prodotti: $error');
     });
   }
 
@@ -413,7 +411,9 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       },
     );
   }
-  Future<List<ProductListItem>> suggestProductsWithinBudget(double budget) async {
+
+  Future<List<ProductListItem>> suggestProductsWithinBudget(
+      double budget) async {
     List<ProductListItem> suggestedProducts = [];
     double currentSum = 0.0;
     List<Meal> meals = ref.read(mealsProvider);
@@ -458,7 +458,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           final quantity = product['quantitySelected'] as double;
           productConsumption.update(
             productId,
-                (value) => value + quantity,
+            (value) => value + quantity,
             ifAbsent: () => quantity,
           );
         }
@@ -466,7 +466,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
       // Calcola la media settimanale per ciascun prodotto
       Map<String, double> weeklyAverageConsumption = productConsumption.map(
-            (key, value) => MapEntry(key, value / totalWeeks),
+        (key, value) => MapEntry(key, value / totalWeeks),
       );
 
       // Calcola il punteggio di necessità per ciascun prodotto
@@ -492,8 +492,8 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       }
 
       // Ordina i prodotti per necessityScore decrescente
-      necessityScores.sort((a, b) =>
-          b['necessityScore'].compareTo(a['necessityScore']));
+      necessityScores
+          .sort((a, b) => b['necessityScore'].compareTo(a['necessityScore']));
 
       // Seleziona i prodotti fino a raggiungere il budget
       for (var entry in necessityScores) {
@@ -503,7 +503,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         double quantityWeightOwned = product.product.quantityWeightOwned;
 
         int quantityToBuy =
-        (weeklyConsumption - quantityWeightOwned).abs().ceil();
+            (weeklyConsumption - quantityWeightOwned).abs().ceil();
         double totalCost = product.product.price * quantityToBuy;
 
         if (currentSum + totalCost <= budget) {
@@ -540,12 +540,11 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         }
       }
     } catch (e) {
-      print('Errore durante il recupero dei pasti: $e');
+      ToastNotifier.showError('Errore durante il recupero dei pasti: $e');
     }
 
     return suggestedProducts;
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -29,6 +29,7 @@ class AppColors {
 
   static var recipeTipsLight = Color.fromARGB(255, 66, 12, 20);
   static var recipeTipsDark = Color.fromARGB(255, 66, 12, 20);
+
   // Blocco statico che carica i colori non appena la classe viene utilizzata per la prima volta
   static Future<void> initialize() async {
     await loadAllColors();

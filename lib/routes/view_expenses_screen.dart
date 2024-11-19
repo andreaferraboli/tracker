@@ -9,6 +9,7 @@ import 'package:tracker/models/custom_barchart.dart';
 import 'package:tracker/models/expense.dart';
 import 'package:tracker/routes/expense_detail_screen.dart';
 import 'package:tracker/services/app_colors.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 import '../models/period_selector.dart';
 
@@ -185,7 +186,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
           .map((expense) => Expense.fromJson(expense))
           .toList();
     } catch (e) {
-      print('Errore durante il recupero delle spese: $e');
+      ToastNotifier.showError('Errore durante il recupero delle spese: $e');
       return [];
     }
   }

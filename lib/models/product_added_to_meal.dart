@@ -19,7 +19,7 @@ class ProductAddedToMeal extends StatefulWidget {
   @override
   State<ProductAddedToMeal> createState() => _ProductAddedToMealState();
 }
-
+//todo: riparti da qua per implementare ios
 class _ProductAddedToMealState extends State<ProductAddedToMeal> {
   void _showEditQuantityDialog() {
     double tempQuantity = widget.selectedQuantity;
@@ -112,7 +112,9 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
             ),
             const SizedBox(width: 16),
             IconButton(
-              icon: Icon(Icons.edit,color: Theme.of(context).colorScheme.onPrimary,
+              icon: Icon(
+                Icons.edit,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
               onPressed: _showEditQuantityDialog,
             ),

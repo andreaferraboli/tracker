@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -43,7 +44,7 @@ class _UserScreenState extends State<UserScreen> {
           _isLoading = false;
         });
       } catch (e) {
-        print("Errore nel caricamento del nome utente: $e");
+        ToastNotifier.showError("Errore nel caricamento del nome utente: $e");
         setState(() {
           _isLoading = false;
         });
@@ -66,9 +67,8 @@ class _UserScreenState extends State<UserScreen> {
         // Aggiornamento della password
         await user!.updatePassword(_newPasswordController.text);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppLocalizations.of(context)!.passwordUpdated),
-        ));
+        ToastNotifier.showSuccess(
+            context, AppLocalizations.of(context)!.passwordUpdated);
 
         // Pulisce i campi di testo
         _currentPasswordController.clear();
@@ -76,20 +76,16 @@ class _UserScreenState extends State<UserScreen> {
         _confirmPasswordController.clear();
       } catch (e) {
         if (e is FirebaseAuthException && e.code == 'invalid-credential') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text(AppLocalizations.of(context)!.incorrectCurrentPassword),
-          ));
+          ToastNotifier.showError(
+              AppLocalizations.of(context)!.incorrectCurrentPassword);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!.errorUpdatingPassword),
-          ));
+          ToastNotifier.showError(
+              AppLocalizations.of(context)!.errorUpdatingPassword);
         }
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(AppLocalizations.of(context)!.passwordsDoNotMatch),
-      ));
+      ToastNotifier.showError(
+          AppLocalizations.of(context)!.passwordsDoNotMatch);
     }
   }
 

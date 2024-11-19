@@ -7,6 +7,7 @@ import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_store_card.dart';
 import 'package:tracker/routes/add_product_screen.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 import '../services/category_services.dart';
 
@@ -60,10 +61,10 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
           originalProducts = productWidgets;
         });
       } else {
-        print('Nessun documento trovato per l\'utente.');
+        ToastNotifier.showError('Nessun documento trovato per l\'utente.');
       }
     }, onError: (error) {
-      print('Errore nel recupero dei prodotti: $error');
+      ToastNotifier.showError('Errore nel recupero dei prodotti: $error');
     });
   }
 

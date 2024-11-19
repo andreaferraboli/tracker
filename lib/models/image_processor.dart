@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
@@ -17,7 +17,8 @@ class ImageProcessor extends StatefulWidget {
       final response = await http.get(Uri.parse(imageUrl));
 
       if (response.statusCode == 200) {
-        final originalImage = img.decodeImage(Uint8List.fromList(response.bodyBytes));
+        final originalImage =
+            img.decodeImage(Uint8List.fromList(response.bodyBytes));
 
         if (originalImage == null) {
           debugPrint('Errore: Impossibile decodificare l\'immagine.');
@@ -41,7 +42,8 @@ class ImageProcessor extends StatefulWidget {
           return const SizedBox.shrink();
         }
       } else {
-        debugPrint('Errore nel caricamento dell\'immagine: ${response.statusCode}');
+        debugPrint(
+            'Errore nel caricamento dell\'immagine: ${response.statusCode}');
         return const SizedBox.shrink();
       }
     } catch (e) {
@@ -69,10 +71,7 @@ class ImageProcessor extends StatefulWidget {
     }
     return srcImage;
   }
-
-
 }
-
 
 class _ImageProcessorState extends State<ImageProcessor> {
   Uint8List? _processedImage;
@@ -81,8 +80,6 @@ class _ImageProcessorState extends State<ImageProcessor> {
   void initState() {
     super.initState();
   }
-
-
 
   @override
   Widget build(BuildContext context) {

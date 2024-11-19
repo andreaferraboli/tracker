@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 
@@ -43,7 +46,54 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return AlertDialog(
+    return Platform.isIOS
+        ? CupertinoAlertDialog(
+      title: Text(localizations.edit_macronutrient),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CupertinoPicker(
+            itemExtent: 40.0,
+            onSelectedItemChanged: (index) {
+              setState(() {
+                editedName = widget.macronutrientsArray[index];
+              });
+            },
+            children: widget.macronutrientsArray.map((nutrient) {
+              return Text(localizations.getNutrientString(nutrient));
+            }).toList(),
+          ),
+          CupertinoTextField(
+            placeholder: localizations.edit_value_100g,
+            controller: _valueController,
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              editedValue = value;
+            },
+          ),
+        ],
+      ),
+      actions: [
+        CupertinoDialogAction(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text(localizations.cancel),
+        ),
+        CupertinoDialogAction(
+          onPressed: () {
+            widget.onSave(
+              widget.initialName,
+              editedName,
+              double.tryParse(editedValue) ?? 0.0,
+            );
+            Navigator.of(context).pop();
+          },
+          child: Text(localizations.save),
+        ),
+      ],
+    )
+        : AlertDialog(
       title: Text(localizations.edit_macronutrient),
       content: Column(
         mainAxisSize: MainAxisSize.min,

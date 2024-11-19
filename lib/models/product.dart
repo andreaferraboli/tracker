@@ -25,6 +25,7 @@ class Product {
   double unitPrice;
   double sliderValue;
   QuantityUpdateType? quantityUpdateType;
+
   // Costruttore
   Product({
     required this.productId,

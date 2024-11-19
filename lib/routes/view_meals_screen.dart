@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/app_colors.dart';
+import 'package:tracker/services/toast_notifier.dart';
+
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
 import '../models/period_selector.dart';
@@ -301,7 +303,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           .map((meal) => Meal.fromJson(meal))
           .toList();
     } catch (e) {
-      print('Errore durante il recupero dei pasti: $e');
+      ToastNotifier.showError('Errore durante il recupero dei pasti: $e');
       return [];
     }
   }

@@ -205,5 +205,7 @@
   "noRecipesFound": "No recipes found",
   "loadRecipeScreen": "Load Recipe Screen",
   "filterRecipes": "Filter Recipes",
-  "selectProducts": "Select products you want to use in the recipe"
+  "selectProducts": "Select products you want to use in the recipe",
+  "mealSavedSuccessfully": "Meal saved successfully",
+  "productDeletedSuccessfully": "Product deleted successfully"
 }

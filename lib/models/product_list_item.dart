@@ -4,8 +4,6 @@ import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/image_processor.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
-import 'package:tracker/services/api_client.dart';
-import 'package:tracker/routes/supermarket_screen.dart';
 import 'package:tracker/services/category_services.dart';
 
 class ProductListItem extends StatefulWidget {
@@ -36,7 +34,6 @@ class ProductListItem extends StatefulWidget {
   @override
   _ProductListItemState createState() => _ProductListItemState();
 }
-
 
 class _ProductListItemState extends State<ProductListItem> {
   void updateQuantity(int change) {
@@ -76,8 +73,8 @@ class _ProductListItemState extends State<ProductListItem> {
               if (widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
                   FutureBuilder<Widget>(
-                    future: ImageProcessor
-                        .removeWhiteBackground(widget.product.imageUrl),
+                    future: ImageProcessor.removeWhiteBackground(
+                        widget.product.imageUrl),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {

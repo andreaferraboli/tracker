@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Per multilingua
 import 'package:tracker/routes/recipe_tips_screen.dart';
 
+import '../services/toast_notifier.dart';
+
 class FilterRecipesScreen extends StatefulWidget {
   @override
   _FilterRecipesScreenState createState() => _FilterRecipesScreenState();
@@ -36,7 +38,7 @@ class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
         });
       }
     } catch (e) {
-      print('Errore: $e');
+      ToastNotifier.showError('Errore: $e');
     }
   }
 
@@ -77,12 +79,12 @@ class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,  // Opzionale, per rendere il testo più evidente
+                        fontWeight: FontWeight
+                            .bold, // Opzionale, per rendere il testo più evidente
                       ),
                     ),
                   ),
                 ),
-
                 Expanded(
                   child: GridView.builder(
                     gridDelegate:

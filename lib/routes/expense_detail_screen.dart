@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 import '../models/expense.dart';
 
@@ -77,10 +78,9 @@ class ExpenseDetailScreen extends StatelessWidget {
               if (confirm == true) {
                 await deleteExpense(expense);
                 Navigator.of(context).pop(expense);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(AppLocalizations.of(context)!.expenseDeleted),
-                  ),
+                ToastNotifier.showSuccess(
+                  context,
+                  AppLocalizations.of(context)!.expenseDeleted,
                 );
               }
             },

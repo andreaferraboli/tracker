@@ -1,29 +1,30 @@
+import 'dart:io'; // Importa per riconoscere la piattaforma
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; // Per il design iOS
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
 import 'package:tracker/routes/filter_recipes_screen.dart';
-import 'package:tracker/routes/recipe_tips_screen.dart';
 import 'package:tracker/routes/theme_customizations.dart';
 import 'package:tracker/routes/user_screen.dart';
+import 'package:tracker/services/toast_notifier.dart';
+
 import 'routes/add_meal_screen.dart';
 import 'routes/home_screen.dart';
 import 'routes/inventory_screen.dart';
 import 'routes/shopping_screen.dart';
 import 'routes/view_expenses_screen.dart';
 import 'routes/view_meals_screen.dart';
-
-// Importiamo il modulo che contiene AppColors e saveAllColors
 import 'services/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-// Aggiungi il caricamento dei colori
+  // Aggiungi il caricamento dei colori
   await AppColors.initialize();
   try {
     await Firebase.initializeApp(
@@ -33,7 +34,8 @@ void main() async {
       persistenceEnabled: true,
     );
   } catch (e) {
-    print('Errore durante l\'inizializzazione di Firebase: $e');
+    ToastNotifier.showError(
+        'Errore durante l\'inizializzazione di Firebase: $e');
   }
   initializeDateFormatting();
   runApp(const ProviderScope(child: MyApp()));
@@ -136,8 +138,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
-      // Salviamo i colori quando l'app viene sospesa o passa in background
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       AppColors.saveAllColors();
     }
   }
@@ -154,23 +156,87 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
   }
 
-  void updateLightTheme(ThemeData newTheme) {
-    setState(() {
-      _lightTheme = newTheme;
-    });
-  }
-
-  void updateDarkTheme(ThemeData newTheme) {
-    setState(() {
-      _darkTheme = newTheme;
-    });
-  }
-
-  bool get isDarkTheme => _isDarkTheme;
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return Platform.isIOS
+        ? CupertinoApp(
+      title: 'Tracker App',
+      locale: _locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: CupertinoThemeData(
+        brightness: _isDarkTheme ? Brightness.dark : Brightness.light,
+        primaryColor: _isDarkTheme
+            ? AppColors.primaryDark
+            : AppColors.primaryLight,
+        barBackgroundColor: _isDarkTheme
+            ? AppColors.appBarBackgroundDark
+            : AppColors.appBarBackgroundLight,
+        textTheme: CupertinoTextThemeData(
+          textStyle: TextStyle(
+            color: _isDarkTheme
+                ? AppColors.onPrimaryDark
+                : AppColors.onPrimaryLight,
+          ),
+          navTitleTextStyle: TextStyle(
+            color: _isDarkTheme
+                ? AppColors.appBarForegroundDark
+                : AppColors.appBarForegroundLight,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+          navLargeTitleTextStyle: TextStyle(
+            color: _isDarkTheme
+                ? AppColors.appBarForegroundDark
+                : AppColors.appBarForegroundLight,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CupertinoActivityIndicator(),
+            );
+          } else if (snapshot.hasData) {
+            return HomeScreen(
+                toggleTheme: _toggleTheme, user: snapshot.data!);
+          } else {
+            return const AuthPage();
+          }
+        },
+      ),
+      routes: {
+        '/home': (context) => HomeScreen(
+          toggleTheme: _toggleTheme,
+        ),
+        '/shopping': (context) => const ShoppingScreen(),
+        '/user': (context) => const UserScreen(),
+        '/addMeal': (context) => AddMealScreen(),
+        '/viewExpenses': (context) => const ViewExpensesScreen(),
+        '/inventory': (context) => const InventoryScreen(),
+        '/viewMeals': (context) => const ViewMealsScreen(),
+        '/recipeTips': (context) => FilterRecipesScreen(),
+        '/themeCustomization': (context) => ThemeCustomizationScreen(
+          lightTheme: _lightTheme,
+          darkTheme: _darkTheme,
+          onLightThemeChanged: (newTheme) {
+            setState(() {
+              _lightTheme = newTheme;
+            });
+          },
+          onDarkThemeChanged: (newTheme) {
+            setState(() {
+              _darkTheme = newTheme;
+            });
+          },
+        ),
+      },
+    )
+        : MaterialApp(
       title: 'Tracker App',
       locale: _locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -186,8 +252,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             );
           } else if (snapshot.hasData) {
             return HomeScreen(
-                toggleTheme: _toggleTheme,
-                user: snapshot.data!);
+                toggleTheme: _toggleTheme, user: snapshot.data!);
           } else {
             return const AuthPage();
           }
@@ -195,8 +260,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ),
       routes: {
         '/home': (context) => HomeScreen(
-              toggleTheme: _toggleTheme,
-            ),
+          toggleTheme: _toggleTheme,
+        ),
         '/shopping': (context) => const ShoppingScreen(),
         '/user': (context) => const UserScreen(),
         '/addMeal': (context) => AddMealScreen(),
@@ -207,8 +272,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         '/themeCustomization': (context) => ThemeCustomizationScreen(
           lightTheme: _lightTheme,
           darkTheme: _darkTheme,
-          onLightThemeChanged: updateLightTheme,
-          onDarkThemeChanged: updateDarkTheme,
+          onLightThemeChanged: (newTheme) {
+            setState(() {
+              _lightTheme = newTheme;
+            });
+          },
+          onDarkThemeChanged: (newTheme) {
+            setState(() {
+              _darkTheme = newTheme;
+            });
+          },
         ),
       },
     );

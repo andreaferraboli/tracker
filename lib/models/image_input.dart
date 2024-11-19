@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:image_picker/image_picker.dart'; // Importa il file generato con le stringhe
+import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
   const ImageInput({super.key, required this.onPickImage});
@@ -18,7 +19,7 @@ class _ImageInputState extends State<ImageInput> {
 
   void _pickImage(ImageSource source) async {
     final pickedImage =
-        await ImagePicker().pickImage(source: source, maxWidth: 600);
+    await ImagePicker().pickImage(source: source, maxWidth: 600);
 
     if (pickedImage == null) {
       return;
@@ -32,30 +33,54 @@ class _ImageInputState extends State<ImageInput> {
   }
 
   void _showImageSourceActionSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.camera),
-            title: Text(AppLocalizations.of(context)!.takePicture),
-            onTap: () {
-              Navigator.of(ctx).pop();
-              _pickImage(ImageSource.camera);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.image),
-            title: Text(AppLocalizations.of(context)!.chooseFromGallery),
-            onTap: () {
-              Navigator.of(ctx).pop();
-              _pickImage(ImageSource.gallery);
-            },
-          ),
-        ],
-      ),
-    );
+    if (Platform.isIOS) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (ctx) => CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              child: Text(AppLocalizations.of(context)!.takePicture),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text(AppLocalizations.of(context)!.chooseFromGallery),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      showModalBottomSheet(
+        context: context,
+        builder: (ctx) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera),
+              title: Text(AppLocalizations.of(context)!.takePicture),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.image),
+              title: Text(AppLocalizations.of(context)!.chooseFromGallery),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -76,14 +101,14 @@ class _ImageInputState extends State<ImageInput> {
             ),
             child: _selectedImage != null
                 ? Image.file(
-                    _selectedImage!,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  )
+              _selectedImage!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+            )
                 : Text(
-                    AppLocalizations.of(context)!.noImageTaken,
-                    textAlign: TextAlign.center,
-                  ),
+              AppLocalizations.of(context)!.noImageTaken,
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
