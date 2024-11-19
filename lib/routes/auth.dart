@@ -98,7 +98,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     _usernameController.dispose();
     super.dispose();
   }
-
+//todo:riparti a fare ios da qua
   @override
   Widget build(BuildContext context) {
     return Scaffold(
