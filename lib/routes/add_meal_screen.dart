@@ -46,56 +46,103 @@ class AddMealScreen extends StatelessWidget {
       ),
     ];
 
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(AppLocalizations.of(context)!.insertMealType),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.selectMealType,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: screenWidth / 2,
-                  crossAxisSpacing: 2,
-                  mainAxisSpacing: 2,
-                  childAspectRatio: 1.1,
-                ),
-                itemCount: mealTypes.length,
-                itemBuilder: (context, index) {
-                  if (mealTypes[index].name.isEmpty) {
-                    return const MealTypeCard.empty();
-                  }
-                  return MealTypeCard(
-                    mealType: mealTypes[index],
-                    onTap: () =>
-                        _showProductSelection(context, mealTypes[index]),
-                  );
-                },
-              ),
-            ),
-          ],
+    return Theme.of(context).platform == TargetPlatform.iOS
+    ? CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(AppLocalizations.of(context)!.insertMealType),
         ),
-      ),
-    );
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.selectMealType,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: screenWidth / 2,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 2,
+                    childAspectRatio: 1.1,
+                  ),
+                  itemCount: mealTypes.length,
+                  itemBuilder: (context, index) {
+                    if (mealTypes[index].name.isEmpty) {
+                      return const MealTypeCard.empty();
+                    }
+                    return MealTypeCard(
+                      mealType: mealTypes[index],
+                      onTap: () =>
+                          _showProductSelection(context, mealTypes[index]),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+    : Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.insertMealType),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.selectMealType,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: screenWidth / 2,
+                    crossAxisSpacing: 2,
+                    mainAxisSpacing: 2,
+                    childAspectRatio: 1.1,
+                  ),
+                  itemCount: mealTypes.length,
+                  itemBuilder: (context, index) {
+                    if (mealTypes[index].name.isEmpty) {
+                      return const MealTypeCard.empty();
+                    }
+                    return MealTypeCard(
+                      mealType: mealTypes[index],
+                      onTap: () =>
+                          _showProductSelection(context, mealTypes[index]),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 
   void _showProductSelection(BuildContext context, MealType mealType) {
-    Navigator.push(
-      context,
-      CupertinoPageRoute(
-        builder: (context) => ProductSelectionScreen(mealType: mealType),
-      ),
-    );
-  }
+  Navigator.push(
+    context,
+    Theme.of(context).platform == TargetPlatform.iOS
+        ? CupertinoPageRoute(
+            builder: (context) => ProductSelectionScreen(mealType: mealType),
+          )
+        : MaterialPageRoute(
+            builder: (context) => ProductSelectionScreen(mealType: mealType),
+          ),
+  );
+}
 }
