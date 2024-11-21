@@ -1,4 +1,6 @@
+import 'dart:collection';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -471,18 +473,32 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
       // Calcola il punteggio di necessità per ciascun prodotto
       const double epsilon = 0.1; // Fattore di scalatura
-      const double alpha = 1.0; // Esponente
+      final HashMap<String, double> categoryZValues = HashMap<String, double>.from({
+        "meat": 9.0,                // La carne scade molto rapidamente.
+        "fish": 9.5,                // Il pesce scade anche più velocemente della carne.
+        "pasta_bread_rice": 2.0,    // Alimenti secchi, molto stabili.
+        "sauces_condiments": 3.5,   // Salse e condimenti hanno una durata media.
+        "vegetables": 7.5,          // Le verdure fresche scadono relativamente presto.
+        "fruit": 6.5,               // La frutta, a seconda del tipo, scade velocemente.
+        "dairy_products": 8.5,      // I latticini hanno una durata breve.
+        "water": 1.0,               // L'acqua non scade praticamente mai.
+        "dessert": 4.0,             // I dolci confezionati hanno una durata moderata.
+        "salty_snacks": 3.0,        // Snack salati, stabili per lungo tempo.
+        "drinks": 2.5,              // Bevande confezionate hanno una buona durata.
+      });
+
       List<Map<String, dynamic>> necessityScores = [];
 
       for (var product in originalProducts) {
         final productId = product.product.productId;
-        double quantityOwned = product.product.quantityOwned;
+        double alpha = categoryZValues[product.product.category] ?? 1.0;  // Esponente
+        double quantityOwned = product.product.quantityWeightOwned;
         double weeklyConsumption = weeklyAverageConsumption[productId] ?? 0.0;
 
         double necessityScore = 0.0;
         if (weeklyConsumption > 0) {
           necessityScore =
-              (weeklyConsumption / (epsilon * quantityOwned)) * alpha;
+              pow(2.7172,((weeklyConsumption / (epsilon + quantityOwned))-1)) * alpha;
         }
 
         necessityScores.add({
