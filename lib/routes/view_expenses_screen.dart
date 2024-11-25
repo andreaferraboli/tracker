@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import 'package:tracker/models/expense.dart';
 import 'package:tracker/routes/expense_detail_screen.dart';
 import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/services/toast_notifier.dart';
-
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 import '../models/period_selector.dart';
 
 class ViewExpensesScreen extends StatefulWidget {
@@ -193,6 +194,22 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.viewExpenses),
+            ),
+            child: _buildBody(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.viewExpenses),
+            ),
+            body: _buildBody(),
+          );
+  }
+
+  Widget _buildBody() {
     final List<Color> colors = [
       Theme.of(context).brightness == Brightness.light
           ? AppColors.shoppingLight
@@ -213,80 +230,35 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
           ? AppColors.recipeTipsLight
           : AppColors.recipeTipsDark,
     ];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.viewExpenses),
-      ),
-      body: FutureBuilder<List<Expense>>(
-        future: _fetchExpenses(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+    return FutureBuilder<List<Expense>>(
+      future: _fetchExpenses(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(
+                '${AppLocalizations.of(context)!.error}: ${snapshot.error}'),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text(AppLocalizations.of(context)!.noExpensesFound),
+          );
+        } else {
+          final expenses = snapshot.data!;
+          var filteredExpenses = _filterExpensesByPeriod(expenses);
+          //sort filtered expenses by date
+          filteredExpenses.sort((a, b) {
+            final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
+            final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
+            return aDate.compareTo(bDate);
+          });
+          if (filteredExpenses.isEmpty) {
             return Center(
-              child: Text(
-                  '${AppLocalizations.of(context)!.error}: ${snapshot.error}'),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Text(AppLocalizations.of(context)!.noExpensesFound),
-            );
-          } else {
-            final expenses = snapshot.data!;
-            var filteredExpenses = _filterExpensesByPeriod(expenses);
-            //sort filtered expenses by date
-            filteredExpenses.sort((a, b) {
-              final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
-              final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
-              return aDate.compareTo(bDate);
-            });
-            if (filteredExpenses.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(AppLocalizations.of(context)!.noExpensesForPeriod),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          PeriodSelector(
-                            selectedPeriod: selectedPeriod,
-                            onPeriodChanged: (value) {
-                              setState(() {
-                                selectedPeriod = value!;
-                              });
-                            },
-                            onPreviousPeriod: () => _changePeriod(-1),
-                            onNextPeriod: () => _changePeriod(1),
-                            onSelectDate: () => _selectDate(context),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            selectedPeriod == 'week'
-                                ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
-                                : selectedPeriod == 'month'
-                                    ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                                    : '${currentDate.year}',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            final categoryData = _calculateCategoryExpenses(filteredExpenses);
-            final supermarketData =
-                _calculateSupermarketExpenses(filteredExpenses);
-            final periodData = _prepareBarChartData(filteredExpenses);
-
-            return SingleChildScrollView(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(AppLocalizations.of(context)!.noExpensesForPeriod),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -304,120 +276,160 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredExpenses.map((expenses) => expenses.totalAmount).reduce((value, element) => value + element).toStringAsFixed(2)} €',
+                          selectedPeriod == 'week'
+                              ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                              : selectedPeriod == 'month'
+                                  ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                  : '${currentDate.year}',
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 150,
-                    child: CustomBarChart(periodData: periodData),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: pie_chart.PieChart(
-                      dataMap: categoryData,
-                      colorList: colors,
-                      chartRadius: MediaQuery.of(context).size.width / 2.2,
-                      legendOptions: const pie_chart.LegendOptions(
-                        legendPosition: pie_chart.LegendPosition.right,
-                      ),
-                      chartValuesOptions: const pie_chart.ChartValuesOptions(
-                        showChartValuesInPercentage: true,
-                        decimalPlaces: 1,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: pie_chart.PieChart(
-                      dataMap: supermarketData,
-                      colorList: colors,
-                      chartRadius: MediaQuery.of(context).size.width / 2.2,
-                      legendOptions: const pie_chart.LegendOptions(
-                        legendPosition: pie_chart.LegendPosition.right,
-                      ),
-                      chartValuesOptions: const pie_chart.ChartValuesOptions(
-                        showChartValuesInPercentage: true,
-                        decimalPlaces: 1,
-                      ),
-                    ),
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: filteredExpenses.length,
-                    itemBuilder: (context, index) {
-                      final expense = filteredExpenses[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 6.0, horizontal: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ExpenseDetailScreen(expense: expense),
-                              ),
-                            ).then((returnedExpense) {
-                              if (returnedExpense != null) {
-                                _fetchExpenses().then((expenses) {
-                                  setState(() {
-                                    filteredExpenses =
-                                        _filterExpensesByPeriod(expenses);
-                                  });
-                                });
-                              }
-                            });
-                          },
-                          child: Card(
-                            color: Theme.of(context).colorScheme.primary,
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                              child: ListTile(
-                                textColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                title: Text(
-                                  '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 4),
-                                    Text(
-                                        '${AppLocalizations.of(context)!.date}: ${expense.date}'),
-                                    Text(
-                                        '${AppLocalizations.of(context)!.total}: €${expense.totalAmount.toStringAsFixed(2)}'),
-                                  ],
-                                ),
-                                trailing: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ],
               ),
             );
           }
-        },
-      ),
+
+          final categoryData = _calculateCategoryExpenses(filteredExpenses);
+          final supermarketData =
+              _calculateSupermarketExpenses(filteredExpenses);
+          final periodData = _prepareBarChartData(filteredExpenses);
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      PeriodSelector(
+                        selectedPeriod: selectedPeriod,
+                        onPeriodChanged: (value) {
+                          setState(() {
+                            selectedPeriod = value!;
+                          });
+                        },
+                        onPreviousPeriod: () => _changePeriod(-1),
+                        onNextPeriod: () => _changePeriod(1),
+                        onSelectDate: () => _selectDate(context),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredExpenses.map((expenses) => expenses.totalAmount).reduce((value, element) => value + element).toStringAsFixed(2)} €',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 150,
+                  child: CustomBarChart(periodData: periodData),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: pie_chart.PieChart(
+                    dataMap: categoryData,
+                    colorList: colors,
+                    chartRadius: MediaQuery.of(context).size.width / 2.2,
+                    legendOptions: const pie_chart.LegendOptions(
+                      legendPosition: pie_chart.LegendPosition.right,
+                    ),
+                    chartValuesOptions: const pie_chart.ChartValuesOptions(
+                      showChartValuesInPercentage: true,
+                      decimalPlaces: 1,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: pie_chart.PieChart(
+                    dataMap: supermarketData,
+                    colorList: colors,
+                    chartRadius: MediaQuery.of(context).size.width / 2.2,
+                    legendOptions: const pie_chart.LegendOptions(
+                      legendPosition: pie_chart.LegendPosition.right,
+                    ),
+                    chartValuesOptions: const pie_chart.ChartValuesOptions(
+                      showChartValuesInPercentage: true,
+                      decimalPlaces: 1,
+                    ),
+                  ),
+                ),
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: filteredExpenses.length,
+                  itemBuilder: (context, index) {
+                    final expense = filteredExpenses[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 6.0, horizontal: 8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ExpenseDetailScreen(expense: expense),
+                            ),
+                          ).then((returnedExpense) {
+                            if (returnedExpense != null) {
+                              _fetchExpenses().then((expenses) {
+                                setState(() {
+                                  filteredExpenses =
+                                      _filterExpensesByPeriod(expenses);
+                                });
+                              });
+                            }
+                          });
+                        },
+                        child: Card(
+                          color: Theme.of(context).colorScheme.primary,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: ListTile(
+                              textColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              title: Text(
+                                '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(
+                                      '${AppLocalizations.of(context)!.date}: ${expense.date}'),
+                                  Text(
+                                      '${AppLocalizations.of(context)!.total}: €${expense.totalAmount.toStringAsFixed(2)}'),
+                                ],
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios,
+                                color:
+                                    Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }

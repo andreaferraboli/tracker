@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
@@ -14,6 +15,8 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     void deleteProduct() async {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -45,26 +48,52 @@ class ProductScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.productName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddProductScreen(product: product),
+      appBar: isIOS
+          ? CupertinoNavigationBar(
+              middle: Text(product.productName),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddProductScreen(product: product),
+                        ),
+                      );
+                    },
+                    child: const Icon(CupertinoIcons.pencil),
+                  ),
+                  GestureDetector(
+                    onTap: deleteProduct,
+                    child: const Icon(CupertinoIcons.trash, color: Colors.red),
+                  ),
+                ],
+              ),
+            )
+          : AppBar(
+              title: Text(product.productName),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AddProductScreen(product: product),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: deleteProduct,
-          ),
-        ],
-      ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: deleteProduct,
+                ),
+              ],
+            ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

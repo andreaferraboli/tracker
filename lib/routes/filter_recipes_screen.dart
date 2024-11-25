@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Per multilingua
 import 'package:tracker/routes/recipe_tips_screen.dart';
 
@@ -65,10 +66,16 @@ class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.filterRecipes),
-      ),
+      appBar: isIOS
+          ? CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.filterRecipes),
+            )
+          : AppBar(
+              title: Text(AppLocalizations.of(context)!.filterRecipes),
+            ),
       body: products.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : Column(

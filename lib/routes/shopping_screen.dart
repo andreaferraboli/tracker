@@ -1,6 +1,8 @@
+import 'dart:io'; // Aggiunto per rilevare la piattaforma
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Importa le localizzazioni generate
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 
 import '../providers/supermarket_provider.dart';
 import '../providers/supermarkets_list_provider.dart';
@@ -13,52 +15,89 @@ class ShoppingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedSupermarkets = ref.watch(supermarketsListProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!
-            .shoppingTitle), // Traduzione del titolo
-      ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          ...selectedSupermarkets.map((name) => _buildSupermarketCard(
-              context, name, 'assets/images/$name.png', ref)),
-          _buildAddSupermarketCard(context, ref),
-        ],
-      ),
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.shoppingTitle),
+            ),
+            child: _buildBody(context, ref, selectedSupermarkets),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.shoppingTitle),
+            ),
+            body: _buildBody(context, ref, selectedSupermarkets),
+          );
+  }
+
+  Widget _buildBody(BuildContext context, WidgetRef ref, List<String> selectedSupermarkets) {
+    return GridView.count(
+      crossAxisCount: 2,
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        ...selectedSupermarkets.map((name) => _buildSupermarketCard(
+            context, name, 'assets/images/$name.png', ref)),
+        _buildAddSupermarketCard(context, ref),
+      ],
     );
   }
 
   void _showDeleteConfirmationDialog(
       BuildContext context, String name, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.confirmDelete),
-          content:
-              Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                ref
-                    .read(supermarketsListProvider.notifier)
-                    .removeSupermarket(name);
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.delete),
-            ),
-          ],
-        );
-      },
-    );
+    Platform.isIOS
+        ? showCupertinoDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: Text(AppLocalizations.of(context)!.confirmDelete),
+                content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
+                actions: [
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                  ),
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      ref
+                          .read(supermarketsListProvider.notifier)
+                          .removeSupermarket(name);
+                      Navigator.of(context).pop();
+                    },
+                    isDestructiveAction: true,
+                    child: Text(AppLocalizations.of(context)!.delete),
+                  ),
+                ],
+              );
+            },
+          )
+        : showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(AppLocalizations.of(context)!.confirmDelete),
+                content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      ref
+                          .read(supermarketsListProvider.notifier)
+                          .removeSupermarket(name);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.delete),
+                  ),
+                ],
+              );
+            },
+          );
   }
 
   Widget _buildSupermarketCard(
@@ -114,54 +153,78 @@ class ShoppingScreen extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              child: SizedBox(
-                height: 400,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        AppLocalizations.of(context)!.selectSupermarket,
-                        // Traduzione del testo dialogo
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: addSupermarketArray.length,
-                        itemBuilder: (context, index) {
-                          final name = addSupermarketArray[index];
-                          return ListTile(
-                            leading: Image.asset('assets/images/$name.png',
-                                width: 50, height: 50),
-                            title: Text(name),
-                            onTap: () {
-                              ref
-                                  .read(supermarketsListProvider.notifier)
-                                  .addSupermarket(name);
-                              Navigator.of(context).pop();
-                            },
-                          );
+        Platform.isIOS
+            ? showCupertinoModalPopup(
+                context: context,
+                builder: (BuildContext context) {
+                  return CupertinoActionSheet(
+                    title: Text(AppLocalizations.of(context)!.selectSupermarket),
+                    actions: addSupermarketArray.map((name) {
+                      return CupertinoActionSheetAction(
+                        onPressed: () {
+                          ref
+                              .read(supermarketsListProvider.notifier)
+                              .addSupermarket(name);
+                          Navigator.of(context).pop();
                         },
-                      ),
-                    ),
-                    TextButton(
-                      child: Text(AppLocalizations.of(context)!.close),
-                      // Traduzione del pulsante "Chiudi"
+                        child: Text(name),
+                      );
+                    }).toList(),
+                    cancelButton: CupertinoActionSheetAction(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
+                      child: Text(AppLocalizations.of(context)!.cancel),
                     ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
+                  );
+                },
+              )
+            : showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Dialog(
+                    child: SizedBox(
+                      height: 400,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              AppLocalizations.of(context)!.selectSupermarket,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: addSupermarketArray.length,
+                              itemBuilder: (context, index) {
+                                final name = addSupermarketArray[index];
+                                return ListTile(
+                                  leading: Image.asset('assets/images/$name.png',
+                                      width: 50, height: 50),
+                                  title: Text(name),
+                                  onTap: () {
+                                    ref
+                                        .read(supermarketsListProvider.notifier)
+                                        .addSupermarket(name);
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          TextButton(
+                            child: Text(AppLocalizations.of(context)!.close),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
       },
       child: Card(
         elevation: 4,
@@ -176,7 +239,6 @@ class ShoppingScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 AppLocalizations.of(context)!.addSupermarket,
-                // Traduzione per "Aggiungi Supermercato"
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,

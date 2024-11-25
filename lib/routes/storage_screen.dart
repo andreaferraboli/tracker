@@ -1,3 +1,4 @@
+import 'dart:io'; // Aggiunto per rilevare la piattaforma
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_store_card.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 
 import '../services/category_services.dart';
 
@@ -70,83 +72,133 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text(widget.name)),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: _showFilterDialog,
-                      icon: Icon(Icons.filter_list,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                    IconButton(
-                      onPressed: _showSearchDialog,
-                      icon: Icon(Icons.search,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          storedProducts = originalProducts;
-                        });
-                      },
-                      icon: Icon(Icons.refresh,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                  ],
-                );
-              },
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(widget.name),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AddProductScreen()),
-                  );
-                },
-                child: Text(AppLocalizations.of(context)!.addProduct),
-              ),
-            ],
-          ),
-          Expanded(
-            child: storedProducts.isNotEmpty
-                ? GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
-                    itemCount: storedProducts.length,
-                    itemBuilder: (context, index) {
-                      return storedProducts[index];
-                    },
-                  )
-                : Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.noSavedProducts,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ),
+            child: _buildBody(),
           )
-        ],
-      ),
+        : Scaffold(
+            appBar: AppBar(
+              title: Center(child: Text(widget.name)),
+            ),
+            body: _buildBody(),
+          );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Platform.isIOS
+                      ? CupertinoButton(
+                          onPressed: _showFilterDialog,
+                          child: Icon(
+                            CupertinoIcons.slider_horizontal_3,
+                            color: CupertinoTheme.of(context).primaryColor,
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: _showFilterDialog,
+                          icon: Icon(Icons.filter_list,
+                              color: Theme.of(context).iconTheme.color),
+                        ),
+                  Platform.isIOS
+                      ? CupertinoButton(
+                          onPressed: _showSearchDialog,
+                          child: Icon(
+                            CupertinoIcons.search,
+                            color: CupertinoTheme.of(context).primaryColor,
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: _showSearchDialog,
+                          icon: Icon(Icons.search,
+                              color: Theme.of(context).iconTheme.color),
+                        ),
+                  Platform.isIOS
+                      ? CupertinoButton(
+                          onPressed: () {
+                            setState(() {
+                              storedProducts = originalProducts;
+                            });
+                          },
+                          child: Icon(
+                            CupertinoIcons.refresh,
+                            color: CupertinoTheme.of(context).primaryColor,
+                          ),
+                        )
+                      : IconButton(
+                          onPressed: () {
+                            setState(() {
+                              storedProducts = originalProducts;
+                            });
+                          },
+                          icon: Icon(Icons.refresh,
+                              color: Theme.of(context).iconTheme.color),
+                        ),
+                ],
+              );
+            },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Platform.isIOS
+                ? CupertinoButton.filled(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddProductScreen()),
+                      );
+                    },
+                    child: Text(AppLocalizations.of(context)!.addProduct),
+                  )
+                : ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AddProductScreen()),
+                      );
+                    },
+                    child: Text(AppLocalizations.of(context)!.addProduct),
+                  ),
+          ],
+        ),
+        Expanded(
+          child: storedProducts.isNotEmpty
+              ? GridView.builder(
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                  ),
+                  itemCount: storedProducts.length,
+                  itemBuilder: (context, index) {
+                    return storedProducts[index];
+                  },
+                )
+              : Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.noSavedProducts,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+        )
+      ],
     );
   }
 

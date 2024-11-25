@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/models/storage_card.dart';
@@ -13,13 +14,18 @@ class InventoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     final stores = ref.watch(storesProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            AppLocalizations.of(context)!.inventory), // Traduci se necessario
-      ),
+      appBar: isIOS
+          ? CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.inventory),
+            )
+          : AppBar(
+              title: Text(AppLocalizations.of(context)!.inventory),
+            ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.count(

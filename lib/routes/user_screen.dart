@@ -1,8 +1,10 @@
+import 'dart:io'; // Aggiunto per rilevare la piattaforma
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/services/toast_notifier.dart';
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -91,109 +93,187 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.userProfile),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: user != null
-            ? _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${AppLocalizations.of(context)!.name}: $username',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${AppLocalizations.of(context)!.email}: ${user?.email}',
-                      ),
-                      const SizedBox(height: 16),
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.userProfile),
+            ),
+            child: _buildBody(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.userProfile),
+            ),
+            body: _buildBody(),
+          );
+  }
 
-                      // Campo per la password corrente
-                      TextField(
-                        controller: _currentPasswordController,
-                        obscureText: !_isCurrentPasswordVisible,
-                        decoration: InputDecoration(
-                          labelText:
-                              AppLocalizations.of(context)!.currentPassword,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isCurrentPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+  Widget _buildBody() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: user != null
+          ? _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Campo nome utente
+                    Text(
+                      '${AppLocalizations.of(context)!.name}: $username',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    // Campo email
+                    Text(
+                      '${AppLocalizations.of(context)!.email}: ${user?.email}',
+                    ),
+                    const SizedBox(height: 16),
+                    // Campo per la password corrente
+                    Platform.isIOS
+                        ? CupertinoTextField(
+                            controller: _currentPasswordController,
+                            obscureText: !_isCurrentPasswordVisible,
+                            placeholder:
+                                AppLocalizations.of(context)!.currentPassword,
+                            suffix: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isCurrentPasswordVisible =
+                                      !_isCurrentPasswordVisible;
+                                });
+                              },
+                              child: Icon(
+                                _isCurrentPasswordVisible
+                                    ? CupertinoIcons.eye
+                                    : CupertinoIcons.eye_slash,
+                              ),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isCurrentPasswordVisible =
-                                    !_isCurrentPasswordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Campo per la nuova password
-                      TextField(
-                        controller: _newPasswordController,
-                        obscureText: !_isNewPasswordVisible,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.newPassword,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isNewPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                          )
+                        : TextField(
+                            controller: _currentPasswordController,
+                            obscureText: !_isCurrentPasswordVisible,
+                            decoration: InputDecoration(
+                              labelText:
+                                  AppLocalizations.of(context)!.currentPassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isCurrentPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isCurrentPasswordVisible =
+                                        !_isCurrentPasswordVisible;
+                                  });
+                                },
+                              ),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isNewPasswordVisible = !_isNewPasswordVisible;
-                              });
-                            },
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Campo per confermare la nuova password
-                      TextField(
-                        controller: _confirmPasswordController,
-                        obscureText: !_isConfirmPasswordVisible,
-                        decoration: InputDecoration(
-                          labelText:
-                              AppLocalizations.of(context)!.confirmNewPassword,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isConfirmPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                    const SizedBox(height: 8),
+                    // Campo per la nuova password
+                    Platform.isIOS
+                        ? CupertinoTextField(
+                            controller: _newPasswordController,
+                            obscureText: !_isNewPasswordVisible,
+                            placeholder:
+                                AppLocalizations.of(context)!.newPassword,
+                            suffix: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isNewPasswordVisible =
+                                      !_isNewPasswordVisible;
+                                });
+                              },
+                              child: Icon(
+                                _isNewPasswordVisible
+                                    ? CupertinoIcons.eye
+                                    : CupertinoIcons.eye_slash,
+                              ),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isConfirmPasswordVisible =
-                                    !_isConfirmPasswordVisible;
-                              });
-                            },
+                          )
+                        : TextField(
+                            controller: _newPasswordController,
+                            obscureText: !_isNewPasswordVisible,
+                            decoration: InputDecoration(
+                              labelText:
+                                  AppLocalizations.of(context)!.newPassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isNewPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isNewPasswordVisible =
+                                        !_isNewPasswordVisible;
+                                  });
+                                },
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      ElevatedButton(
-                        onPressed: _reauthenticateAndChangePassword,
-                        child:
-                            Text(AppLocalizations.of(context)!.updatePassword),
-                      ),
-                    ],
-                  )
-            : Center(
-                child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
-              ),
-      ),
+                    const SizedBox(height: 8),
+                    // Campo per confermare la nuova password
+                    Platform.isIOS
+                        ? CupertinoTextField(
+                            controller: _confirmPasswordController,
+                            obscureText: !_isConfirmPasswordVisible,
+                            placeholder:
+                                AppLocalizations.of(context)!.confirmNewPassword,
+                            suffix: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
+                                });
+                              },
+                              child: Icon(
+                                _isConfirmPasswordVisible
+                                    ? CupertinoIcons.eye
+                                    : CupertinoIcons.eye_slash,
+                              ),
+                            ),
+                          )
+                        : TextField(
+                            controller: _confirmPasswordController,
+                            obscureText: !_isConfirmPasswordVisible,
+                            decoration: InputDecoration(
+                              labelText:
+                                  AppLocalizations.of(context)!.confirmNewPassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isConfirmPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isConfirmPasswordVisible =
+                                        !_isConfirmPasswordVisible;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                    const SizedBox(height: 8),
+                    // Bottone per aggiornare la password
+                    Platform.isIOS
+                        ? CupertinoButton.filled(
+                            onPressed: _reauthenticateAndChangePassword,
+                            child: Text(
+                                AppLocalizations.of(context)!.updatePassword),
+                          )
+                        : ElevatedButton(
+                            onPressed: _reauthenticateAndChangePassword,
+                            child: Text(
+                                AppLocalizations.of(context)!.updatePassword),
+                          ),
+                  ],
+                )
+          : Center(
+              child: Text(AppLocalizations.of(context)!.noUserLoggedIn),
+            ),
     );
   }
 }

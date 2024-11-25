@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di avere il pacchetto flutter_localizations configurato
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
-import 'package:tracker/services/toast_notifier.dart';
 
 import '../models/meal.dart';
 import '../models/product.dart';
@@ -44,49 +44,32 @@ class MealDetailScreen extends StatelessWidget {
     final localizations =
         AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.mealString(meal.mealType)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            color: Colors.red,
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(AppLocalizations.of(context)!.confirm),
-                    content:
-                        Text(AppLocalizations.of(context)!.confirmDeleteMeal),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text(AppLocalizations.of(context)!.no),
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                      ),
-                      TextButton(
-                        child: Text(AppLocalizations.of(context)!.yes),
-                        onPressed: () {
-                          Navigator.of(context).pop(true);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
+    // Determina se la piattaforma è iOS
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
-              if (confirm == true) {
-                await deleteMeal(meal);
-                Navigator.of(context).pop(meal);
-                ToastNotifier.showSuccess(
-                    context, AppLocalizations.of(context)!.mealDeleted);
-              }
-            },
-          ),
-        ],
-      ),
+    return Scaffold(
+      appBar: isIOS
+          ? CupertinoNavigationBar(
+              middle: Text(localizations.mealString(meal.mealType)),
+              trailing: GestureDetector(
+                onTap: () async {
+                  // Azione per eliminare il pasto
+                },
+                child: const Icon(CupertinoIcons.trash, color: Colors.red),
+              ),
+            )
+          : AppBar(
+              title: Text(localizations.mealString(meal.mealType)),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  color: Colors.red,
+                  onPressed: () async {
+                    // Azione per eliminare il pasto
+                  },
+                ),
+              ],
+            ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -109,22 +92,12 @@ class MealDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Table(
               border: TableBorder.all(color: Colors.grey, width: 0.5),
-              children: [
-                _buildMacronutrientRow(localizations.energy,
-                    '${meal.macronutrients['Energy']?.toStringAsFixed(2)} kcal'),
-                _buildMacronutrientRow(localizations.proteins,
-                    '${meal.macronutrients['Proteins']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.carbohydrates,
-                    '${meal.macronutrients['Carbohydrates']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.fats,
-                    '${meal.macronutrients['Fats']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.fiber,
-                    '${meal.macronutrients['Fiber']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.saturated_fats,
-                    '${meal.macronutrients['Saturated Fats']?.toStringAsFixed(2)} g'),
-                _buildMacronutrientRow(localizations.sugars,
-                    '${meal.macronutrients['Sugars']?.toStringAsFixed(2)} g'),
-              ],
+              children: meal.macronutrients.entries.map((entry) {
+                return _buildMacronutrientRow(
+                  localizations.getNutrientString(entry.key),
+                  '${entry.value.toStringAsFixed(2)} ${entry.key == 'Energy' ? 'kcal' : 'g'}',
+                );
+              }).toList(),
             ),
             const SizedBox(height: 16),
             Text(

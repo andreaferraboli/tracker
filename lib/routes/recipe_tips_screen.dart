@@ -1,7 +1,9 @@
+import 'dart:io'; // Aggiunto per rilevare la piattaforma
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import per multilingua
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 import 'package:http/http.dart' as http;
 import 'package:tracker/services/toast_notifier.dart';
 
@@ -52,23 +54,42 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            AppLocalizations.of(context)!.recipeTips), // Traduci se necessario
-      ),
-      body: recipes.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-              ),
-              itemCount: recipes.length,
-              itemBuilder: (context, index) {
-                final recipe = recipes[index];
-                return Card(
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(
+                  AppLocalizations.of(context)!.recipeTips),
+            ),
+            child: _buildBody(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(
+                  AppLocalizations.of(context)!.recipeTips), // Traduci se necessario
+            ),
+            body: _buildBody(),
+          );
+  }
+
+  Widget _buildBody() {
+    return recipes.isEmpty
+        ? Center(
+            child: Platform.isIOS
+                ? const CupertinoActivityIndicator()
+                : const CircularProgressIndicator(),
+          )
+        : GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            itemCount: recipes.length,
+            itemBuilder: (context, index) {
+              final recipe = recipes[index];
+              return GestureDetector(
+                onTap: () => _showRecipeDetail(recipe),
+                child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -118,9 +139,13 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
                       ],
                     ),
                   ),
-                );
-              },
-            ),
-    );
+                ),
+              );
+            },
+          );
+  }
+
+  void _showRecipeDetail(Map<String, dynamic> recipe) {
+    // Implementare la logica per mostrare i dettagli della ricetta
   }
 }

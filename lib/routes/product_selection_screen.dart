@@ -1,3 +1,4 @@
+import 'dart:io'; // Aggiunto per rilevare la piattaforma
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
@@ -231,59 +233,113 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
   }
 
   void _showFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: CategorySelectionRow(
-            mealType: widget.mealType,
-            categories: selectedCategories,
-            onCategoriesUpdated: updateCategories,
-          ),
-        );
-      },
-    );
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            content: CategorySelectionRow(
+              mealType: widget.mealType,
+              categories: selectedCategories,
+              onCategoriesUpdated: updateCategories,
+            ),
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: CategorySelectionRow(
+              mealType: widget.mealType,
+              categories: selectedCategories,
+              onCategoriesUpdated: updateCategories,
+            ),
+          );
+        },
+      );
+    }
   }
 
   void _showSearchDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String searchQuery = '';
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.searchProductByName),
-          content: TextField(
-            onChanged: (value) {
-              searchQuery = value;
-            },
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.insertProductName,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.cancel),
-              onPressed: () {
-                Navigator.of(context).pop();
+    if (Platform.isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          String searchQuery = '';
+          return CupertinoAlertDialog(
+            title: Text(AppLocalizations.of(context)!.searchProductByName),
+            content: CupertinoTextField(
+              onChanged: (value) {
+                searchQuery = value;
               },
+              placeholder: AppLocalizations.of(context)!.insertProductName,
             ),
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.search),
-              onPressed: () {
-                setState(() {
-                  filteredProducts = originalProducts
-                      .where((product) => product.productName
-                          .toLowerCase()
-                          .contains(searchQuery.toLowerCase()))
-                      .toList();
-                });
-                Navigator.of(context).pop();
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(AppLocalizations.of(context)!.cancel),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(AppLocalizations.of(context)!.search),
+                onPressed: () {
+                  setState(() {
+                    filteredProducts = originalProducts
+                        .where((product) => product.productName
+                            .toLowerCase()
+                            .contains(searchQuery.toLowerCase()))
+                        .toList();
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          String searchQuery = '';
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.searchProductByName),
+            content: TextField(
+              onChanged: (value) {
+                searchQuery = value;
               },
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.insertProductName,
+              ),
             ),
-          ],
-        );
-      },
-    );
+            actions: <Widget>[
+              TextButton(
+                child: Text(AppLocalizations.of(context)!.cancel),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text(AppLocalizations.of(context)!.search),
+                onPressed: () {
+                  setState(() {
+                    filteredProducts = originalProducts
+                        .where((product) => product.productName
+                            .toLowerCase()
+                            .contains(searchQuery.toLowerCase()))
+                        .toList();
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   updateCategories(List<String> categories) {
@@ -301,145 +357,210 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-            "${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
-        backgroundColor: widget.mealType.color,
-      ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: mealProducts.isNotEmpty ? _saveMeal : null,
-                child: Text(AppLocalizations.of(context)!.save_meal),
-              ),
-              IconButton(
-                onPressed: _showFilterDialog,
-                icon: const Icon(Icons.filter_list),
-              ),
-              IconButton(
-                onPressed: _showSearchDialog,
-                icon: const Icon(Icons.search),
-              ),
-              IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: selectedDate,
-                    firstDate: DateTime(2015, 8),
-                    lastDate: DateTime(2101),
-                  );
-                  if (picked != null && picked != selectedDate) {
-                    setState(() {
-                      selectedDate = picked;
-                    });
-                  }
-                },
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    filteredProducts = originalProducts;
-                  });
-                },
-                icon: const Icon(Icons.refresh),
-              ),
-            ],
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  ExpansionTile(
-                    title: Text(
-                      AppLocalizations.of(context)!.selectedProducts,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    initiallyExpanded: mealProducts.isNotEmpty,
-                    leading: const Icon(Icons.food_bank),
-                    children: mealProducts.isEmpty
-                        ? [
-                            Center(
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(
+                  "${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
+              backgroundColor: widget.mealType.color,
+            ),
+            child: _buildBody(),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(
+                  "${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
+              backgroundColor: widget.mealType.color,
+            ),
+            body: _buildBody(),
+          );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Platform.isIOS
+                ? CupertinoButton.filled(
+                    onPressed: mealProducts.isNotEmpty ? _saveMeal : null,
+                    child: Text(AppLocalizations.of(context)!.save_meal),
+                  )
+                : ElevatedButton(
+                    onPressed: mealProducts.isNotEmpty ? _saveMeal : null,
+                    child: Text(AppLocalizations.of(context)!.save_meal),
+                  ),
+            Platform.isIOS
+                ? CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(CupertinoIcons.slider_horizontal_3),
+                    onPressed: _showFilterDialog,
+                  )
+                : IconButton(
+                    onPressed: _showFilterDialog,
+                    icon: const Icon(Icons.filter_list),
+                  ),
+            Platform.isIOS
+                ? CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(CupertinoIcons.search),
+                    onPressed: _showSearchDialog,
+                  )
+                : IconButton(
+                    onPressed: _showSearchDialog,
+                    icon: const Icon(Icons.search),
+                  ),
+            Platform.isIOS
+                ? CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(CupertinoIcons.calendar),
+                    onPressed: () async {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            height: 250,
+                            color: CupertinoColors.systemBackground,
+                            child: CupertinoDatePicker(
+                              mode: CupertinoDatePickerMode.date,
+                              initialDateTime: selectedDate,
+                              onDateTimeChanged: (DateTime newDate) {
+                                setState(() {
+                                  selectedDate = newDate;
+                                });
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime(2015, 8),
+                        lastDate: DateTime(2101),
+                      );
+                      if (picked != null && picked != selectedDate) {
+                        setState(() {
+                          selectedDate = picked;
+                        });
+                      }
+                    },
+                  ),
+            Platform.isIOS
+                ? CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(CupertinoIcons.refresh),
+                    onPressed: () {
+                      setState(() {
+                        filteredProducts = originalProducts;
+                      });
+                    },
+                  )
+                : IconButton(
+                    onPressed: () {
+                      setState(() {
+                        filteredProducts = originalProducts;
+                      });
+                    },
+                    icon: const Icon(Icons.refresh),
+                  ),
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ExpansionTile(
+                  title: Text(
+                    AppLocalizations.of(context)!.selectedProducts,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  initiallyExpanded: mealProducts.isNotEmpty,
+                  leading: const Icon(Icons.food_bank),
+                  children: mealProducts.isEmpty
+                      ? [
+                          Center(
+                            child: Text(AppLocalizations.of(context)!
+                                .noSelectedProducts),
+                          ),
+                        ]
+                      : [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(16),
+                            itemCount: mealProducts.length,
+                            itemBuilder: (context, index) {
+                              final product = mealProducts[index];
+                              return ProductAddedToMeal(
+                                product: product,
+                                selectedQuantity: product.selectedQuantity,
+                                onQuantityUpdated: (quantity) {
+                                  setState(() {
+                                    mealProducts[index] = product.copyWith(
+                                        selectedQuantity: quantity);
+                                  });
+                                },
+                                onDeleteProduct: () {
+                                  product.quantityUpdateType = null;
+                                  product.selectedQuantity = 0;
+                                  setState(() {
+                                    filteredProducts.add(product);
+                                    mealProducts.remove(product);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                ),
+                ExpansionTile(
+                  title: Text(
+                    AppLocalizations.of(context)!.listProducts,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  initiallyExpanded: true,
+                  leading: const Icon(Icons.list),
+                  children: filteredProducts.isEmpty
+                      ? [
+                          Center(
                               child: Text(AppLocalizations.of(context)!
-                                  .noSelectedProducts),
-                            ),
-                          ]
-                        : [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.all(16),
-                              itemCount: mealProducts.length,
-                              itemBuilder: (context, index) {
-                                final product = mealProducts[index];
-                                return ProductAddedToMeal(
-                                  product: product,
-                                  selectedQuantity: product.selectedQuantity,
-                                  onQuantityUpdated: (quantity) {
-                                    setState(() {
-                                      mealProducts[index] = product.copyWith(
-                                          selectedQuantity: quantity);
-                                    });
-                                  },
-                                  onDeleteProduct: () {
-                                    product.quantityUpdateType = null;
-                                    product.selectedQuantity = 0;
-                                    setState(() {
-                                      filteredProducts.add(product);
-                                      mealProducts.remove(product);
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                  ),
-                  ExpansionTile(
-                    title: Text(
-                      AppLocalizations.of(context)!.listProducts,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    initiallyExpanded: true,
-                    leading: const Icon(Icons.list),
-                    children: filteredProducts.isEmpty
-                        ? [
-                            Center(
-                                child: Text(AppLocalizations.of(context)!
-                                    .noAvailableProducts))
-                          ]
-                        : [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.all(16),
-                              itemCount: filteredProducts.length,
-                              itemBuilder: (context, index) {
-                                final product = filteredProducts[index];
-                                return ProductCard(
-                                  product: product,
-                                  addProductToMeal: (product, quantity) {
-                                    setState(() {
-                                      mealProducts.add(product.copyWith(
-                                          selectedQuantity: quantity));
-                                      originalProducts.remove(product);
-                                      filteredProducts.remove(product);
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                          ],
-                  ),
-                ],
-              ),
+                                  .noAvailableProducts))
+                        ]
+                      : [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.all(16),
+                            itemCount: filteredProducts.length,
+                            itemBuilder: (context, index) {
+                              final product = filteredProducts[index];
+                              return ProductCard(
+                                product: product,
+                                addProductToMeal: (product, quantity) {
+                                  setState(() {
+                                    mealProducts.add(product.copyWith(
+                                        selectedQuantity: quantity));
+                                    originalProducts.remove(product);
+                                    filteredProducts.remove(product);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

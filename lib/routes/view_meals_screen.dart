@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/services/toast_notifier.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../models/custom_barchart.dart';
 import '../models/meal.dart';
@@ -310,6 +312,20 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.viewMeals),
+            ),
+            child: _buildBody(),
+          )
+        : Scaffold(
+            appBar: AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
+            body: _buildBody(),
+          );
+  }
+
+  Widget _buildBody() {
     final List<Color> colors = [
       Theme.of(context).brightness == Brightness.light
           ? AppColors.shoppingLight
@@ -330,253 +346,341 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
           ? AppColors.recipeTipsLight
           : AppColors.recipeTipsDark,
     ];
-    return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
-      body: FutureBuilder<List<Meal>>(
-        future: _fetchMeals(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
+    return FutureBuilder<List<Meal>>(
+      future: _fetchMeals(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(
+              child: Text(
+                  '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+              child: Text(AppLocalizations.of(context)!.noMealsFound));
+        } else {
+          final meals = snapshot.data!;
+          var filteredMeals = _filterMeals(meals);
+          filteredMeals.sort((a, b) {
+            final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
+            final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
+            return aDate.compareTo(bDate);
+          });
+          if (filteredMeals.isEmpty) {
             return Center(
-                child: Text(
-                    '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-                child: Text(AppLocalizations.of(context)!.noMealsFound));
-          } else {
-            final meals = snapshot.data!;
-            final filteredMeals = _filterMeals(meals);
-            filteredMeals.sort((a, b) {
-              final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
-              final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
-              return aDate.compareTo(bDate);
-            });
-            if (filteredMeals.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(AppLocalizations.of(context)!.noMealsForPeriod),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          PeriodSelector(
-                            selectedPeriod: selectedPeriod,
-                            onPeriodChanged: (value) {
-                              setState(() {
-                                selectedPeriod = value!;
-                              });
-                            },
-                            onPreviousPeriod: () => _changePeriod(-1),
-                            onNextPeriod: () => _changePeriod(1),
-                            onSelectDate: () => _selectDate(context),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            selectedPeriod == 'week'
-                                ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
-                                : selectedPeriod == 'month'
-                                    ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
-                                    : '${currentDate.year}',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              // Dropdown per il tipo di pasto
-                              DropdownButton<String>(
-                                value: selectedMealType,
-                                items: mealTypes.map((String type) {
-                                  return DropdownMenuItem<String>(
-                                    value: type,
-                                    child: Text(type),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedMealType = value!;
-                                  });
-                                },
-                              ),
-                              // Dropdown per il macronutriente
-                              DropdownButton<String>(
-                                value: selectedMacronutrient,
-                                items: macronutrients.map((String nutrient) {
-                                  return DropdownMenuItem<String>(
-                                    value: nutrient,
-                                    child: Text(nutrient),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedMacronutrient = value!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            final mealTypeData = _calculateMealTypeExpenses(filteredMeals);
-            final periodData = _prepareBarChartData(filteredMeals);
-            final macronutrientData = _prepareMacronutrientData(filteredMeals);
-
-            return SingleChildScrollView(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Selettore del periodo
-                  PeriodSelector(
-                    selectedPeriod: selectedPeriod,
-                    onPeriodChanged: (value) {
-                      setState(() {
-                        selectedPeriod = value!;
-                      });
-                    },
-                    onPreviousPeriod: () => _changePeriod(-1),
-                    onNextPeriod: () => _changePeriod(1),
-                    onSelectDate: () => _selectDate(context),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredMeals.map((meal) => meal.totalExpense).reduce((value, element) => value + element).toStringAsFixed(2)} €',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // Dropdown per il tipo di pasto
-                      DropdownButton<String>(
-                        value: selectedMealType,
-                        items: mealTypes.map((String type) {
-                          return DropdownMenuItem<String>(
-                            value: type,
-                            child: Text(
-                                AppLocalizations.of(context)!.mealString(type)),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedMealType = value!;
-                          });
-                        },
-                      ),
-                      // Dropdown per il macronutriente
-                      DropdownButton<String>(
-                        value: selectedMacronutrient,
-                        items: macronutrients.map((String nutrient) {
-                          return DropdownMenuItem<String>(
-                            value: nutrient,
-                            child: Text(AppLocalizations.of(context)!
-                                .getNutrientString(nutrient)),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedMacronutrient = value!;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  // Grafico a barre per le spese giornaliere
-                  SizedBox(
-                    height: 150,
-                    child: CustomBarChart(periodData: periodData),
-                  ),
-                  const SizedBox(height: 8),
-                  // Grafico a barre per le calorie giornaliere
-                  SizedBox(
-                    height: 150,
-                    child: CustomBarChart(periodData: macronutrientData),
-                  ),
-                  // Grafico a torta per il totale speso per tipo di pasto
+                  Text(AppLocalizations.of(context)!.noMealsForPeriod),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: pie_chart.PieChart(
-                      dataMap: mealTypeData,
-                      colorList: colors,
-                      chartRadius: MediaQuery.of(context).size.width / 2.2,
-                      legendOptions: const pie_chart.LegendOptions(
-                        legendPosition: pie_chart.LegendPosition.right,
-                      ),
-                      chartValuesOptions: const pie_chart.ChartValuesOptions(
-                        showChartValuesInPercentage: true,
-                        decimalPlaces: 1,
-                      ),
-                    ),
-                  ),
-                  // Lista dei pasti
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
-                      children: filteredMeals.map((meal) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                '${AppLocalizations.of(context)!.mealString(meal.mealType)} - €${meal.totalExpense.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              trailing: Text(
-                                meal.date,
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        MealDetailScreen(meal: meal),
-                                  ),
-                                ).then((returnedMeal) {
-                                  if (returnedMeal != null) {
-                                    // Chiama la funzione desiderata, ad esempio updateMeal
-                                    _fetchMeals().then((meals) {
+                      children: [
+                        PeriodSelector(
+                          selectedPeriod: selectedPeriod,
+                          onPeriodChanged: (value) {
+                            setState(() {
+                              selectedPeriod = value!;
+                            });
+                          },
+                          onPreviousPeriod: () => _changePeriod(-1),
+                          onNextPeriod: () => _changePeriod(1),
+                          onSelectDate: () => _selectDate(context),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          selectedPeriod == 'week'
+                              ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}'
+                              : selectedPeriod == 'month'
+                                  ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}'
+                                  : '${currentDate.year}',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            // Dropdown per il tipo di pasto
+                            Platform.isIOS
+                                ? CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .mealString(selectedMealType),
+                                    ),
+                                    onPressed: _showMealTypePicker,
+                                  )
+                                : DropdownButton<String>(
+                                    value: selectedMealType,
+                                    items: mealTypes.map((String type) {
+                                      return DropdownMenuItem<String>(
+                                        value: type,
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .mealString(type)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
                                       setState(() {
-                                        filteredMeals.clear();
-                                        filteredMeals
-                                            .addAll(_filterMeals(meals));
+                                        selectedMealType = value!;
                                       });
-                                    });
-                                  }
-                                });
-                              },
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                                    },
+                                  ),
+                            // Dropdown per il macronutriente
+                            Platform.isIOS
+                                ? CupertinoButton(
+                                    padding: EdgeInsets.zero,
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .getNutrientString(selectedMacronutrient),
+                                    ),
+                                    onPressed: _showMacronutrientPicker,
+                                  )
+                                : DropdownButton<String>(
+                                    value: selectedMacronutrient,
+                                    items: macronutrients.map((String nutrient) {
+                                      return DropdownMenuItem<String>(
+                                        value: nutrient,
+                                        child: Text(AppLocalizations.of(context)!
+                                            .getNutrientString(nutrient)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedMacronutrient = value!;
+                                      });
+                                    },
+                                  ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             );
           }
-        },
+
+          final mealTypeData = _calculateMealTypeExpenses(filteredMeals);
+          final periodData = _prepareBarChartData(filteredMeals);
+          final macronutrientData = _prepareMacronutrientData(filteredMeals);
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Selettore del periodo
+                PeriodSelector(
+                  selectedPeriod: selectedPeriod,
+                  onPeriodChanged: (value) {
+                    setState(() {
+                      selectedPeriod = value!;
+                    });
+                  },
+                  onPreviousPeriod: () => _changePeriod(-1),
+                  onNextPeriod: () => _changePeriod(1),
+                  onSelectDate: () => _selectDate(context),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredMeals.map((meal) => meal.totalExpense).reduce((value, element) => value + element).toStringAsFixed(2)} €',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Dropdown per il tipo di pasto
+                    Platform.isIOS
+                        ? CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .mealString(selectedMealType),
+                            ),
+                            onPressed: _showMealTypePicker,
+                          )
+                        : DropdownButton<String>(
+                            value: selectedMealType,
+                            items: mealTypes.map((String type) {
+                              return DropdownMenuItem<String>(
+                                value: type,
+                                child: Text(
+                                    AppLocalizations.of(context)!.mealString(type)),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMealType = value!;
+                              });
+                            },
+                          ),
+                    // Dropdown per il macronutriente
+                    Platform.isIOS
+                        ? CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .getNutrientString(selectedMacronutrient),
+                            ),
+                            onPressed: _showMacronutrientPicker,
+                          )
+                        : DropdownButton<String>(
+                            value: selectedMacronutrient,
+                            items: macronutrients.map((String nutrient) {
+                              return DropdownMenuItem<String>(
+                                value: nutrient,
+                                child: Text(AppLocalizations.of(context)!
+                                    .getNutrientString(nutrient)),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedMacronutrient = value!;
+                              });
+                            },
+                          ),
+                  ],
+                ),
+                // Grafico a barre per le spese giornaliere
+                SizedBox(
+                  height: 150,
+                  child: CustomBarChart(periodData: periodData),
+                ),
+                const SizedBox(height: 8),
+                // Grafico a barre per le calorie giornaliere
+                SizedBox(
+                  height: 150,
+                  child: CustomBarChart(periodData: macronutrientData),
+                ),
+                // Grafico a torta per il totale speso per tipo di pasto
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: pie_chart.PieChart(
+                    dataMap: mealTypeData,
+                    colorList: colors,
+                    chartRadius: MediaQuery.of(context).size.width / 2.2,
+                    legendOptions: const pie_chart.LegendOptions(
+                      legendPosition: pie_chart.LegendPosition.right,
+                    ),
+                    chartValuesOptions: const pie_chart.ChartValuesOptions(
+                      showChartValuesInPercentage: true,
+                      decimalPlaces: 1,
+                    ),
+                  ),
+                ),
+                // Lista dei pasti
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: filteredMeals.map((meal) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              '${AppLocalizations.of(context)!.mealString(meal.mealType)} - €${meal.totalExpense.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary),
+                            ),
+                            trailing: Text(
+                              meal.date,
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      MealDetailScreen(meal: meal),
+                                ),
+                              ).then((returnedMeal) {
+                                if (returnedMeal != null) {
+                                  // Chiama la funzione desiderata, ad esempio updateMeal
+                                  _fetchMeals().then((meals) {
+                                    setState(() {
+                                      filteredMeals.clear();
+                                      filteredMeals
+                                          .addAll(_filterMeals(meals));
+                                    });
+                                  });
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  // Metodi per mostrare i CupertinoPicker su iOS
+  void _showMealTypePicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 250,
+        child: CupertinoPicker(
+          backgroundColor: CupertinoColors.systemBackground,
+          itemExtent: 32,
+          scrollController: FixedExtentScrollController(
+            initialItem: mealTypes.indexOf(selectedMealType),
+          ),
+          onSelectedItemChanged: (int index) {
+            setState(() {
+              selectedMealType = mealTypes[index];
+            });
+          },
+          children: mealTypes
+              .map((type) => Text(AppLocalizations.of(context)!.mealString(type)))
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  void _showMacronutrientPicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 250,
+        child: CupertinoPicker(
+          backgroundColor: CupertinoColors.systemBackground,
+          itemExtent: 32,
+          scrollController: FixedExtentScrollController(
+            initialItem: macronutrients.indexOf(selectedMacronutrient),
+          ),
+          onSelectedItemChanged: (int index) {
+            setState(() {
+              selectedMacronutrient = macronutrients[index];
+            });
+          },
+          children: macronutrients
+              .map((nutrient) => Text(AppLocalizations.of(context)!
+                  .getNutrientString(nutrient)))
+              .toList(),
+        ),
       ),
     );
   }
