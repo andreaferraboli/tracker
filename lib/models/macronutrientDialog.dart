@@ -48,106 +48,106 @@ class _MacronutrientDialogState extends State<MacronutrientDialog> {
 
     return Platform.isIOS
         ? CupertinoAlertDialog(
-      title: Text(localizations.edit_macronutrient),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CupertinoPicker(
-            itemExtent: 40.0,
-            onSelectedItemChanged: (index) {
-              setState(() {
-                editedName = widget.macronutrientsArray[index];
-              });
-            },
-            children: widget.macronutrientsArray.map((nutrient) {
-              return Text(localizations.getNutrientString(nutrient));
-            }).toList(),
-          ),
-          CupertinoTextField(
-            placeholder: localizations.edit_value_100g,
-            controller: _valueController,
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              editedValue = value;
-            },
-          ),
-        ],
-      ),
-      actions: [
-        CupertinoDialogAction(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(localizations.cancel),
-        ),
-        CupertinoDialogAction(
-          onPressed: () {
-            widget.onSave(
-              widget.initialName,
-              editedName,
-              double.tryParse(editedValue) ?? 0.0,
-            );
-            Navigator.of(context).pop();
-          },
-          child: Text(localizations.save),
-        ),
-      ],
-    )
+            title: Text(localizations.edit_macronutrient),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CupertinoPicker(
+                  itemExtent: 40.0,
+                  onSelectedItemChanged: (index) {
+                    setState(() {
+                      editedName = widget.macronutrientsArray[index];
+                    });
+                  },
+                  children: widget.macronutrientsArray.map((nutrient) {
+                    return Text(localizations.getNutrientString(nutrient));
+                  }).toList(),
+                ),
+                CupertinoTextField(
+                  placeholder: localizations.edit_value_100g,
+                  controller: _valueController,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    editedValue = value;
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(localizations.cancel),
+              ),
+              CupertinoDialogAction(
+                onPressed: () {
+                  widget.onSave(
+                    widget.initialName,
+                    editedName,
+                    double.tryParse(editedValue) ?? 0.0,
+                  );
+                  Navigator.of(context).pop();
+                },
+                child: Text(localizations.save),
+              ),
+            ],
+          )
         : AlertDialog(
-      title: Text(localizations.edit_macronutrient),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              labelText: localizations.change_name_to,
+            title: Text(localizations.edit_macronutrient),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: localizations.change_name_to,
+                  ),
+                  value: widget.macronutrientsArray.contains(editedName)
+                      ? editedName
+                      : widget.macronutrientsArray[0],
+                  items: widget.macronutrientsArray.map((nutrient) {
+                    return DropdownMenuItem<String>(
+                      value: nutrient,
+                      child: Text(localizations.getNutrientString(nutrient)),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      editedName = newValue!;
+                    });
+                  },
+                ),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: localizations.edit_value_100g,
+                  ),
+                  controller: _valueController,
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    editedValue = value;
+                  },
+                ),
+              ],
             ),
-            value: widget.macronutrientsArray.contains(editedName)
-                ? editedName
-                : widget.macronutrientsArray[0],
-            items: widget.macronutrientsArray.map((nutrient) {
-              return DropdownMenuItem<String>(
-                value: nutrient,
-                child: Text(localizations.getNutrientString(nutrient)),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                editedName = newValue!;
-              });
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(
-              labelText: localizations.edit_value_100g,
-            ),
-            controller: _valueController,
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              editedValue = value;
-            },
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(localizations.cancel),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            widget.onSave(
-              widget.initialName,
-              editedName,
-              double.tryParse(editedValue) ?? 0.0,
-            );
-            Navigator.of(context).pop();
-          },
-          child: Text(localizations.save),
-        ),
-      ],
-    );
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(localizations.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  widget.onSave(
+                    widget.initialName,
+                    editedName,
+                    double.tryParse(editedValue) ?? 0.0,
+                  );
+                  Navigator.of(context).pop();
+                },
+                child: Text(localizations.save),
+              ),
+            ],
+          );
   }
 }
