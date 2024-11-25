@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/services/toast_notifier.dart';
@@ -98,9 +100,112 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     _usernameController.dispose();
     super.dispose();
   }
-//todo:riparti a fare ios da qua
+
   @override
   Widget build(BuildContext context) {
+    if (Platform.isIOS) {
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(isLogin
+              ? AppLocalizations.of(context)!.login
+              : AppLocalizations.of(context)!.signUp),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!isLogin)
+                    CupertinoTextField(
+                      controller: _usernameController,
+                      placeholder: AppLocalizations.of(context)!.username,
+                      padding: const EdgeInsets.all(12),
+                    ),
+                  if (!isLogin) const SizedBox(height: 16),
+                  CupertinoTextField(
+                    controller: _emailController,
+                    placeholder: AppLocalizations.of(context)!.email,
+                    keyboardType: TextInputType.emailAddress,
+                    padding: const EdgeInsets.all(12),
+                  ),
+                  const SizedBox(height: 16),
+                  CupertinoTextField(
+                    controller: _passwordController,
+                    placeholder: AppLocalizations.of(context)!.password,
+                    obscureText: !_isPasswordVisible,
+                    suffix: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Icon(
+                        _isPasswordVisible
+                            ? CupertinoIcons.eye_slash
+                            : CupertinoIcons.eye,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                    padding: const EdgeInsets.all(12),
+                  ),
+                  if (!isLogin) const SizedBox(height: 16),
+                  if (!isLogin)
+                    CupertinoTextField(
+                      controller: _confirmPasswordController,
+                      placeholder: AppLocalizations.of(context)!.confirmPassword,
+                      obscureText: !_isConfirmPasswordVisible,
+                      suffix: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: Icon(
+                          _isConfirmPasswordVisible
+                              ? CupertinoIcons.eye_slash
+                              : CupertinoIcons.eye,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                          });
+                        },
+                      ),
+                      padding: const EdgeInsets.all(12),
+                    ),
+                  const SizedBox(height: 32),
+                  CupertinoButton.filled(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _authenticateUser();
+                      }
+                    },
+                    child: Text(
+                      isLogin
+                          ? AppLocalizations.of(context)!.login
+                          : AppLocalizations.of(context)!.signUp,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  CupertinoButton(
+                    onPressed: () {
+                      setState(() {
+                        isLogin = !isLogin;
+                      });
+                    },
+                    child: Text(
+                      isLogin
+                          ? AppLocalizations.of(context)!.noAccount
+                          : AppLocalizations.of(context)!.alreadyHaveAccount,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isLogin
@@ -148,9 +253,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                   labelText: AppLocalizations.of(context)!.password,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                      _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
                     ),
                     onPressed: () {
                       setState(() {
@@ -176,13 +279,12 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isConfirmPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                       onPressed: () {
                         setState(() {
-                          _isConfirmPasswordVisible =
-                              !_isConfirmPasswordVisible;
+                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
                         });
                       },
                     ),
@@ -190,31 +292,39 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                   obscureText: !_isConfirmPasswordVisible,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.confirmPassword;
+                      return AppLocalizations.of(context)!.enterPassword;
+                    }
+                    if (value != _passwordController.text) {
+                      return AppLocalizations.of(context)!.passwordsDoNotMatch;
                     }
                     return null;
                   },
                 ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _authenticateUser();
                   }
                 },
-                child: Text(isLogin
-                    ? AppLocalizations.of(context)!.login
-                    : AppLocalizations.of(context)!.signUp),
+                child: Text(
+                  isLogin
+                      ? AppLocalizations.of(context)!.login
+                      : AppLocalizations.of(context)!.signUp,
+                ),
               ),
+              const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
                   setState(() {
                     isLogin = !isLogin;
                   });
                 },
-                child: Text(isLogin
-                    ? AppLocalizations.of(context)!.createAccount
-                    : AppLocalizations.of(context)!.alreadyHaveAccount),
+                child: Text(
+                  isLogin
+                      ? AppLocalizations.of(context)!.noAccount
+                      : AppLocalizations.of(context)!.alreadyHaveAccount,
+                ),
               ),
             ],
           ),

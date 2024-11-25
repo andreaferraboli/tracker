@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/main.dart';
@@ -15,7 +17,7 @@ import '../providers/category_provider.dart';
 import '../providers/expenses_provider.dart';
 import '../providers/products_provider.dart';
 import '../providers/stores_provider.dart';
-import '../providers/supermarkets_list_provider.dart'; // Supponendo che MyApp sia definito in main.dart
+import '../providers/supermarkets_list_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final VoidCallback toggleTheme;
@@ -120,6 +122,195 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ? AppColors.recipeTipsLight
         : AppColors.recipeTipsDark;
 
+    final gridContent = GridView.count(
+      crossAxisCount: 2,
+      childAspectRatio: 0.8,
+      padding: const EdgeInsets.all(16),
+      mainAxisSpacing: 16,
+      crossAxisSpacing: 16,
+      children: <Widget>[
+        _buildMenuButton(context, AppLocalizations.of(context)!.shopping,
+            Icons.shopping_cart, '/shopping', shoppingColor),
+        _buildMenuButton(context, AppLocalizations.of(context)!.addMeal,
+            Icons.restaurant, '/addMeal', addMealColor),
+        _buildMenuButton(context, AppLocalizations.of(context)!.viewExpenses,
+            Icons.receipt_long, '/viewExpenses', viewExpensesColor),
+        _buildMenuButton(context, AppLocalizations.of(context)!.inventory,
+            Icons.inventory, '/inventory', inventoryColor),
+        _buildMenuButton(context, AppLocalizations.of(context)!.viewMeals,
+            Icons.fastfood, '/viewMeals', viewMealsColor),
+        _buildMenuButton(context, AppLocalizations.of(context)!.recipeTips,
+            Icons.food_bank_outlined, '/recipeTips', recipeTipsColor),
+      ],
+    );
+
+    final drawerContent = ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        if (Platform.isIOS)
+          Container(
+            padding: const EdgeInsets.only(
+              top: 70.0,
+              bottom: 20.0,
+              left: 20.0,
+            ),
+            color: CupertinoTheme.of(context).barBackgroundColor,
+            child: Text(
+              AppLocalizations.of(context)!.menu,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+        else
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).appBarTheme.backgroundColor,
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.menu,
+              style: TextStyle(
+                color: Theme.of(context).appBarTheme.foregroundColor,
+                fontSize: 24,
+              ),
+            ),
+          ),
+        Platform.isIOS
+            ? CupertinoListTile(
+                title: Text(AppLocalizations.of(context)!.changeLanguage),
+                leading: const Icon(CupertinoIcons.globe),
+                trailing: const CupertinoListTileChevron(),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) => const LanguageScreen(),
+                    ),
+                  );
+                },
+              )
+            : ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(AppLocalizations.of(context)!.changeLanguage),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LanguageScreen(),
+                    ),
+                  );
+                },
+              ),
+        Platform.isIOS
+            ? CupertinoListTile(
+                title: Text(AppLocalizations.of(context)!.modifyThemeColors),
+                leading: const Icon(CupertinoIcons.paintbrush),
+                trailing: const CupertinoListTileChevron(),
+                onTap: () {
+                  Navigator.pushNamed(context, '/themeCustomization');
+                },
+              )
+            : ListTile(
+                leading: const Icon(Icons.format_paint),
+                title: Text(AppLocalizations.of(context)!.modifyThemeColors),
+                onTap: () {
+                  Navigator.pushNamed(context, '/themeCustomization');
+                },
+              ),
+        Platform.isIOS
+            ? CupertinoListTile(
+                title: Text(AppLocalizations.of(context)!.changeTheme),
+                leading: const Icon(CupertinoIcons.sun_max),
+                onTap: () {
+                  widget.toggleTheme();
+                  Navigator.pop(context);
+                },
+              )
+            : ListTile(
+                leading: const Icon(Icons.brightness_6),
+                title: Text(AppLocalizations.of(context)!.changeTheme),
+                onTap: () {
+                  widget.toggleTheme();
+                  Navigator.pop(context);
+                },
+              ),
+        Platform.isIOS
+            ? CupertinoListTile(
+                title: Text(AppLocalizations.of(context)!.logout),
+                leading: const Icon(CupertinoIcons.square_arrow_right),
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                  AppColors.resetAllColors();
+                  ref.read(supermarketsListProvider.notifier).resetSupermarkets();
+                  Navigator.pop(context);
+                },
+              )
+            : ListTile(
+                leading: const Icon(Icons.logout),
+                title: Text(AppLocalizations.of(context)!.logout),
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                  AppColors.resetAllColors();
+                  ref.read(supermarketsListProvider.notifier).resetSupermarkets();
+                  Navigator.pop(context);
+                },
+              ),
+      ],
+    );
+
+    if (Platform.isIOS) {
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(AppLocalizations.of(context)!.home),
+          leading: CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: const Icon(CupertinoIcons.bars),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          ),
+          trailing: widget.user == null
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.loginRegister,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Icon(CupertinoIcons.arrow_right_square),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.user!.displayName ?? '',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: const Icon(CupertinoIcons.person),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/user');
+                      },
+                    ),
+                  ],
+                ),
+        ),
+        child: Scaffold(
+          drawer: Drawer(child: drawerContent),
+          body: gridContent,
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -176,89 +367,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).appBarTheme.backgroundColor,
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.menu,
-                style: TextStyle(
-                  color: Theme.of(context).appBarTheme.foregroundColor,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.language),
-              title: Text(AppLocalizations.of(context)!.changeLanguage),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LanguageScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.format_paint),
-              title: Text(AppLocalizations.of(context)!.modifyThemeColors),
-              onTap: () {
-                Navigator.pushNamed(context, '/themeCustomization');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.brightness_6),
-              title: Text(AppLocalizations.of(context)!.changeTheme),
-              onTap: () {
-                widget.toggleTheme();
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: Text(AppLocalizations.of(context)!.logout),
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-                AppColors.resetAllColors();
-                ref.read(supermarketsListProvider.notifier).resetSupermarkets();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      body: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 0.8,
-        padding: const EdgeInsets.all(16),
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        children: <Widget>[
-          _buildMenuButton(context, AppLocalizations.of(context)!.shopping,
-              Icons.shopping_cart, '/shopping', shoppingColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.addMeal,
-              Icons.restaurant, '/addMeal', addMealColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.viewExpenses,
-              Icons.receipt_long, '/viewExpenses', viewExpensesColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.inventory,
-              Icons.inventory, '/inventory', inventoryColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.viewMeals,
-              Icons.fastfood, '/viewMeals', viewMealsColor),
-          _buildMenuButton(context, AppLocalizations.of(context)!.recipeTips,
-              Icons.food_bank_outlined, '/recipeTips', recipeTipsColor),
-        ],
-      ),
+      drawer: Drawer(child: drawerContent),
+      body: gridContent,
     );
   }
 
-  // Funzione per creare un pulsante nel grid
   Widget _buildMenuButton(BuildContext context, String label, IconData icon,
       String? route, Color color) {
+    if (Platform.isIOS) {
+      return CupertinoButton(
+        onPressed: route != null
+            ? () {
+                Navigator.pushNamed(context, route);
+              }
+            : null,
+        padding: EdgeInsets.zero,
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 40),
+              const SizedBox(height: 10),
+              Text(label, textAlign: TextAlign.center),
+            ],
+          ),
+        ),
+      );
+    }
+
     return ElevatedButton(
       onPressed: route != null
           ? () {

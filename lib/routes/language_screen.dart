@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/main.dart';
 
@@ -7,45 +9,87 @@ class LanguageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.language),
-      ),
-      body: ListView(
-        children: [
-          _buildLanguageOption(
-            context,
-            'Italiano',
-            'it',
-            const AssetImage('assets/flags/it.png'),
-          ),
-          _buildLanguageOption(
-            context,
-            'English',
-            'en',
-            const AssetImage('assets/flags/en.png'),
-          ),
-          _buildLanguageOption(
-            context,
-            'Français',
-            'fr',
-            const AssetImage('assets/flags/fr.png'),
-          ),
-          _buildLanguageOption(
-            context,
-            'Español',
-            'es',
-            const AssetImage('assets/flags/es.png'),
-          ),
-          _buildLanguageOption(
-            context,
-            'Deutsch',
-            'de',
-            const AssetImage('assets/flags/de.png'),
-          ),
-        ],
-      ),
-    );
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.language),
+            ),
+            child: SafeArea(
+              child: ListView(
+                children: [
+                  _buildLanguageOption(
+                    context,
+                    'Italiano',
+                    'it',
+                    const AssetImage('assets/flags/it.png'),
+                  ),
+                  _buildLanguageOption(
+                    context,
+                    'English',
+                    'en',
+                    const AssetImage('assets/flags/en.png'),
+                  ),
+                  _buildLanguageOption(
+                    context,
+                    'Français',
+                    'fr',
+                    const AssetImage('assets/flags/fr.png'),
+                  ),
+                  _buildLanguageOption(
+                    context,
+                    'Español',
+                    'es',
+                    const AssetImage('assets/flags/es.png'),
+                  ),
+                  _buildLanguageOption(
+                    context,
+                    'Deutsch',
+                    'de',
+                    const AssetImage('assets/flags/de.png'),
+                  ),
+                ],
+              ),
+            ),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.language),
+            ),
+            body: ListView(
+              children: [
+                _buildLanguageOption(
+                  context,
+                  'Italiano',
+                  'it',
+                  const AssetImage('assets/flags/it.png'),
+                ),
+                _buildLanguageOption(
+                  context,
+                  'English',
+                  'en',
+                  const AssetImage('assets/flags/en.png'),
+                ),
+                _buildLanguageOption(
+                  context,
+                  'Français',
+                  'fr',
+                  const AssetImage('assets/flags/fr.png'),
+                ),
+                _buildLanguageOption(
+                  context,
+                  'Español',
+                  'es',
+                  const AssetImage('assets/flags/es.png'),
+                ),
+                _buildLanguageOption(
+                  context,
+                  'Deutsch',
+                  'de',
+                  const AssetImage('assets/flags/de.png'),
+                ),
+              ],
+            ),
+          );
   }
 
   Widget _buildLanguageOption(
@@ -56,6 +100,22 @@ class LanguageScreen extends StatelessWidget {
   ) {
     final currentLocale = Localizations.localeOf(context);
     final isSelected = currentLocale.languageCode == languageCode;
+
+    if (Platform.isIOS) {
+      return CupertinoListTile(
+        leading: CircleAvatar(
+          backgroundImage: flagImage,
+        ),
+        title: Text(languageName),
+        trailing: isSelected
+            ? const Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeGreen)
+            : null,
+        onTap: () {
+          MyApp.setLocale(context, Locale(languageCode));
+          Navigator.pop(context);
+        },
+      );
+    }
 
     return ListTile(
       leading: CircleAvatar(

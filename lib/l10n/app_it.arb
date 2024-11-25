@@ -209,5 +209,6 @@
   "mealSavedSuccessfully": "Pasto salvato con successo",
   "productDeletedSuccessfully": "Prodotto eliminato con successo",
   "language": "Lingua",
-  "selectLanguage": "Seleziona Lingua"
+  "selectLanguage": "Seleziona Lingua",
+  "noAccount": "Non hai un account? Registrati"
 }
