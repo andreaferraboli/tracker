@@ -54,51 +54,43 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
   @override
   Widget build(BuildContext context) {
     return Platform.isIOS
-        ? _buildCupertinoPage(context)
-        : _buildMaterialPage(context);
-  }
-
-  Widget _buildCupertinoPage(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(AppLocalizations.of(context)!.editStorage),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
-              onPressed: () => _confirmDelete(context),
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.editStorage),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
+                    onPressed: () => _confirmDelete(context),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: Text(AppLocalizations.of(context)!.save),
+                    onPressed: () => _saveChanges(),
+                  ),
+                ],
+              ),
             ),
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              child: Text(AppLocalizations.of(context)!.save),
-              onPressed: () => _saveChanges(),
+            child: _buildContent(context),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.editStorage),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _confirmDelete(context),
+                ),
+                IconButton(
+                  icon: Icon(Icons.save),
+                  onPressed: () => _saveChanges(),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      child: _buildContent(context),
-    );
-  }
-
-  Widget _buildMaterialPage(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.editStorage),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.delete, color: Colors.red),
-            onPressed: () => _confirmDelete(context),
-          ),
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () => _saveChanges(),
-          ),
-        ],
-      ),
-      body: _buildContent(context),
-    );
+            body: _buildContent(context),
+          );
   }
 
   Widget _buildContent(BuildContext context) {

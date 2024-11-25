@@ -103,229 +103,217 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) {
-      return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(isLogin
-              ? AppLocalizations.of(context)!.login
-              : AppLocalizations.of(context)!.signUp),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!isLogin)
-                    CupertinoTextField(
-                      controller: _usernameController,
-                      placeholder: AppLocalizations.of(context)!.username,
-                      padding: const EdgeInsets.all(12),
-                    ),
-                  if (!isLogin) const SizedBox(height: 16),
-                  CupertinoTextField(
-                    controller: _emailController,
-                    placeholder: AppLocalizations.of(context)!.email,
-                    keyboardType: TextInputType.emailAddress,
-                    padding: const EdgeInsets.all(12),
-                  ),
-                  const SizedBox(height: 16),
-                  CupertinoTextField(
-                    controller: _passwordController,
-                    placeholder: AppLocalizations.of(context)!.password,
-                    obscureText: !_isPasswordVisible,
-                    suffix: CupertinoButton(
-                      padding: EdgeInsets.zero,
-                      child: Icon(
-                        _isPasswordVisible
-                            ? CupertinoIcons.eye_slash
-                            : CupertinoIcons.eye,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                    ),
-                    padding: const EdgeInsets.all(12),
-                  ),
-                  if (!isLogin) const SizedBox(height: 16),
-                  if (!isLogin)
-                    CupertinoTextField(
-                      controller: _confirmPasswordController,
-                      placeholder: AppLocalizations.of(context)!.confirmPassword,
-                      obscureText: !_isConfirmPasswordVisible,
-                      suffix: CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: Icon(
-                          _isConfirmPasswordVisible
-                              ? CupertinoIcons.eye_slash
-                              : CupertinoIcons.eye,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                          });
-                        },
-                      ),
-                      padding: const EdgeInsets.all(12),
-                    ),
-                  const SizedBox(height: 32),
-                  CupertinoButton.filled(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _authenticateUser();
-                      }
-                    },
-                    child: Text(
-                      isLogin
-                          ? AppLocalizations.of(context)!.login
-                          : AppLocalizations.of(context)!.signUp,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  CupertinoButton(
-                    onPressed: () {
-                      setState(() {
-                        isLogin = !isLogin;
-                      });
-                    },
-                    child: Text(
-                      isLogin
-                          ? AppLocalizations.of(context)!.noAccount
-                          : AppLocalizations.of(context)!.alreadyHaveAccount,
-                    ),
-                  ),
-                ],
-              ),
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(isLogin
+                  ? AppLocalizations.of(context)!.login
+                  : AppLocalizations.of(context)!.signUp),
             ),
-          ),
-        ),
-      );
-    }
+            child: _buildBody(context),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(isLogin
+                  ? AppLocalizations.of(context)!.login
+                  : AppLocalizations.of(context)!.signUp),
+            ),
+            body: _buildBody(context),
+          );
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(isLogin
-            ? AppLocalizations.of(context)!.login
-            : AppLocalizations.of(context)!.signUp),
-      ),
-      body: Padding(
+  Widget _buildBody(BuildContext context) {
+    return SafeArea(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (!isLogin)
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.username,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.enterUsername;
-                    }
-                    return null;
-                  },
-                ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.email,
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.enterEmail;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.password,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  ),
-                ),
-                obscureText: !_isPasswordVisible,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.enterPassword;
-                  }
-                  return null;
-                },
-              ),
-              if (!isLogin) const SizedBox(height: 16),
-              if (!isLogin)
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.confirmPassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _isConfirmPasswordVisible
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+              Platform.isIOS
+                  ? CupertinoTextField(
+                      controller: _emailController,
+                      placeholder: AppLocalizations.of(context)!.email,
+                      keyboardType: TextInputType.emailAddress,
+                    )
+                  : TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.email,
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                        });
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            !value.contains('@')) {
+                          return AppLocalizations.of(context)!.enterValidEmail;
+                        }
+                        return null;
                       },
                     ),
-                  ),
-                  obscureText: !_isConfirmPasswordVisible,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.enterPassword;
-                    }
-                    if (value != _passwordController.text) {
-                      return AppLocalizations.of(context)!.passwordsDoNotMatch;
-                    }
-                    return null;
-                  },
-                ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _authenticateUser();
-                  }
-                },
-                child: Text(
-                  isLogin
-                      ? AppLocalizations.of(context)!.login
-                      : AppLocalizations.of(context)!.signUp,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isLogin = !isLogin;
-                  });
-                },
-                child: Text(
-                  isLogin
-                      ? AppLocalizations.of(context)!.noAccount
-                      : AppLocalizations.of(context)!.alreadyHaveAccount,
-                ),
-              ),
+              const SizedBox(height: 12),
+              Platform.isIOS
+                  ? CupertinoTextField(
+                      controller: _passwordController,
+                      placeholder: AppLocalizations.of(context)!.password,
+                      obscureText: !_isPasswordVisible,
+                      suffix: CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: Icon(
+                          _isPasswordVisible
+                              ? CupertinoIcons.eye_slash
+                              : CupertinoIcons.eye,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
+                      suffixMode: OverlayVisibilityMode.editing,
+                    )
+                  : TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.password,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: !_isPasswordVisible,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return AppLocalizations.of(context)!.enterPassword;
+                        }
+                        return null;
+                      },
+                    ),
+              if (!isLogin) ...[
+                const SizedBox(height: 12),
+                Platform.isIOS
+                    ? CupertinoTextField(
+                        controller: _confirmPasswordController,
+                        placeholder:
+                            AppLocalizations.of(context)!.confirmPassword,
+                        obscureText: !_isConfirmPasswordVisible,
+                        suffix: CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          child: Icon(
+                            _isConfirmPasswordVisible
+                                ? CupertinoIcons.eye_slash
+                                : CupertinoIcons.eye,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isConfirmPasswordVisible =
+                                  !_isConfirmPasswordVisible;
+                            });
+                          },
+                        ),
+                        suffixMode: OverlayVisibilityMode.editing,
+                      )
+                    : TextFormField(
+                        controller: _confirmPasswordController,
+                        decoration: InputDecoration(
+                          labelText:
+                              AppLocalizations.of(context)!.confirmPassword,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !_isConfirmPasswordVisible,
+                        validator: (value) {
+                          if (value != _passwordController.text) {
+                            return AppLocalizations.of(context)!
+                                .passwordsDoNotMatch;
+                          }
+                          return null;
+                        },
+                      ),
+                const SizedBox(height: 12),
+                Platform.isIOS
+                    ? CupertinoTextField(
+                        controller: _usernameController,
+                        placeholder: AppLocalizations.of(context)!.username,
+                      )
+                    : TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.username,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return AppLocalizations.of(context)!.enterUsername;
+                          }
+                          return null;
+                        },
+                      ),
+              ],
+              const SizedBox(height: 12),
+              Platform.isIOS
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CupertinoButton(
+                          child: Text(isLogin
+                              ? AppLocalizations.of(context)!.login
+                              : AppLocalizations.of(context)!.signUp),
+                          onPressed: _authenticateUser,
+                        ),
+                        CupertinoButton(
+                          child: Text(isLogin
+                              ? AppLocalizations.of(context)!.createAccount
+                              : AppLocalizations.of(context)!
+                                  .alreadyHaveAccount),
+                          onPressed: () {
+                            setState(() {
+                              isLogin = !isLogin;
+                            });
+                          },
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _authenticateUser,
+                          child: Text(isLogin
+                              ? AppLocalizations.of(context)!.login
+                              : AppLocalizations.of(context)!.signUp),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isLogin = !isLogin;
+                            });
+                          },
+                          child: Text(isLogin
+                              ? AppLocalizations.of(context)!.createAccount
+                              : AppLocalizations.of(context)!
+                                  .alreadyHaveAccount),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),

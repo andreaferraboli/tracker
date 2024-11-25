@@ -210,5 +210,6 @@
   "weightInGrams": "Peso (g)",
   "weightInKg": "Peso (kg)",
   "year": "Año",
-  "yes": "Sí"
+  "yes": "Sí",
+  "enterValidEmail": "Por favor, introduce una dirección de correo electrónica válida"
 }

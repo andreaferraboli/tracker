@@ -242,7 +242,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () {
                   FirebaseAuth.instance.signOut();
                   AppColors.resetAllColors();
-                  ref.read(supermarketsListProvider.notifier).resetSupermarkets();
+                  ref
+                      .read(supermarketsListProvider.notifier)
+                      .resetSupermarkets();
                   Navigator.pop(context);
                 },
               )
@@ -252,7 +254,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () {
                   FirebaseAuth.instance.signOut();
                   AppColors.resetAllColors();
-                  ref.read(supermarketsListProvider.notifier).resetSupermarkets();
+                  ref
+                      .read(supermarketsListProvider.notifier)
+                      .resetSupermarkets();
                   Navigator.pop(context);
                 },
               ),

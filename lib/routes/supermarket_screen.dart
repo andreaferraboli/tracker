@@ -475,17 +475,17 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       const double epsilon = 0.1; // Fattore di scalatura
       final HashMap<String, double> categoryZValues =
           HashMap<String, double>.from({
-        "meat": 9.0, // La carne scade molto rapidamente.
-        "fish": 9.5, // Il pesce scade anche più velocemente della carne.
-        "pasta_bread_rice": 2.0, // Alimenti secchi, molto stabili.
-        "sauces_condiments": 3.5, // Salse e condimenti hanno una durata media.
-        "vegetables": 7.5, // Le verdure fresche scadono relativamente presto.
-        "fruit": 6.5, // La frutta, a seconda del tipo, scade velocemente.
-        "dairy_products": 8.5, // I latticini hanno una durata breve.
+        "meat": 1.9, // La carne scade molto rapidamente.
+        "fish": 2, // Il pesce scade anche più velocemente della carne.
+        "pasta_bread_rice": 1.1, // Alimenti secchi, molto stabili.
+        "sauces_condiments": 1.4, // Salse e condimenti hanno una durata media.
+        "vegetables": 1.6, // Le verdure fresche scadono relativamente presto.
+        "fruit": 1.7, // La frutta, a seconda del tipo, scade velocemente.
+        "dairy_products": 1.8, // I latticini hanno una durata breve.
         "water": 1.0, // L'acqua non scade praticamente mai.
-        "dessert": 4.0, // I dolci confezionati hanno una durata moderata.
-        "salty_snacks": 3.0, // Snack salati, stabili per lungo tempo.
-        "drinks": 2.5, // Bevande confezionate hanno una buona durata.
+        "dessert": 1.1, // I dolci confezionati hanno una durata moderata.
+        "salty_snacks": 1.2, // Snack salati, stabili per lungo tempo.
+        "drinks": 1.3, // Bevande confezionate hanno una buona durata.
       });
 
       List<Map<String, dynamic>> necessityScores = [];

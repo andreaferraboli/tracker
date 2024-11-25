@@ -94,201 +94,202 @@ class ExpenseDetailScreen extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final content = Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${AppLocalizations.of(context)!.date}: ${expense.date}',
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${AppLocalizations.of(context)!.totalAmount}: €${expense.totalAmount.toStringAsFixed(2)}',
-            style: const TextStyle(fontSize: 16),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.details,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView.builder(
-              itemCount: expense.products.length,
-              itemBuilder: (context, index) {
-                final item = expense.products[index];
-                return GestureDetector(
-                  onTap: () async {
-                    DocumentReference productDocRef = FirebaseFirestore
-                        .instance
-                        .collection('products')
-                        .doc(FirebaseAuth.instance.currentUser!.uid);
-
-                    DocumentSnapshot snapshot = await productDocRef.get();
-                    var existingProduct, product;
-                    if (snapshot.exists) {
-                      final List<dynamic> productsList =
-                          snapshot['products'] ?? [];
-                      existingProduct = productsList.firstWhere(
-                          (p) =>
-                              p['productId'] ==
-                              expense.products[index].idProdotto,
-                          orElse: () => null);
-                      product = Product.fromJson(existingProduct);
-                    }
-                    Navigator.push(
-                      context,
-                      Platform.isIOS
-                          ? CupertinoPageRoute(
-                              builder: (context) =>
-                                  ProductScreen(product: product),
-                            )
-                          : MaterialPageRoute(
-                              builder: (context) =>
-                                  ProductScreen(product: product),
-                            ),
-                    );
-                  },
-                  child: Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.1),
-                                  child: CategoryServices.iconFromCategory(
-                                      item.category),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.productName,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '${AppLocalizations.of(context)!.quantity}: ${item.quantity} x €${item.price.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[700],
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '€/Kg: ${item.pricePerKg}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[700],
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            '€${(item.quantity * item.price).toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (Platform.isIOS) {
-      return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(AppLocalizations.of(context)!.expenseDetailTitle),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: const Icon(
-              CupertinoIcons.delete,
-              color: CupertinoColors.destructiveRed,
-            ),
-            onPressed: () async {
-              final confirm = await _showDeleteConfirmation(context);
-              if (confirm == true) {
-                await deleteExpense(expense);
-                Navigator.of(context).pop(expense);
-                ToastNotifier.showSuccess(
-                  context,
-                  AppLocalizations.of(context)!.expenseDeleted,
-                );
-              }
-            },
-          ),
-        ),
-        child: SafeArea(child: content),
+  void _deleteExpense(BuildContext context) async {
+    final confirm = await _showDeleteConfirmation(context);
+    if (confirm == true) {
+      await deleteExpense(expense);
+      Navigator.of(context).pop(expense);
+      ToastNotifier.showSuccess(
+        context,
+        AppLocalizations.of(context)!.expenseDeleted,
       );
     }
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.expenseDetailTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            color: Colors.red,
-            onPressed: () async {
-              final confirm = await _showDeleteConfirmation(context);
-              if (confirm == true) {
-                await deleteExpense(expense);
-                Navigator.of(context).pop(expense);
-                ToastNotifier.showSuccess(
-                  context,
-                  AppLocalizations.of(context)!.expenseDeleted,
-                );
-              }
-            },
-          ),
-        ],
+  @override
+  Widget build(BuildContext context) {
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: Text(AppLocalizations.of(context)!.expenseDetailTitle),
+              trailing: CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: const Icon(CupertinoIcons.delete),
+                onPressed: () => _deleteExpense(context),
+              ),
+            ),
+            child: _buildBody(context),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              title: Text(AppLocalizations.of(context)!.expenseDetailTitle),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => _deleteExpense(context),
+                ),
+              ],
+            ),
+            body: _buildBody(context),
+          );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Platform.isIOS
+        ? CustomScrollView(
+            slivers: [
+              SliverSafeArea(
+                sliver: SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate:
+                        SliverChildListDelegate(_buildExpenseDetails(context)),
+                  ),
+                ),
+              ),
+            ],
+          )
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _buildExpenseDetails(context),
+            ),
+          );
+  }
+
+  List<Widget> _buildExpenseDetails(BuildContext context) {
+    return [
+      Text(
+        '${AppLocalizations.of(context)!.supermarket}: ${expense.supermarket}',
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      body: content,
-    );
+      const SizedBox(height: 8),
+      Text(
+        '${AppLocalizations.of(context)!.date}: ${expense.date}',
+        style: const TextStyle(fontSize: 16),
+      ),
+      const SizedBox(height: 8),
+      Text(
+        '${AppLocalizations.of(context)!.totalAmount}: €${expense.totalAmount.toStringAsFixed(2)}',
+        style: const TextStyle(fontSize: 16),
+      ),
+      const SizedBox(height: 16),
+      Text(
+        AppLocalizations.of(context)!.details,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 8),
+      Expanded(
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: expense.products.length,
+          itemBuilder: (context, index) {
+            final item = expense.products[index];
+            return GestureDetector(
+              onTap: () async {
+                DocumentReference productDocRef = FirebaseFirestore.instance
+                    .collection('products')
+                    .doc(FirebaseAuth.instance.currentUser!.uid);
+
+                DocumentSnapshot snapshot = await productDocRef.get();
+                var existingProduct, product;
+                if (snapshot.exists) {
+                  final List<dynamic> productsList = snapshot['products'] ?? [];
+                  existingProduct = productsList.firstWhere(
+                      (p) =>
+                          p['productId'] == expense.products[index].idProdotto,
+                      orElse: () => null);
+                  product = Product.fromJson(existingProduct);
+                }
+                Navigator.push(
+                  context,
+                  Platform.isIOS
+                      ? CupertinoPageRoute(
+                          builder: (context) => ProductScreen(product: product),
+                        )
+                      : MaterialPageRoute(
+                          builder: (context) => ProductScreen(product: product),
+                        ),
+                );
+              },
+              child: Card(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.1),
+                              child: CategoryServices.iconFromCategory(
+                                  item.category),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.productName,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${AppLocalizations.of(context)!.quantity}: ${item.quantity} x €${item.price.toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '€/Kg: ${item.pricePerKg}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '€${(item.quantity * item.price).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ];
   }
 }
