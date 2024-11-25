@@ -7,6 +7,8 @@ import 'package:tracker/routes/recipe_tips_screen.dart';
 import '../services/toast_notifier.dart';
 
 class FilterRecipesScreen extends StatefulWidget {
+  const FilterRecipesScreen({super.key});
+
   @override
   _FilterRecipesScreenState createState() => _FilterRecipesScreenState();
 }
@@ -68,7 +70,7 @@ class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
         title: Text(AppLocalizations.of(context)!.filterRecipes),
       ),
       body: products.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Center(
@@ -77,7 +79,7 @@ class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
                     child: Text(
                       AppLocalizations.of(context)!.selectProducts,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight
                             .bold, // Opzionale, per rendere il testo più evidente
@@ -134,7 +136,7 @@ class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: navigateToRecipeTips,
         label: Text(AppLocalizations.of(context)!.ok),
-        icon: Icon(Icons.check),
+        icon: const Icon(Icons.check),
       ),
     );
   }

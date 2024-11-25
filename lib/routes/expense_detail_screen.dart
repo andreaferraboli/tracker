@@ -12,8 +12,7 @@ import '../models/expense.dart';
 class ExpenseDetailScreen extends StatelessWidget {
   final Expense expense;
 
-  const ExpenseDetailScreen({Key? key, required this.expense})
-      : super(key: key);
+  const ExpenseDetailScreen({super.key, required this.expense});
 
   Future<void> deleteExpense(Expense expense) async {
     // Recupera l'ID dell'utente

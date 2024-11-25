@@ -118,7 +118,7 @@ class ShoppingScreen extends ConsumerWidget {
           context: context,
           builder: (BuildContext context) {
             return Dialog(
-              child: Container(
+              child: SizedBox(
                 height: 400,
                 child: Column(
                   children: [
@@ -194,7 +194,7 @@ class ShoppingScreen extends ConsumerWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SupermarketScreen(),
+        builder: (context) => const SupermarketScreen(),
       ),
     );
   }

@@ -244,7 +244,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 title: 'Tracker App',
                 locale: _locale,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
+                supportedLocales: const [
+                  Locale('en', ''), // English
+                  Locale('it', ''), // Italian
+                  Locale('fr', ''), // French
+                  Locale('es', ''), // Spanish
+                  Locale('de', ''), // German
+                ],
                 debugShowCheckedModeBanner: false,
                 theme: _isDarkTheme ? _darkTheme : _lightTheme,
                 home: StreamBuilder<User?>(

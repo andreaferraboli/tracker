@@ -10,12 +10,12 @@ class ProductAddedToMeal extends StatefulWidget {
   final VoidCallback? onDeleteProduct;
 
   const ProductAddedToMeal({
-    Key? key,
+    super.key,
     required this.product,
     required this.selectedQuantity,
     required this.onQuantityUpdated,
     required this.onDeleteProduct,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductAddedToMeal> createState() => _ProductAddedToMealState();
@@ -157,11 +157,11 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
             if (isIOS)
               CupertinoButton(
                 padding: EdgeInsets.zero,
+                onPressed: _showEditQuantityDialog,
                 child: Icon(
                   CupertinoIcons.pencil,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
-                onPressed: _showEditQuantityDialog,
               )
             else
               IconButton(
@@ -174,11 +174,11 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
             if (isIOS)
               CupertinoButton(
                 padding: EdgeInsets.zero,
+                onPressed: widget.onDeleteProduct,
                 child: const Icon(
                   CupertinoIcons.delete,
                   color: CupertinoColors.destructiveRed,
                 ),
-                onPressed: widget.onDeleteProduct,
               )
             else
               IconButton(

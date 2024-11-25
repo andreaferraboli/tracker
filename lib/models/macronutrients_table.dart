@@ -119,7 +119,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
 
   Widget _buildPlatformDropdown(AppLocalizations localizations) {
     if (Platform.isIOS) {
-      return Container(
+      return SizedBox(
         height: 40,
         child: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -132,7 +132,7 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   color: CupertinoColors.systemBackground.resolveFrom(context),
                   child: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: 40,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,7 +200,8 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
     }
   }
 
-  Widget _buildActionButton(IconData icon, VoidCallback onPressed, Color color) {
+  Widget _buildActionButton(
+      IconData icon, VoidCallback onPressed, Color color) {
     if (Platform.isIOS) {
       return CupertinoButton(
         padding: EdgeInsets.zero,
@@ -235,104 +236,109 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
               scrollDirection: Axis.vertical,
               child: Platform.isIOS
                   ? CupertinoListSection(
-                children: macronutrients.entries.map((entry) {
-                  return CupertinoListTile(
-                    title: Text(localizations!.getNutrientString(entry.key)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(entry.value.toString()),
-                        if (_isEditing) ...[
-                          CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) => MacronutrientDialog(
-                                  initialName: entry.key,
-                                  initialValue: entry.value.toString(),
-                                  macronutrientsArray: macronutrientsArray,
-                                  onSave: (oldName, newName, newValue) {
-                                    _editRow(oldName, newName, newValue);
-                                  },
-                                ),
-                              );
-                            },
-                            child: Icon(CupertinoIcons.pencil,
-                                color: CupertinoColors.activeBlue),
-                          ),
-                          CupertinoButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: () => _deleteRow(entry.key),
-                            child: Icon(CupertinoIcons.delete,
-                                color: CupertinoColors.destructiveRed),
-                          ),
-                        ],
-                      ],
-                    ),
-                  );
-                }).toList(),
-              )
-                  : DataTable(
-                columnSpacing: 5,
-                columns: [
-                  DataColumn(
-                      label:
-                      Center(child: Text(localizations!.macronutrient))),
-                  DataColumn(
-                      label: Center(child: Text(localizations.valueLabel))),
-                  if (_isEditing)
-                    DataColumn(
-                        label: Center(child: Text(localizations.actions))),
-                ],
-                rows: macronutrients.entries.map((entry) {
-                  return DataRow(
-                    cells: [
-                      DataCell(Center(
-                          child: Text(localizations
-                              .getNutrientString(entry.key)))),
-                      DataCell(
-                          Center(child: Text(entry.value.toString()))),
-                      if (_isEditing)
-                        DataCell(
-                          Row(
+                      children: macronutrients.entries.map((entry) {
+                        return CupertinoListTile(
+                          title:
+                              Text(localizations!.getNutrientString(entry.key)),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit,
-                                    color: Colors.blue),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return MacronutrientDialog(
+                              Text(entry.value.toString()),
+                              if (_isEditing) ...[
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    showCupertinoDialog(
+                                      context: context,
+                                      builder: (context) => MacronutrientDialog(
                                         initialName: entry.key,
                                         initialValue: entry.value.toString(),
                                         macronutrientsArray:
-                                        macronutrientsArray,
-                                        onSave: (oldName, newName,
-                                            newValue) {
-                                          _editRow(
-                                              oldName, newName, newValue);
+                                            macronutrientsArray,
+                                        onSave: (oldName, newName, newValue) {
+                                          _editRow(oldName, newName, newValue);
                                         },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete,
-                                    color: Colors.red),
-                                onPressed: () {
-                                  _deleteRow(entry.key);
-                                },
-                              ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Icon(CupertinoIcons.pencil,
+                                      color: CupertinoColors.activeBlue),
+                                ),
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () => _deleteRow(entry.key),
+                                  child: const Icon(CupertinoIcons.delete,
+                                      color: CupertinoColors.destructiveRed),
+                                ),
+                              ],
                             ],
                           ),
-                        ),
-                    ],
-                  );
-                }).toList(),
-              ),
+                        );
+                      }).toList(),
+                    )
+                  : DataTable(
+                      columnSpacing: 5,
+                      columns: [
+                        DataColumn(
+                            label: Center(
+                                child: Text(localizations!.macronutrient))),
+                        DataColumn(
+                            label:
+                                Center(child: Text(localizations.valueLabel))),
+                        if (_isEditing)
+                          DataColumn(
+                              label:
+                                  Center(child: Text(localizations.actions))),
+                      ],
+                      rows: macronutrients.entries.map((entry) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Center(
+                                child: Text(localizations
+                                    .getNutrientString(entry.key)))),
+                            DataCell(
+                                Center(child: Text(entry.value.toString()))),
+                            if (_isEditing)
+                              DataCell(
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit,
+                                          color: Colors.blue),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return MacronutrientDialog(
+                                              initialName: entry.key,
+                                              initialValue:
+                                                  entry.value.toString(),
+                                              macronutrientsArray:
+                                                  macronutrientsArray,
+                                              onSave:
+                                                  (oldName, newName, newValue) {
+                                                _editRow(
+                                                    oldName, newName, newValue);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                      onPressed: () {
+                                        _deleteRow(entry.key);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -357,10 +363,10 @@ class _MacronutrientTableState extends State<MacronutrientTable> {
                   _buildActionButton(
                     Platform.isIOS
                         ? (_isEditing
-                        ? CupertinoIcons.check_mark
-                        : CupertinoIcons.pencil)
+                            ? CupertinoIcons.check_mark
+                            : CupertinoIcons.pencil)
                         : (_isEditing ? Icons.save : Icons.edit),
-                        () {
+                    () {
                       setState(() {
                         _isEditing = !_isEditing;
                         if (!_isEditing) widget.onSave(macronutrients);

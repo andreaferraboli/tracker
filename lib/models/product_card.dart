@@ -64,7 +64,7 @@ class _ProductCardState extends State<ProductCard> {
     try {
       final double newWeight = double.parse(value);
       if (newWeight < 0) {
-        throw FormatException("Il peso non può essere negativo");
+        throw const FormatException("Il peso non può essere negativo");
       }
 
       setState(() {
@@ -99,7 +99,7 @@ class _ProductCardState extends State<ProductCard> {
             _weightController.text = _weightFromTextField.toStringAsFixed(0);
           }
         });
-        throw FormatException("La quantità non può essere negativa");
+        throw const FormatException("La quantità non può essere negativa");
       }
 
       setState(() {

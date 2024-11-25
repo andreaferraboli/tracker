@@ -13,7 +13,7 @@ import '../models/product.dart';
 class MealDetailScreen extends StatelessWidget {
   final Meal meal;
 
-  const MealDetailScreen({Key? key, required this.meal}) : super(key: key);
+  const MealDetailScreen({super.key, required this.meal});
 
   Future<void> deleteMeal(Meal meal) async {
     // Recupera l'ID dell'utente

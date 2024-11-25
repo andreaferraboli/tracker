@@ -41,114 +41,114 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
 
   void _openCustomizeCategoriesDialog() async {
     List<String> availableCategories =
-    await CategoryServices.getCategoryNames();
+        await CategoryServices.getCategoryNames();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Platform.isIOS
             ? CupertinoAlertDialog(
-          title: Text(AppLocalizations.of(context)!.customizeCategories),
-          content: SizedBox(
-            width: 200,
-            height: 500,
-            child: CupertinoScrollbar(
-              child: ListView(
-                shrinkWrap: true,
-                children: availableCategories.map((category) {
-                  return Row(
-                    children: [
-                      CupertinoSwitch(
-                        value: selectedCategories.contains(category),
-                        onChanged: (bool value) {
-                          setState(() {
-                            if (value) {
-                              if (selectedCategories.length < 4) {
-                                selectedCategories.add(category);
-                              }
-                            } else {
-                              selectedCategories.remove(category);
-                            }
-                          });
-                        },
-                      ),
-                      Text(AppLocalizations.of(context)!
-                          .translateCategory(category)),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-          actions: <CupertinoDialogAction>[
-            CupertinoDialogAction(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            CupertinoDialogAction(
-              onPressed: () {
-                setState(() {
-                  widget.onCategoriesUpdated?.call(selectedCategories);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.save),
-            ),
-          ],
-        )
-            : AlertDialog(
-          title: Text(AppLocalizations.of(context)!.customizeCategories),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setDialogState) {
-              return Container(
-                width: 200,
-                height: 500,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: availableCategories.map((category) {
-                    return CheckboxListTile(
-                      title: Text(
-                        AppLocalizations.of(context)!
-                            .translateCategory(category),
-                      ),
-                      value: selectedCategories.contains(category),
-                      onChanged: (bool? value) {
-                        setDialogState(() {
-                          if (value == true) {
-                            if (selectedCategories.length < 4) {
-                              selectedCategories.add(category);
-                            }
-                          } else {
-                            selectedCategories.remove(category);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
+                title: Text(AppLocalizations.of(context)!.customizeCategories),
+                content: SizedBox(
+                  width: 200,
+                  height: 500,
+                  child: CupertinoScrollbar(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: availableCategories.map((category) {
+                        return Row(
+                          children: [
+                            CupertinoSwitch(
+                              value: selectedCategories.contains(category),
+                              onChanged: (bool value) {
+                                setState(() {
+                                  if (value) {
+                                    if (selectedCategories.length < 4) {
+                                      selectedCategories.add(category);
+                                    }
+                                  } else {
+                                    selectedCategories.remove(category);
+                                  }
+                                });
+                              },
+                            ),
+                            Text(AppLocalizations.of(context)!
+                                .translateCategory(category)),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 ),
+                actions: <CupertinoDialogAction>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                  ),
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      setState(() {
+                        widget.onCategoriesUpdated?.call(selectedCategories);
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.save),
+                  ),
+                ],
+              )
+            : AlertDialog(
+                title: Text(AppLocalizations.of(context)!.customizeCategories),
+                content: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setDialogState) {
+                    return SizedBox(
+                      width: 200,
+                      height: 500,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: availableCategories.map((category) {
+                          return CheckboxListTile(
+                            title: Text(
+                              AppLocalizations.of(context)!
+                                  .translateCategory(category),
+                            ),
+                            value: selectedCategories.contains(category),
+                            onChanged: (bool? value) {
+                              setDialogState(() {
+                                if (value == true) {
+                                  if (selectedCategories.length < 4) {
+                                    selectedCategories.add(category);
+                                  }
+                                } else {
+                                  selectedCategories.remove(category);
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.onCategoriesUpdated?.call(selectedCategories);
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.save),
+                  ),
+                ],
               );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  widget.onCategoriesUpdated?.call(selectedCategories);
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.save),
-            ),
-          ],
-        );
       },
     );
   }

@@ -14,7 +14,7 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _deleteProduct() async {
+    void deleteProduct() async {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         DocumentReference userDocRef =
@@ -61,7 +61,7 @@ class ProductScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: _deleteProduct,
+            onPressed: deleteProduct,
           ),
         ],
       ),

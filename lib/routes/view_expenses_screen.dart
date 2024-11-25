@@ -311,7 +311,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 150,
                     child: CustomBarChart(periodData: periodData),
                   ),
@@ -402,7 +402,8 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                                 ),
                                 trailing: Icon(
                                   Icons.arrow_forward_ios,
-                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                               ),
                             ),

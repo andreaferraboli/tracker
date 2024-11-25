@@ -207,5 +207,7 @@
   "filterRecipes": "Filter Recipes",
   "selectProducts": "Select products you want to use in the recipe",
   "mealSavedSuccessfully": "Meal saved successfully",
-  "productDeletedSuccessfully": "Product deleted successfully"
+  "productDeletedSuccessfully": "Product deleted successfully",
+  "language": "Language",
+  "selectLanguage": "Select Language"
 }

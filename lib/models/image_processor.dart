@@ -25,22 +25,17 @@ class ImageProcessor extends StatefulWidget {
           return const SizedBox.shrink();
         }
 
-        if (originalImage != null) {
-          final processedImage = _processImage(originalImage);
+        final processedImage = _processImage(originalImage);
 
-          final pngBytes = Uint8List.fromList(img.encodePng(processedImage));
-          return Container(
-            width: 40,
-            height: 40,
-            child: Image.memory(
-              pngBytes,
-              fit: BoxFit.cover, // Adatta l'immagine al container
-            ),
-          );
-        } else {
-          debugPrint('Impossibile decodificare l\'immagine.');
-          return const SizedBox.shrink();
-        }
+        final pngBytes = Uint8List.fromList(img.encodePng(processedImage));
+        return Container(
+          width: 40,
+          height: 40,
+          child: Image.memory(
+            pngBytes,
+            fit: BoxFit.cover, // Adatta l'immagine al container
+          ),
+        );
       } else {
         debugPrint(
             'Errore nel caricamento dell\'immagine: ${response.statusCode}');

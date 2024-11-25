@@ -9,7 +9,7 @@ class RecipeTipsScreen extends StatefulWidget {
   final List<String> ingredientNames;
 
   // Costruttore per passare i nomi degli ingredienti
-  RecipeTipsScreen({required this.ingredientNames});
+  const RecipeTipsScreen({super.key, required this.ingredientNames});
 
   @override
   _RecipeTipsScreenState createState() => _RecipeTipsScreenState();
@@ -58,7 +58,7 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
             AppLocalizations.of(context)!.recipeTips), // Traduci se necessario
       ),
       body: recipes.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -87,15 +87,15 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
                               ),
                               image: recipe['image']?.isNotEmpty == true
                                   ? DecorationImage(
-                                image: NetworkImage(recipe['image']!),
-                                fit: BoxFit.cover,
-                              )
+                                      image: NetworkImage(recipe['image']!),
+                                      fit: BoxFit.cover,
+                                    )
                                   : null,
                             ),
                             child: recipe['image']?.isNotEmpty != true
                                 ? const Center(
-                              child: Icon(Icons.no_photography, size: 50),
-                            )
+                                    child: Icon(Icons.no_photography, size: 50),
+                                  )
                                 : null,
                           ),
                         ),

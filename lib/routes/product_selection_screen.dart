@@ -17,9 +17,9 @@ class ProductSelectionScreen extends StatefulWidget {
   final MealType mealType;
 
   const ProductSelectionScreen({
-    Key? key,
+    super.key,
     required this.mealType,
-  }) : super(key: key);
+  });
 
   @override
   _ProductSelectionScreenState createState() => _ProductSelectionScreenState();

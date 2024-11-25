@@ -8,7 +8,7 @@ import 'package:image/image.dart' as img;
 import 'category_services.dart';
 
 class ApiClient {
-  static final String apiKey = 'tyqPYQx9H98UiewRiqV8fGtw';
+  static const String apiKey = 'tyqPYQx9H98UiewRiqV8fGtw';
 
   static Future<Uint8List?> removeBackground(String imageUrl) async {
     try {

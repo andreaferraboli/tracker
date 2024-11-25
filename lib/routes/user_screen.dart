@@ -99,7 +99,7 @@ class _UserScreenState extends State<UserScreen> {
         padding: const EdgeInsets.all(16.0),
         child: user != null
             ? _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

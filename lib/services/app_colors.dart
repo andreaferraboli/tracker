@@ -2,33 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppColors {
-  static Color primaryLight = Color.fromARGB(255, 45, 49, 66);
-  static Color onPrimaryLight = Color.fromARGB(255, 234, 232, 255);
+  static Color primaryLight = const Color.fromARGB(255, 45, 49, 66);
+  static Color onPrimaryLight = const Color.fromARGB(255, 234, 232, 255);
   static Color secondaryLight = Colors.orange;
-  static Color appBarBackgroundLight = Color.fromARGB(255, 234, 232, 255);
-  static Color appBarForegroundLight = Color.fromARGB(255, 45, 49, 66);
-  static Color primaryDark = Color.fromARGB(255, 97, 3, 3);
+  static Color appBarBackgroundLight = const Color.fromARGB(255, 234, 232, 255);
+  static Color appBarForegroundLight = const Color.fromARGB(255, 45, 49, 66);
+  static Color primaryDark = const Color.fromARGB(255, 97, 3, 3);
   static Color onPrimaryDark = Colors.white;
-  static Color secondaryDark = Color.fromARGB(255, 66, 12, 20);
-  static Color appBarBackgroundDark = Color.fromARGB(255, 97, 3, 3);
+  static Color secondaryDark = const Color.fromARGB(255, 66, 12, 20);
+  static Color appBarBackgroundDark = const Color.fromARGB(255, 97, 3, 3);
   static Color appBarForegroundDark = Colors.white;
-  static var shoppingLight = Color.fromARGB(255, 34, 65, 98);
-  static var shoppingDark = Color.fromARGB(255, 41, 36, 36);
+  static var shoppingLight = const Color.fromARGB(255, 34, 65, 98);
+  static var shoppingDark = const Color.fromARGB(255, 41, 36, 36);
 
-  static var addMealLight = Color.fromARGB(255, 97, 3, 3);
-  static var addMealDark = Color.fromARGB(255, 97, 3, 3);
+  static var addMealLight = const Color.fromARGB(255, 97, 3, 3);
+  static var addMealDark = const Color.fromARGB(255, 97, 3, 3);
 
-  static var viewExpensesLight = Color.fromARGB(255, 89, 100, 117);
-  static var viewExpensesDark = Color.fromARGB(255, 100, 100, 100);
+  static var viewExpensesLight = const Color.fromARGB(255, 89, 100, 117);
+  static var viewExpensesDark = const Color.fromARGB(255, 100, 100, 100);
 
-  static var inventoryLight = Color.fromARGB(255, 0, 126, 167);
-  static var inventoryDark = Color.fromARGB(255, 150, 150, 150);
+  static var inventoryLight = const Color.fromARGB(255, 0, 126, 167);
+  static var inventoryDark = const Color.fromARGB(255, 150, 150, 150);
 
-  static var viewMealsLight = Color.fromARGB(255, 45, 49, 66);
-  static var viewMealsDark = Color.fromARGB(255, 50, 50, 50);
+  static var viewMealsLight = const Color.fromARGB(255, 45, 49, 66);
+  static var viewMealsDark = const Color.fromARGB(255, 50, 50, 50);
 
-  static var recipeTipsLight = Color.fromARGB(255, 66, 12, 20);
-  static var recipeTipsDark = Color.fromARGB(255, 66, 12, 20);
+  static var recipeTipsLight = const Color.fromARGB(255, 66, 12, 20);
+  static var recipeTipsDark = const Color.fromARGB(255, 66, 12, 20);
 
   // Blocco statico che carica i colori non appena la classe viene utilizzata per la prima volta
   static Future<void> initialize() async {
@@ -50,28 +50,28 @@ class AppColors {
 
 // Metodo per resettare tutti i colori ai valori originali
   static Future<void> resetAllColors() async {
-    primaryLight = Color.fromARGB(255, 45, 49, 66);
-    onPrimaryLight = Color.fromARGB(255, 234, 232, 255);
+    primaryLight = const Color.fromARGB(255, 45, 49, 66);
+    onPrimaryLight = const Color.fromARGB(255, 234, 232, 255);
     secondaryLight = Colors.orange;
-    appBarBackgroundLight = Color.fromARGB(255, 234, 232, 255);
-    appBarForegroundLight = Color.fromARGB(255, 45, 49, 66);
-    primaryDark = Color.fromARGB(255, 97, 3, 3);
+    appBarBackgroundLight = const Color.fromARGB(255, 234, 232, 255);
+    appBarForegroundLight = const Color.fromARGB(255, 45, 49, 66);
+    primaryDark = const Color.fromARGB(255, 97, 3, 3);
     onPrimaryDark = Colors.white;
-    secondaryDark = Color.fromARGB(255, 66, 12, 20);
-    appBarBackgroundDark = Color.fromARGB(255, 97, 3, 3);
+    secondaryDark = const Color.fromARGB(255, 66, 12, 20);
+    appBarBackgroundDark = const Color.fromARGB(255, 97, 3, 3);
     appBarForegroundDark = Colors.white;
-    shoppingLight = Color.fromARGB(255, 34, 65, 98);
-    shoppingDark = Color.fromARGB(255, 41, 36, 36);
-    addMealLight = Color.fromARGB(255, 97, 3, 3);
-    addMealDark = Color.fromARGB(255, 97, 3, 3);
-    viewExpensesLight = Color.fromARGB(255, 89, 100, 117);
-    viewExpensesDark = Color.fromARGB(255, 100, 100, 100);
-    inventoryLight = Color.fromARGB(255, 0, 126, 167);
-    inventoryDark = Color.fromARGB(255, 150, 150, 150);
-    viewMealsLight = Color.fromARGB(255, 45, 49, 66);
-    viewMealsDark = Color.fromARGB(255, 50, 50, 50);
-    recipeTipsLight = Color.fromARGB(255, 66, 12, 20);
-    recipeTipsDark = Color.fromARGB(255, 66, 12, 20);
+    shoppingLight = const Color.fromARGB(255, 34, 65, 98);
+    shoppingDark = const Color.fromARGB(255, 41, 36, 36);
+    addMealLight = const Color.fromARGB(255, 97, 3, 3);
+    addMealDark = const Color.fromARGB(255, 97, 3, 3);
+    viewExpensesLight = const Color.fromARGB(255, 89, 100, 117);
+    viewExpensesDark = const Color.fromARGB(255, 100, 100, 100);
+    inventoryLight = const Color.fromARGB(255, 0, 126, 167);
+    inventoryDark = const Color.fromARGB(255, 150, 150, 150);
+    viewMealsLight = const Color.fromARGB(255, 45, 49, 66);
+    viewMealsDark = const Color.fromARGB(255, 50, 50, 50);
+    recipeTipsLight = const Color.fromARGB(255, 66, 12, 20);
+    recipeTipsDark = const Color.fromARGB(255, 66, 12, 20);
     await saveAllColors();
   }
 

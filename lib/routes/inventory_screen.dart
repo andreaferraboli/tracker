@@ -9,7 +9,7 @@ import '../services/icons_helper.dart';
 import 'edit_storage_screen.dart'; // Assicurati di importare il file del provider
 
 class InventoryScreen extends ConsumerWidget {
-  const InventoryScreen({Key? key}) : super(key: key);
+  const InventoryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +49,7 @@ class InventoryScreen extends ConsumerWidget {
                   isAddButton: false,
                 ),
               );
-            }).toList(),
+            }),
             StorageCard(
               icon: Icons.add,
               title: AppLocalizations.of(context)!.addStorage,

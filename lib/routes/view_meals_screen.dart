@@ -493,13 +493,13 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                     ],
                   ),
                   // Grafico a barre per le spese giornaliere
-                  Container(
+                  SizedBox(
                     height: 150,
                     child: CustomBarChart(periodData: periodData),
                   ),
                   const SizedBox(height: 8),
                   // Grafico a barre per le calorie giornaliere
-                  Container(
+                  SizedBox(
                     height: 150,
                     child: CustomBarChart(periodData: macronutrientData),
                   ),

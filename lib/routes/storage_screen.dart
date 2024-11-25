@@ -141,7 +141,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
                 : Center(
                     child: Text(
                       AppLocalizations.of(context)!.noSavedProducts,
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ),
           )

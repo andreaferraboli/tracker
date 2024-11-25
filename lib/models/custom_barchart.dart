@@ -136,7 +136,7 @@ class CustomBarChart extends StatelessWidget {
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         );
       },

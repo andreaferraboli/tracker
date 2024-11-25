@@ -207,5 +207,7 @@
   "filterRecipes": "Filtra Ricette",
   "selectProducts": "Seleziona prodotti che vuoi aggiungere alla ricetta",
   "mealSavedSuccessfully": "Pasto salvato con successo",
-  "productDeletedSuccessfully": "Prodotto eliminato con successo"
+  "productDeletedSuccessfully": "Prodotto eliminato con successo",
+  "language": "Lingua",
+  "selectLanguage": "Seleziona Lingua"
 }

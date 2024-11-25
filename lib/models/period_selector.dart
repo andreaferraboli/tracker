@@ -30,13 +30,13 @@ class PeriodSelector extends StatelessWidget {
         if (isIOS)
           CupertinoButton(
             padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.arrow_left),
             onPressed: onPreviousPeriod,
+            child: const Icon(CupertinoIcons.arrow_left),
           )
         else
           ElevatedButton(
-            child: const Icon(Icons.arrow_back),
             onPressed: onPreviousPeriod,
+            child: const Icon(Icons.arrow_back),
           ),
 
         // Dropdown per selezionare il periodo
@@ -57,11 +57,14 @@ class PeriodSelector extends StatelessWidget {
             value: selectedPeriod,
             items: [
               DropdownMenuItem(
-                  value: 'week', child: Text(AppLocalizations.of(context)!.week)),
+                  value: 'week',
+                  child: Text(AppLocalizations.of(context)!.week)),
               DropdownMenuItem(
-                  value: 'month', child: Text(AppLocalizations.of(context)!.month)),
+                  value: 'month',
+                  child: Text(AppLocalizations.of(context)!.month)),
               DropdownMenuItem(
-                  value: 'year', child: Text(AppLocalizations.of(context)!.year)),
+                  value: 'year',
+                  child: Text(AppLocalizations.of(context)!.year)),
             ],
             onChanged: onPeriodChanged,
           ),
@@ -70,8 +73,8 @@ class PeriodSelector extends StatelessWidget {
         if (isIOS)
           CupertinoButton(
             padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.calendar),
             onPressed: onSelectDate,
+            child: const Icon(CupertinoIcons.calendar),
           )
         else
           ElevatedButton(
@@ -83,13 +86,13 @@ class PeriodSelector extends StatelessWidget {
         if (isIOS)
           CupertinoButton(
             padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.arrow_right),
             onPressed: onNextPeriod,
+            child: const Icon(CupertinoIcons.arrow_right),
           )
         else
           ElevatedButton(
-            child: const Icon(Icons.arrow_forward),
             onPressed: onNextPeriod,
+            child: const Icon(Icons.arrow_forward),
           ),
       ],
     );

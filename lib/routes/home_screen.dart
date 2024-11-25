@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/main.dart';
 import 'package:tracker/providers/meals_provider.dart';
+import 'package:tracker/routes/language_screen.dart';
 import 'package:tracker/services/app_colors.dart';
 
 import '../models/expense.dart';
@@ -195,12 +196,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               leading: const Icon(Icons.language),
               title: Text(AppLocalizations.of(context)!.changeLanguage),
               onTap: () {
-                Locale newLocale =
-                    Localizations.localeOf(context).languageCode == 'it'
-                        ? const Locale('en')
-                        : const Locale('it');
-                MyApp.setLocale(context, newLocale);
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LanguageScreen(),
+                  ),
+                );
               },
             ),
             ListTile(
