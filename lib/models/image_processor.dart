@@ -12,7 +12,7 @@ class ImageProcessor extends StatefulWidget {
   @override
   _ImageProcessorState createState() => _ImageProcessorState();
 
-  static Future<Widget> removeWhiteBackground(String imageUrl) async {
+  static Future<Uint8List?> removeWhiteBackground(String imageUrl) async {
     try {
       final response = await http.get(Uri.parse(imageUrl));
 
@@ -22,49 +22,44 @@ class ImageProcessor extends StatefulWidget {
 
         if (originalImage == null) {
           debugPrint('Errore: Impossibile decodificare l\'immagine.');
-          return const SizedBox.shrink();
+          return null;
         }
 
         final processedImage = _processImage(originalImage);
-
-        final pngBytes = Uint8List.fromList(img.encodePng(processedImage));
-        return Container(
-          width: 40,
-          height: 40,
-          child: Image.memory(
-            pngBytes,
-            fit: BoxFit.cover, // Adatta l'immagine al container
-          ),
-        );
+        return Uint8List.fromList(img.encodePng(processedImage));
       } else {
         debugPrint(
             'Errore nel caricamento dell\'immagine: ${response.statusCode}');
-        return const SizedBox.shrink();
+        return null;
       }
     } catch (e) {
       debugPrint('Errore durante l\'elaborazione dell\'immagine: $e');
-      return const SizedBox.shrink();
+      return null;
     }
   }
 
   static img.Image _processImage(img.Image srcImage) {
-    // Itera sui pixel dell'immagine e sostituisce il bianco con trasparenza
-    for (int y = 0; y < srcImage.height; y++) {
-      for (int x = 0; x < srcImage.width; x++) {
-        final pixel = srcImage.getPixel(x, y);
-
-        // Usa i metodi corretti per ottenere i valori RGB
-        final r = pixel.r; // Red
-        final g = pixel.g; // Green
-        final b = pixel.b; // Blue
-
-        // Se il pixel è bianco (255, 255, 255), rende il pixel trasparente
-        if (r == 255 && g == 255 && b == 255) {
-          srcImage.setPixelRgba(x, y, r, g, b, 0); // Alpha a 0 (trasparenza)
+    // Create a new image with alpha channel
+    final processedImage = img.Image.from(srcImage);
+    
+    // Iterate through pixels and make white pixels transparent
+    for (int y = 0; y < processedImage.height; y++) {
+      for (int x = 0; x < processedImage.width; x++) {
+        final pixel = processedImage.getPixel(x, y);
+        
+        // Get RGB values
+        final r = pixel.r;
+        final g = pixel.g;
+        final b = pixel.b;
+        
+        // Check if pixel is close to white (with some tolerance)
+        if (r > 240 && g > 240 && b > 240) {
+          // Set pixel to fully transparent
+          processedImage.setPixelRgba(x, y, r, g, b, 0);
         }
       }
     }
-    return srcImage;
+    return processedImage;
   }
 }
 

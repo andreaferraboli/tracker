@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -79,16 +80,21 @@ class _ProductListItemState extends State<ProductListItem> {
             children: [
               if (widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
-                  FutureBuilder<Widget>(
-                    future: ImageProcessor.removeWhiteBackground(
-                        widget.product.imageUrl),
+                  FutureBuilder<Uint8List?>(
+                    future: ImageProcessor.removeWhiteBackground(widget.product.imageUrl),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {
-                          return snapshot.data!;
+                          return Container(
+                            width: 40,
+                            height: 40,
+                            child: Image.memory(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            ),
+                          );
                         } else {
-                          return CategoryServices.iconFromCategory(
-                              widget.product.category);
+                          return CategoryServices.iconFromCategory(widget.product.category);
                         }
                       } else {
                         return const CupertinoActivityIndicator();
@@ -101,8 +107,7 @@ class _ProductListItemState extends State<ProductListItem> {
                     width: 100,
                     height: 100,
                     errorBuilder: (context, error, stackTrace) {
-                      return CategoryServices.iconFromCategory(
-                          widget.product.category);
+                      return CategoryServices.iconFromCategory(widget.product.category);
                     },
                   )
               else

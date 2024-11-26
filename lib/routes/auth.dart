@@ -136,6 +136,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       controller: _emailController,
                       placeholder: AppLocalizations.of(context)!.email,
                       keyboardType: TextInputType.emailAddress,
+                      style: const TextStyle(color: Colors.black),
                     )
                   : TextFormField(
                       controller: _emailController,
@@ -158,6 +159,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       controller: _passwordController,
                       placeholder: AppLocalizations.of(context)!.password,
                       obscureText: !_isPasswordVisible,
+                      style: const TextStyle(color: Colors.black),
                       suffix: CupertinoButton(
                         padding: EdgeInsets.zero,
                         child: Icon(
@@ -206,6 +208,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                         placeholder:
                             AppLocalizations.of(context)!.confirmPassword,
                         obscureText: !_isConfirmPasswordVisible,
+                        style: const TextStyle(color: Colors.black),
                         suffix: CupertinoButton(
                           padding: EdgeInsets.zero,
                           child: Icon(
@@ -255,6 +258,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     ? CupertinoTextField(
                         controller: _usernameController,
                         placeholder: AppLocalizations.of(context)!.username,
+                        style: const TextStyle(color: Colors.black),
                       )
                     : TextFormField(
                         controller: _usernameController,
@@ -271,7 +275,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
               ],
               const SizedBox(height: 12),
               Platform.isIOS
-                  ? Row(
+                  ? Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         CupertinoButton(

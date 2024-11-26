@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart'; // Per il design iOS
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toastification/toastification.dart';
 import 'package:tracker/firebase_options.dart';
 import 'package:tracker/routes/auth.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isDarkTheme = false;
   Locale? _locale;
+  static const String _languageKey = 'selected_language';
   ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.blue,
@@ -129,6 +131,29 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _loadSavedLanguage();
+  }
+
+  Future<void> _loadSavedLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedLanguage = prefs.getString(_languageKey);
+    if (savedLanguage != null) {
+      final parts = savedLanguage.split('_');
+      if (parts.length == 2) {
+        setState(() {
+          _locale = Locale(parts[0], parts[1]);
+        });
+      }
+    }
+  }
+
+  void setLocale(Locale locale) async {
+    setState(() {
+      _locale = locale;
+    });
+    // Save the selected language
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_languageKey, '${locale.languageCode}_${locale.countryCode}');
   }
 
   @override
@@ -148,12 +173,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _toggleTheme() {
     setState(() {
       _isDarkTheme = !_isDarkTheme;
-    });
-  }
-
-  void setLocale(Locale locale) {
-    setState(() {
-      _locale = locale;
     });
   }
 

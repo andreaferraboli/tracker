@@ -320,7 +320,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
             child: _buildBody(),
           )
         : Scaffold(
-            appBar: AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
+            appBar:
+                AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
             body: _buildBody(),
           );
   }
@@ -434,17 +435,20 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                                     padding: EdgeInsets.zero,
                                     child: Text(
                                       AppLocalizations.of(context)!
-                                          .getNutrientString(selectedMacronutrient),
+                                          .getNutrientString(
+                                              selectedMacronutrient),
                                     ),
                                     onPressed: _showMacronutrientPicker,
                                   )
                                 : DropdownButton<String>(
                                     value: selectedMacronutrient,
-                                    items: macronutrients.map((String nutrient) {
+                                    items:
+                                        macronutrients.map((String nutrient) {
                                       return DropdownMenuItem<String>(
                                         value: nutrient,
-                                        child: Text(AppLocalizations.of(context)!
-                                            .getNutrientString(nutrient)),
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .getNutrientString(nutrient)),
                                       );
                                     }).toList(),
                                     onChanged: (value) {
@@ -508,8 +512,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                             items: mealTypes.map((String type) {
                               return DropdownMenuItem<String>(
                                 value: type,
-                                child: Text(
-                                    AppLocalizations.of(context)!.mealString(type)),
+                                child: Text(AppLocalizations.of(context)!
+                                    .mealString(type)),
                               );
                             }).toList(),
                             onChanged: (value) {
@@ -588,16 +592,14 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                             title: Text(
                               '${AppLocalizations.of(context)!.mealString(meal.mealType)} - €${meal.totalExpense.toStringAsFixed(2)}',
                               style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimary),
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
                             ),
                             trailing: Text(
                               meal.date,
                               style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimary),
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
                             ),
                             onTap: () {
                               Navigator.push(
@@ -612,8 +614,7 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                                   _fetchMeals().then((meals) {
                                     setState(() {
                                       filteredMeals.clear();
-                                      filteredMeals
-                                          .addAll(_filterMeals(meals));
+                                      filteredMeals.addAll(_filterMeals(meals));
                                     });
                                   });
                                 }
@@ -652,7 +653,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
             });
           },
           children: mealTypes
-              .map((type) => Text(AppLocalizations.of(context)!.mealString(type)))
+              .map((type) =>
+                  Text(AppLocalizations.of(context)!.mealString(type)))
               .toList(),
         ),
       ),
@@ -677,8 +679,8 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
             });
           },
           children: macronutrients
-              .map((nutrient) => Text(AppLocalizations.of(context)!
-                  .getNutrientString(nutrient)))
+              .map((nutrient) => Text(
+                  AppLocalizations.of(context)!.getNutrientString(nutrient)))
               .toList(),
         ),
       ),
