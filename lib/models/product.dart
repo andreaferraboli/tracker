@@ -1,4 +1,5 @@
 import 'package:tracker/models/quantiy_update_type.dart';
+import 'package:tracker/models/purchase_history.dart';
 
 class Product {
   String productId;
@@ -25,6 +26,7 @@ class Product {
   double unitPrice;
   double sliderValue;
   QuantityUpdateType? quantityUpdateType;
+  //List<PurchaseHistory> purchaseHistory = []; // Cronologia degli acquisti
 
   // Costruttore
   Product({
@@ -80,6 +82,11 @@ class Product {
       unitWeight: double.parse(json['unitWeight'].toString()),
       unitPrice: double.parse(json['unitPrice'].toString()),
       selectedQuantity: json['selectedQuantity'] ?? 0,
+      //purchaseHistory: json['purchaseHistory'] != null
+      //    ? (json['purchaseHistory'] as List)
+      //        .map((p) => PurchaseHistory.fromJson(p as Map<String, dynamic>))
+      //        .toList()
+      //    : [],
     );
   }
 
@@ -108,6 +115,7 @@ class Product {
       'unitWeight': unitWeight,
       'unitPrice': unitPrice,
       'selectedQuantity': selectedQuantity,
+      //'purchaseHistory': purchaseHistory.map((p) => p.toJson()).toList(),
     };
   }
 
@@ -144,6 +152,54 @@ class Product {
       unitPrice: unitPrice,
       quantityUpdateType: quantityUpdateType,
       selectedQuantity: selectedQuantity,
+      //purchaseHistory: purchaseHistory,
     );
   }
+
+  // Metodo per aggiungere un nuovo acquisto alla cronologia
+  /* void addPurchase({
+    required double price,
+    required int quantity,
+    required String supermarket,
+    double? originalPrice,
+  }) {
+    final isDiscounted = originalPrice != null && originalPrice > price;
+    purchaseHistory.add(PurchaseHistory(
+      purchaseDate: DateTime.now().toIso8601String(),
+      price: price,
+      quantity: quantity,
+      supermarket: supermarket,
+      isDiscounted: isDiscounted,
+      originalPrice: originalPrice,
+    ));
+  }
+
+  // Metodo per ottenere gli acquisti scontati
+  List<PurchaseHistory> getDiscountedPurchases() {
+    return purchaseHistory.where((p) => p.isDiscounted).toList();
+  }
+
+  // Metodo per ottenere il prezzo medio di acquisto
+  double getAveragePrice() {
+    if (purchaseHistory.isEmpty) return price;
+    final totalPrice = purchaseHistory.fold(
+        0.0, (sum, purchase) => sum + (purchase.price * purchase.quantity));
+    final totalQuantity =
+        purchaseHistory.fold(0, (sum, purchase) => sum + purchase.quantity);
+    return totalPrice / totalQuantity;
+  }
+
+  // Metodo per ottenere l'ultimo prezzo scontato
+  double? getLastDiscountedPrice() {
+    final discountedPurchases = getDiscountedPurchases();
+    if (discountedPurchases.isEmpty) return null;
+    return discountedPurchases.last.price;
+  }
+
+  // Metodo per ottenere l'ultimo prezzo originale
+  double? getLastOriginalPrice() {
+    final discountedPurchases = getDiscountedPurchases();
+    if (discountedPurchases.isEmpty) return null;
+    return discountedPurchases.last.originalPrice;
+  } */
 }

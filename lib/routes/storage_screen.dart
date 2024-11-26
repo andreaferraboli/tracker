@@ -75,13 +75,16 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
     return Platform.isIOS
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
-              middle: Text(widget.name),
+              middle: Text(
+                  AppLocalizations.of(context)!.getStorageTitle(widget.name)),
             ),
             child: _buildBody(),
           )
         : Scaffold(
             appBar: AppBar(
-              title: Center(child: Text(widget.name)),
+              title: Center(
+                  child: Text(AppLocalizations.of(context)!
+                      .getStorageTitle(widget.name))),
             ),
             body: _buildBody(),
           );
@@ -180,8 +183,7 @@ class _StorageScreenState extends ConsumerState<StorageScreen> {
         Expanded(
           child: storedProducts.isNotEmpty
               ? GridView.builder(
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
