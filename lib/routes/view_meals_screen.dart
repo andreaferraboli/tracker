@@ -19,10 +19,10 @@ class ViewMealsScreen extends StatefulWidget {
   const ViewMealsScreen({super.key});
 
   @override
-  _ViewMealsScreenState createState() => _ViewMealsScreenState();
+  ViewMealsScreenState createState() => ViewMealsScreenState();
 }
 
-class _ViewMealsScreenState extends State<ViewMealsScreen> {
+class ViewMealsScreenState extends State<ViewMealsScreen> {
   String selectedPeriod = 'week';
   String selectedMealType = 'All';
   String selectedMacronutrient = 'Energy';
@@ -407,11 +407,11 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                             Platform.isIOS
                                 ? CupertinoButton(
                                     padding: EdgeInsets.zero,
+                                    onPressed: _showMealTypePicker,
                                     child: Text(
                                       AppLocalizations.of(context)!
                                           .mealString(selectedMealType),
                                     ),
-                                    onPressed: _showMealTypePicker,
                                   )
                                 : DropdownButton<String>(
                                     value: selectedMealType,
@@ -433,12 +433,12 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                             Platform.isIOS
                                 ? CupertinoButton(
                                     padding: EdgeInsets.zero,
+                                    onPressed: _showMacronutrientPicker,
                                     child: Text(
                                       AppLocalizations.of(context)!
                                           .getNutrientString(
                                               selectedMacronutrient),
                                     ),
-                                    onPressed: _showMacronutrientPicker,
                                   )
                                 : DropdownButton<String>(
                                     value: selectedMacronutrient,
@@ -501,11 +501,11 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                     Platform.isIOS
                         ? CupertinoButton(
                             padding: EdgeInsets.zero,
+                            onPressed: _showMealTypePicker,
                             child: Text(
                               AppLocalizations.of(context)!
                                   .mealString(selectedMealType),
                             ),
-                            onPressed: _showMealTypePicker,
                           )
                         : DropdownButton<String>(
                             value: selectedMealType,
@@ -526,11 +526,11 @@ class _ViewMealsScreenState extends State<ViewMealsScreen> {
                     Platform.isIOS
                         ? CupertinoButton(
                             padding: EdgeInsets.zero,
+                            onPressed: _showMacronutrientPicker,
                             child: Text(
                               AppLocalizations.of(context)!
                                   .getNutrientString(selectedMacronutrient),
                             ),
-                            onPressed: _showMacronutrientPicker,
                           )
                         : DropdownButton<String>(
                             value: selectedMacronutrient,

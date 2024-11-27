@@ -59,6 +59,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isDarkTheme = false;
   Locale? _locale;
   static const String _languageKey = 'selected_language';
+  static const String _themeKey = 'is_dark_theme';
   ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.blue,
@@ -132,6 +133,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadSavedLanguage();
+    _loadSavedTheme();
   }
 
   Future<void> _loadSavedLanguage() async {
@@ -140,6 +142,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (savedLanguage != null) {
       final parts = savedLanguage.split('_');
       if (parts.length == 2) {
+        if (!mounted) return;
         setState(() {
           _locale = Locale(parts[0], parts[1]);
         });
@@ -147,13 +150,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _loadSavedTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _isDarkTheme = prefs.getBool(_themeKey) ?? false;
+    });
+  }
+
   void setLocale(Locale locale) async {
+    if (!mounted) return;
     setState(() {
       _locale = locale;
     });
     // Save the selected language
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_languageKey, '${locale.languageCode}_${locale.countryCode}');
+    await prefs.setString(
+        _languageKey, '${locale.languageCode}_${locale.countryCode}');
   }
 
   @override
@@ -170,150 +183,154 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  void _toggleTheme() {
+  void _toggleTheme() async {
+    if (!mounted) return;
     setState(() {
       _isDarkTheme = !_isDarkTheme;
     });
+    // Salva la preferenza del tema
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_themeKey, _isDarkTheme);
   }
 
   @override
   Widget build(BuildContext context) {
     return Platform.isIOS
         ? ToastificationWrapper(
-          child: CupertinoApp(
-                title: 'Tracker App',
-                locale: _locale,
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
-                theme: CupertinoThemeData(
-          brightness: _isDarkTheme ? Brightness.dark : Brightness.light,
-          primaryColor: _isDarkTheme
-              ? AppColors.primaryDark
-              : AppColors.primaryLight,
-          barBackgroundColor: _isDarkTheme
-              ? AppColors.appBarBackgroundDark
-              : AppColors.appBarBackgroundLight,
-          textTheme: CupertinoTextThemeData(
-            textStyle: TextStyle(
-              color: _isDarkTheme
-                  ? AppColors.onPrimaryDark
-                  : AppColors.onPrimaryLight,
-            ),
-            navTitleTextStyle: TextStyle(
-              color: _isDarkTheme
-                  ? AppColors.appBarForegroundDark
-                  : AppColors.appBarForegroundLight,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-            navLargeTitleTextStyle: TextStyle(
-              color: _isDarkTheme
-                  ? AppColors.appBarForegroundDark
-                  : AppColors.appBarForegroundLight,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+            child: CupertinoApp(
+              title: 'Tracker App',
+              locale: _locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: CupertinoThemeData(
+                brightness: _isDarkTheme ? Brightness.dark : Brightness.light,
+                primaryColor: _isDarkTheme
+                    ? AppColors.primaryDark
+                    : AppColors.primaryLight,
+                barBackgroundColor: _isDarkTheme
+                    ? AppColors.appBarBackgroundDark
+                    : AppColors.appBarBackgroundLight,
+                textTheme: CupertinoTextThemeData(
+                  textStyle: TextStyle(
+                    color: _isDarkTheme
+                        ? AppColors.onPrimaryDark
+                        : AppColors.onPrimaryLight,
+                  ),
+                  navTitleTextStyle: TextStyle(
+                    color: _isDarkTheme
+                        ? AppColors.appBarForegroundDark
+                        : AppColors.appBarForegroundLight,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                  navLargeTitleTextStyle: TextStyle(
+                    color: _isDarkTheme
+                        ? AppColors.appBarForegroundDark
+                        : AppColors.appBarForegroundLight,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CupertinoActivityIndicator(),
-              );
-            } else if (snapshot.hasData) {
-              return HomeScreen(
-                  toggleTheme: _toggleTheme, user: snapshot.data!);
-            } else {
-              return const AuthPage();
-            }
-          },
-                ),
-                routes: {
-          '/home': (context) => HomeScreen(
-            toggleTheme: _toggleTheme,
-          ),
-          '/shopping': (context) => const ShoppingScreen(),
-          '/user': (context) => const UserScreen(),
-          '/addMeal': (context) => AddMealScreen(),
-          '/viewExpenses': (context) => const ViewExpensesScreen(),
-          '/inventory': (context) => const InventoryScreen(),
-          '/viewMeals': (context) => const ViewMealsScreen(),
-          '/recipeTips': (context) => FilterRecipesScreen(),
-          '/themeCustomization': (context) => ThemeCustomizationScreen(
-            lightTheme: _lightTheme,
-            darkTheme: _darkTheme,
-            onLightThemeChanged: (newTheme) {
-              setState(() {
-                _lightTheme = newTheme;
-              });
-            },
-            onDarkThemeChanged: (newTheme) {
-              setState(() {
-                _darkTheme = newTheme;
-              });
-            },
-          ),
+              ),
+              home: StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CupertinoActivityIndicator(),
+                    );
+                  } else if (snapshot.hasData) {
+                    return HomeScreen(
+                        toggleTheme: _toggleTheme, user: snapshot.data!);
+                  } else {
+                    return const AuthPage();
+                  }
                 },
               ),
-        )
+              routes: {
+                '/home': (context) => HomeScreen(
+                      toggleTheme: _toggleTheme,
+                    ),
+                '/shopping': (context) => const ShoppingScreen(),
+                '/user': (context) => const UserScreen(),
+                '/addMeal': (context) => const AddMealScreen(),
+                '/viewExpenses': (context) => const ViewExpensesScreen(),
+                '/inventory': (context) => const InventoryScreen(),
+                '/viewMeals': (context) => const ViewMealsScreen(),
+                '/recipeTips': (context) => const FilterRecipesScreen(),
+                '/themeCustomization': (context) => ThemeCustomizationScreen(
+                      lightTheme: _lightTheme,
+                      darkTheme: _darkTheme,
+                      onLightThemeChanged: (newTheme) {
+                        setState(() {
+                          _lightTheme = newTheme;
+                        });
+                      },
+                      onDarkThemeChanged: (newTheme) {
+                        setState(() {
+                          _darkTheme = newTheme;
+                        });
+                      },
+                    ),
+              },
+            ),
+          )
         : ToastificationWrapper(
-          child: MaterialApp(
-                title: 'Tracker App',
-                locale: _locale,
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: const [
-                  Locale('en', ''), // English
-                  Locale('it', ''), // Italian
-                  Locale('fr', ''), // French
-                  Locale('es', ''), // Spanish
-                  Locale('de', ''), // German
-                ],
-                debugShowCheckedModeBanner: false,
-                theme: _isDarkTheme ? _darkTheme : _lightTheme,
-                home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasData) {
-              return HomeScreen(
-                  toggleTheme: _toggleTheme, user: snapshot.data!);
-            } else {
-              return const AuthPage();
-            }
-          },
-                ),
-                routes: {
-          '/home': (context) => HomeScreen(
-            toggleTheme: _toggleTheme,
-          ),
-          '/shopping': (context) => const ShoppingScreen(),
-          '/user': (context) => const UserScreen(),
-          '/addMeal': (context) => AddMealScreen(),
-          '/viewExpenses': (context) => const ViewExpensesScreen(),
-          '/inventory': (context) => const InventoryScreen(),
-          '/viewMeals': (context) => const ViewMealsScreen(),
-          '/recipeTips': (context) => FilterRecipesScreen(),
-          '/themeCustomization': (context) => ThemeCustomizationScreen(
-            lightTheme: _lightTheme,
-            darkTheme: _darkTheme,
-            onLightThemeChanged: (newTheme) {
-              setState(() {
-                _lightTheme = newTheme;
-              });
-            },
-            onDarkThemeChanged: (newTheme) {
-              setState(() {
-                _darkTheme = newTheme;
-              });
-            },
-          ),
+            child: MaterialApp(
+              title: 'Tracker App',
+              locale: _locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: const [
+                Locale('en', ''), // English
+                Locale('it', ''), // Italian
+                Locale('fr', ''), // French
+                Locale('es', ''), // Spanish
+                Locale('de', ''), // German
+              ],
+              debugShowCheckedModeBanner: false,
+              theme: _isDarkTheme ? _darkTheme : _lightTheme,
+              home: StreamBuilder<User?>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasData) {
+                    return HomeScreen(
+                        toggleTheme: _toggleTheme, user: snapshot.data!);
+                  } else {
+                    return const AuthPage();
+                  }
                 },
               ),
-        );
+              routes: {
+                '/home': (context) => HomeScreen(
+                      toggleTheme: _toggleTheme,
+                    ),
+                '/shopping': (context) => const ShoppingScreen(),
+                '/user': (context) => const UserScreen(),
+                '/addMeal': (context) => const AddMealScreen(),
+                '/viewExpenses': (context) => const ViewExpensesScreen(),
+                '/inventory': (context) => const InventoryScreen(),
+                '/viewMeals': (context) => const ViewMealsScreen(),
+                '/recipeTips': (context) => const FilterRecipesScreen(),
+                '/themeCustomization': (context) => ThemeCustomizationScreen(
+                      lightTheme: _lightTheme,
+                      darkTheme: _darkTheme,
+                      onLightThemeChanged: (newTheme) {
+                        setState(() {
+                          _lightTheme = newTheme;
+                        });
+                      },
+                      onDarkThemeChanged: (newTheme) {
+                        setState(() {
+                          _darkTheme = newTheme;
+                        });
+                      },
+                    ),
+              },
+            ),
+          );
   }
 }

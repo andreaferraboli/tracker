@@ -18,11 +18,11 @@ class ThemeCustomizationScreen extends StatefulWidget {
   });
 
   @override
-  _ThemeCustomizationScreenState createState() =>
-      _ThemeCustomizationScreenState();
+  ThemeCustomizationScreenState createState() =>
+      ThemeCustomizationScreenState();
 }
 
-class _ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
+class ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
   @override
   void initState() {
     super.initState();

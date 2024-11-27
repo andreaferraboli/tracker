@@ -35,7 +35,7 @@ class ProductScreen extends StatelessWidget {
           await userDocRef.update({
             "products": products,
           });
-
+          if (!context.mounted) return;
           ToastNotifier.showSuccess(context,
               AppLocalizations.of(context)!.productDeletedSuccessfully);
 

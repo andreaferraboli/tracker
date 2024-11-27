@@ -25,6 +25,7 @@ class _ImageInputState extends State<ImageInput> {
       return;
     }
 
+    if (!mounted) return;
     setState(() {
       _selectedImage = File(pickedImage.path);
     });

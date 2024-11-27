@@ -134,6 +134,7 @@ class MealDetailScreen extends StatelessWidget {
                             orElse: () => null);
                         product = Product.fromJson(existingProduct);
                       }
+                      if (!context.mounted) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(

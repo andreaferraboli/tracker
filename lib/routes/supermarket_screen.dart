@@ -57,63 +57,62 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
   }
 
   Future<void> saveMealsToJson(String userId, String jsonFilePath) async {
-    // Riferimento al documento dell'utente basato sul suo id
+    if (!mounted) return;
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('meals').doc(userId);
 
     try {
-      // Recupera il documento
       DocumentSnapshot snapshot = await userDocRef.get();
+      if (!mounted) return;
 
       if (snapshot.exists) {
-        // Recupera l'array "meals" dal documento
         final List<dynamic> mealsArray = snapshot['meals'] ?? [];
-
-        // Converti l'array in una stringa JSON
         String jsonString = json.encode(mealsArray);
-
-        // Salva la stringa JSON nel file specificato
         debugPrint(jsonString);
-
         ToastNotifier.showError('Dati salvati con successo in $jsonFilePath');
       } else {
         ToastNotifier.showError('Nessun documento trovato per l\'utente.');
       }
     } catch (e) {
+      if (!mounted) return;
       ToastNotifier.showError('Errore durante il salvataggio dei dati: $e');
     }
   }
 
   Future<void> uploadProductsFromJsonToFirestore(
       String userId, String jsonFilePath) async {
-    // Leggi il file JSON
+    if (!mounted) return;
     String jsonString =
         await DefaultAssetBundle.of(context).loadString(jsonFilePath);
-    List<dynamic> products = json.decode(jsonString);
+    if (!mounted) return;
 
-    // Riferimento al documento dell'utente basato sul suo id
+    List<dynamic> products = json.decode(jsonString);
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
 
     try {
-      // Aggiorna il documento esistente aggiungendo i prodotti all'array "products"
       await userDocRef.update({"products": FieldValue.arrayUnion(products)});
+      if (!mounted) return;
       ToastNotifier.showError('Prodotti aggiunti con successo!');
     } catch (e) {
+      if (!mounted) return;
       ToastNotifier.showError('Errore durante l\'aggiunta dei prodotti: $e');
     }
   }
 
 //funzione per cancellare tutti i documenti in products
   Future<void> deleteAllProducts() async {
+    if (!mounted) return;
     DocumentReference userDocRef = FirebaseFirestore.instance
         .collection('products')
         .doc(FirebaseAuth.instance.currentUser!.uid);
 
     try {
       await userDocRef.update({"products": FieldValue.delete()});
+      if (!mounted) return;
       ToastNotifier.showError('Prodotti eliminati con successo!');
     } catch (e) {
+      if (!mounted) return;
       ToastNotifier.showError(
           'Errore durante l\'eliminazione dei prodotti: $e');
     }
@@ -121,16 +120,19 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       userDocRef = FirebaseFirestore.instance
           .collection('products')
           .doc(FirebaseAuth.instance.currentUser!.uid);
-      userDocRef.set({
+      await userDocRef.set({
         "products": [],
       });
+      if (!mounted) return;
     } catch (e) {
+      if (!mounted) return;
       ToastNotifier.showError(
           'Errore durante l\'impostazione dei prodotti: $e');
     }
   }
 
   Future<void> saveExpense() async {
+    if (!mounted) return;
     try {
       DocumentReference userDocRef = FirebaseFirestore.instance
           .collection('expenses')
@@ -154,6 +156,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           .doc(FirebaseAuth.instance.currentUser!.uid);
 
       DocumentSnapshot snapshot = await productDocRef.get();
+      if (!mounted) return;
 
       if (snapshot.exists) {
         final List<dynamic> productsList = snapshot['products'] ?? [];
@@ -194,20 +197,24 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         ])
       });
 
+      if (!mounted) return;
       ToastNotifier.showSuccess(
           context, AppLocalizations.of(context)!.expenseSaved);
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
       ToastNotifier.showError('Errore durante il salvataggio della spesa: $e');
     }
   }
 
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
+    if (!mounted) return;
     // Riferimento al documento dell'utente basato sul suo id
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
 
     userDocRef.snapshots().listen((DocumentSnapshot snapshot) {
+      if (!mounted) return;
       if (snapshot.exists) {
         // Recupera l'array "products" dal documento
         final List<dynamic> productsArray = snapshot['products'] ?? [];
@@ -259,59 +266,63 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
   }
 
   void _showFilterDialog() {
+    if (!mounted) return;
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return FutureBuilder<List<String>>(
           future: CategoryServices.getCategoryNames(),
-          builder: (context, snapshot) {
+          builder: (dialogContext, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(
                   child: Text(
-                      '${AppLocalizations.of(context)!.error}: ${snapshot.error}'));
+                      '${AppLocalizations.of(dialogContext)!.error}: ${snapshot.error}'));
             } else {
               String selectedCategory = '';
               List<String> categoryNames = snapshot.data ?? [];
               return AlertDialog(
-                title: Text(AppLocalizations.of(context)!.filterByCategory),
+                title:
+                    Text(AppLocalizations.of(dialogContext)!.filterByCategory),
                 content: DropdownButtonFormField<String>(
                   value: selectedCategory.isEmpty ? null : selectedCategory,
                   items: categoryNames.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
-                      child: Text(AppLocalizations.of(context)!
+                      child: Text(AppLocalizations.of(dialogContext)!
                           .translateCategory(category)),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
+                    if (!mounted) return;
                     setState(() {
                       selectedCategory = newValue!;
                     });
                   },
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.selectCategory,
+                    labelText:
+                        AppLocalizations.of(dialogContext)!.selectCategory,
                   ),
                 ),
                 actions: <Widget>[
                   TextButton(
-                    child: Text(AppLocalizations.of(context)!.cancel),
+                    child: Text(AppLocalizations.of(dialogContext)!.cancel),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(dialogContext).pop();
                     },
                   ),
                   TextButton(
-                    child: Text(AppLocalizations.of(context)!.filter),
+                    child: Text(AppLocalizations.of(dialogContext)!.filter),
                     onPressed: () {
-                      // Implementa la logica di filtro qui
+                      if (!mounted) return;
                       setState(() {
                         purchasedProducts = originalProducts
                             .where((product) =>
                                 product.product.category == selectedCategory)
                             .toList();
                       });
-                      Navigator.of(context).pop();
+                      Navigator.of(dialogContext).pop();
                     },
                   ),
                 ],
@@ -324,31 +335,32 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
   }
 
   void _showSearchDialog() {
+    if (!mounted) return;
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         String searchQuery = '';
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.searchByProductName),
+          title: Text(AppLocalizations.of(dialogContext)!.searchByProductName),
           content: TextField(
             onChanged: (value) {
               searchQuery = value;
             },
             decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.enterProductName,
+              labelText: AppLocalizations.of(dialogContext)!.enterProductName,
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: Text(AppLocalizations.of(dialogContext)!.cancel),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
-              child: Text(AppLocalizations.of(context)!.search),
+              child: Text(AppLocalizations.of(dialogContext)!.search),
               onPressed: () {
-                // Implementa la logica di ricerca qui
+                if (!mounted) return;
                 setState(() {
                   purchasedProducts = originalProducts
                       .where((product) => product.product.productName
@@ -356,7 +368,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                           .contains(searchQuery.toLowerCase()))
                       .toList();
                 });
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
             ),
           ],
@@ -365,35 +377,37 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     );
   }
 
-  void _showAiDialog() {
-    showDialog(
+  Future<void> _showAiDialog() {
+    return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (dialogContext) {
         double budget = 0.0;
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.enterBudget),
+          title: Text(AppLocalizations.of(dialogContext)!.enterBudget),
           content: TextField(
             keyboardType: TextInputType.number,
             onChanged: (value) {
               budget = double.tryParse(value) ?? 0.0;
             },
             decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.enterAmount,
+              labelText: AppLocalizations.of(dialogContext)!.enterAmount,
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: Text(AppLocalizations.of(dialogContext)!.cancel),
               onPressed: () {
-                Navigator.of(context).pop();
+                if (dialogContext != null) {
+                  Navigator.of(dialogContext).pop();
+                }
               },
             ),
             TextButton(
-              child: Text(AppLocalizations.of(context)!.suggest),
+              child: Text(AppLocalizations.of(dialogContext)!.suggest),
               onPressed: () async {
                 List<ProductListItem> suggestedProducts =
                     await suggestProductsWithinBudget(budget);
-
+                if (!mounted || dialogContext == null) return;
                 setState(() {
                   selectedProducts = suggestedProducts;
                   purchasedProducts = purchasedProducts
@@ -404,8 +418,9 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                       )
                       .toList();
                 });
-
-                Navigator.of(context).pop();
+                if (mounted) {
+                  Navigator.of(dialogContext).pop();
+                }
               },
             ),
           ],

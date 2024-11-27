@@ -14,10 +14,10 @@ class RecipeTipsScreen extends StatefulWidget {
   const RecipeTipsScreen({super.key, required this.ingredientNames});
 
   @override
-  _RecipeTipsScreenState createState() => _RecipeTipsScreenState();
+  RecipeTipsScreenState createState() => RecipeTipsScreenState();
 }
 
-class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
+class RecipeTipsScreenState extends State<RecipeTipsScreen> {
   final String apiKey =
       'f5d282cdf14a463f9c042dff7e58f255'; // Inserisci la tua chiave API
   List<Map<String, dynamic>> recipes = [];
@@ -57,15 +57,14 @@ class _RecipeTipsScreenState extends State<RecipeTipsScreen> {
     return Platform.isIOS
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
-              middle: Text(
-                  AppLocalizations.of(context)!.recipeTips),
+              middle: Text(AppLocalizations.of(context)!.recipeTips),
             ),
             child: _buildBody(),
           )
         : Scaffold(
             appBar: AppBar(
-              title: Text(
-                  AppLocalizations.of(context)!.recipeTips), // Traduci se necessario
+              title: Text(AppLocalizations.of(context)!
+                  .recipeTips), // Traduci se necessario
             ),
             body: _buildBody(),
           );

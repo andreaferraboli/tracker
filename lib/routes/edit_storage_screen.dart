@@ -62,7 +62,8 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
                 children: [
                   CupertinoButton(
                     padding: EdgeInsets.zero,
-                    child: Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
+                    child: const Icon(CupertinoIcons.trash,
+                        color: CupertinoColors.destructiveRed),
                     onPressed: () => _confirmDelete(context),
                   ),
                   CupertinoButton(
@@ -80,11 +81,11 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
               title: Text(AppLocalizations.of(context)!.editStorage),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _confirmDelete(context),
                 ),
                 IconButton(
-                  icon: Icon(Icons.save),
+                  icon: const Icon(Icons.save),
                   onPressed: () => _saveChanges(),
                 ),
               ],
@@ -116,14 +117,14 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
             controller: searchController,
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.searchIcon,
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
             ),
             onChanged: filterIcons,
           ),
           const SizedBox(height: 20),
           Expanded(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 childAspectRatio: 1,
               ),
@@ -165,7 +166,8 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
       builder: (ctx) => Platform.isIOS
           ? CupertinoAlertDialog(
               title: Text(AppLocalizations.of(context)!.confirmDelete),
-              content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(storageName)),
+              content: Text(AppLocalizations.of(context)!
+                  .confirmDeleteMessage(storageName)),
               actions: [
                 CupertinoDialogAction(
                   child: Text(AppLocalizations.of(context)!.cancel),
@@ -183,7 +185,8 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
             )
           : AlertDialog(
               title: Text(AppLocalizations.of(context)!.confirmDelete),
-              content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(storageName)),
+              content: Text(AppLocalizations.of(context)!
+                  .confirmDeleteMessage(storageName)),
               actions: [
                 TextButton(
                   child: Text(AppLocalizations.of(context)!.cancel),
@@ -203,7 +206,8 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
 
   void _deleteStorage() {
     final storesNotifier = ref.read(storesProvider.notifier);
-    final index = storesNotifier.state.indexWhere((store) => store['name'] == storageName);
+    final index = storesNotifier.state
+        .indexWhere((store) => store['name'] == storageName);
     if (index != -1) {
       storesNotifier.removeStore(index);
     }

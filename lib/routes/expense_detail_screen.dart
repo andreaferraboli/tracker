@@ -98,6 +98,7 @@ class ExpenseDetailScreen extends StatelessWidget {
     final confirm = await _showDeleteConfirmation(context);
     if (confirm == true) {
       await deleteExpense(expense);
+      if (!context.mounted) return;
       Navigator.of(context).pop(expense);
       ToastNotifier.showSuccess(
         context,
@@ -202,6 +203,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                       orElse: () => null);
                   product = Product.fromJson(existingProduct);
                 }
+                if (!context.mounted) return;
                 Navigator.push(
                   context,
                   Platform.isIOS

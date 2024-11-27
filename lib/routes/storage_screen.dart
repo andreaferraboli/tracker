@@ -19,10 +19,10 @@ class StorageScreen extends ConsumerStatefulWidget {
   const StorageScreen({super.key, required this.name});
 
   @override
-  _StorageScreenState createState() => _StorageScreenState();
+  StorageScreenState createState() => StorageScreenState();
 }
 
-class _StorageScreenState extends ConsumerState<StorageScreen> {
+class StorageScreenState extends ConsumerState<StorageScreen> {
   double totalBalance = 0.0;
   List<ProductStoreCard> storedProducts = [];
   List<ProductStoreCard> originalProducts = [];

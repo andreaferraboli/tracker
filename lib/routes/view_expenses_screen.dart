@@ -18,10 +18,10 @@ class ViewExpensesScreen extends StatefulWidget {
   const ViewExpensesScreen({super.key});
 
   @override
-  _ViewExpensesScreenState createState() => _ViewExpensesScreenState();
+  ViewExpensesScreenState createState() => ViewExpensesScreenState();
 }
 
-class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
+class ViewExpensesScreenState extends State<ViewExpensesScreen> {
   String selectedPeriod = 'week';
 
   DateTime currentDate = DateTime.now();
@@ -415,8 +415,7 @@ class _ViewExpensesScreenState extends State<ViewExpensesScreen> {
                               ),
                               trailing: Icon(
                                 Icons.arrow_forward_ios,
-                                color:
-                                    Theme.of(context).colorScheme.onPrimary,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
                           ),

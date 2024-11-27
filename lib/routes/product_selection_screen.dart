@@ -221,6 +221,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
           }
         ])
       });
+      if (!mounted) return;
       ToastNotifier.showSuccess(
           context, AppLocalizations.of(context)!.mealSavedSuccessfully);
       int count = 0;
@@ -394,8 +395,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             Platform.isIOS
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
-                    child: Icon(CupertinoIcons.slider_horizontal_3),
                     onPressed: _showFilterDialog,
+                    child: const Icon(CupertinoIcons.slider_horizontal_3),
                   )
                 : IconButton(
                     onPressed: _showFilterDialog,
@@ -404,8 +405,8 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             Platform.isIOS
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
-                    child: Icon(CupertinoIcons.search),
                     onPressed: _showSearchDialog,
+                    child: const Icon(CupertinoIcons.search),
                   )
                 : IconButton(
                     onPressed: _showSearchDialog,
@@ -414,7 +415,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             Platform.isIOS
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
-                    child: Icon(CupertinoIcons.calendar),
+                    child: const Icon(CupertinoIcons.calendar),
                     onPressed: () async {
                       showCupertinoModalPopup(
                         context: context,
@@ -455,7 +456,7 @@ class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
             Platform.isIOS
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
-                    child: Icon(CupertinoIcons.refresh),
+                    child: const Icon(CupertinoIcons.refresh),
                     onPressed: () {
                       setState(() {
                         filteredProducts = originalProducts;

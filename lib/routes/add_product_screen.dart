@@ -182,7 +182,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
               });
             },
             onSubmitted: (value) {
-              value = value.replaceAll(',', '.') ?? '';
+              value = value.replaceAll(',', '.');
               _productData['price'] = double.tryParse(value) ?? 0.0;
             },
           )
@@ -230,7 +230,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Future<void> _loadCategories() async {
+    if (!mounted) return;
     await CategoryServices.loadCategoriesData();
+    if (!mounted) return;
     setState(() {
       categories = CategoryServices.getCategoriesData()
               ?.map<String>((category) => category['nomeCategoria'])
@@ -712,6 +714,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   //scrivi _updateProduct per aggiornare il prodotto nel database
   void _updateProduct() async {
     //TODO: funziona ma è inefficiente, bisogna ottimizzare
+    if (!mounted) return;
     User? user;
     _productData['unitPrice'] =
         _productData['price'] / _productData['quantity'];
@@ -731,8 +734,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   '${_productData['productName']}_${UniqueKey().toString()}.jpg');
 
           await storageRef.putFile(_selectedImage!);
+          if (!mounted) return;
           final imageUrl = await storageRef.getDownloadURL();
-          //setta imageUrl in _productData con setState
+          if (!mounted) return;
           setState(() {
             _productData['imageUrl'] = imageUrl;
           });
@@ -747,6 +751,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         // Trova il prodotto con lo stesso id e aggiorna i suoi dati
         // Leggi il documento corrente
         DocumentSnapshot userDoc = await userDocRef.get();
+        if (!mounted) return;
         List<dynamic> products = userDoc['products'];
         //
         // for (Map<String, dynamic> product in products) {
@@ -765,12 +770,14 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         await userDocRef.update({
           "products": products,
         });
+        if (!mounted) return;
         ToastNotifier.showSuccess(context, 'Prodotto aggiornato con successo!');
         int count = 0;
         Navigator.of(context).popUntil((route) {
           return count++ == 2;
         });
       } catch (e) {
+        if (!mounted) return;
         ToastNotifier.showError(
             'Errore durante l\'aggiornamento del prodotto: $e');
       }
@@ -778,6 +785,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   void _saveProduct() async {
+    if (!mounted) return;
     User? user;
     _productData['unitPrice'] =
         _productData['price'] / _productData['quantity'];
@@ -803,8 +811,9 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                   '${_productData['productName']}_${UniqueKey().toString()}.jpg');
 
           await storageRef.putFile(_selectedImage!);
+          if (!mounted) return;
           final imageUrl = await storageRef.getDownloadURL();
-          //setta imageUrl in _productData con setState
+          if (!mounted) return;
           setState(() {
             _productData['imageUrl'] = imageUrl;
           });
@@ -820,10 +829,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         await userDocRef.update({
           "products": FieldValue.arrayUnion([_productData])
         });
+        if (!mounted) return;
         ToastNotifier.showSuccess(
             context, AppLocalizations.of(context)!.successAddProduct);
         Navigator.of(context).pop();
       } catch (e) {
+        if (!mounted) return;
         ToastNotifier.showError('Errore durante l\'aggiunta del prodotto: $e');
       }
     }

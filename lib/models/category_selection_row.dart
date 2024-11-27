@@ -43,6 +43,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
     List<String> availableCategories =
         await CategoryServices.getCategoryNames();
 
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -89,6 +90,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
                   ),
                   CupertinoDialogAction(
                     onPressed: () {
+                      if (!mounted) return;
                       setState(() {
                         widget.onCategoriesUpdated?.call(selectedCategories);
                       });
@@ -140,6 +142,7 @@ class _CategorySelectionRowState extends State<CategorySelectionRow> {
                   ),
                   TextButton(
                     onPressed: () {
+                      if (!mounted) return;
                       setState(() {
                         widget.onCategoriesUpdated?.call(selectedCategories);
                       });

@@ -25,6 +25,11 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   final _usernameController = TextEditingController();
 
   Future<void> _authenticateUser() async {
+    if (!mounted) return;
+
+    final localContext = context;
+    final localizations = AppLocalizations.of(localContext)!;
+
     try {
       if (isLogin) {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -34,8 +39,8 @@ class _AuthPageState extends ConsumerState<AuthPage> {
       } else {
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
-          ToastNotifier.showError(
-              AppLocalizations.of(context)!.passwordsDoNotMatch);
+          if (!mounted) return;
+          ToastNotifier.showError(localizations.passwordsDoNotMatch);
           return;
         }
 
@@ -49,7 +54,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             .collection('users')
             .doc(userCredential.user!.uid);
 
-        // Creazione documento principale dell'utente
         await userDocRef.set({
           "username": _usernameController.text.trim(),
           "supermarkets": [],
@@ -60,34 +64,31 @@ class _AuthPageState extends ConsumerState<AuthPage> {
           ],
         });
 
-// Creazione documento per products
         await FirebaseFirestore.instance
             .collection('products')
             .doc(userCredential.user!.uid)
             .set({"products": []});
 
-// Creazione documento per expenses
         await FirebaseFirestore.instance
             .collection('expenses')
             .doc(userCredential.user!.uid)
             .set({"expenses": []});
 
-// Creazione documento per meals
         await FirebaseFirestore.instance
             .collection('meals')
             .doc(userCredential.user!.uid)
             .set({"meals": []});
       }
 
+      if (!mounted) return;
       ToastNotifier.showSuccess(
-        context,
-        isLogin
-            ? AppLocalizations.of(context)!.loginSuccess
-            : AppLocalizations.of(context)!.signupSuccess,
+        localContext,
+        isLogin ? localizations.loginSuccess : localizations.signupSuccess,
       );
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ToastNotifier.showError(
-        '${AppLocalizations.of(context)!.error}: ${e.message}',
+        '${localizations.error}: ${e.message}',
       );
     }
   }
@@ -279,10 +280,10 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         CupertinoButton(
+                          onPressed: _authenticateUser,
                           child: Text(isLogin
                               ? AppLocalizations.of(context)!.login
                               : AppLocalizations.of(context)!.signUp),
-                          onPressed: _authenticateUser,
                         ),
                         CupertinoButton(
                           child: Text(isLogin

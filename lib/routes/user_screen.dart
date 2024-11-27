@@ -68,7 +68,7 @@ class _UserScreenState extends State<UserScreen> {
 
         // Aggiornamento della password
         await user!.updatePassword(_newPasswordController.text);
-
+        if (!mounted) return;
         ToastNotifier.showSuccess(
             context, AppLocalizations.of(context)!.passwordUpdated);
 
@@ -219,8 +219,8 @@ class _UserScreenState extends State<UserScreen> {
                         ? CupertinoTextField(
                             controller: _confirmPasswordController,
                             obscureText: !_isConfirmPasswordVisible,
-                            placeholder:
-                                AppLocalizations.of(context)!.confirmNewPassword,
+                            placeholder: AppLocalizations.of(context)!
+                                .confirmNewPassword,
                             suffix: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -239,8 +239,8 @@ class _UserScreenState extends State<UserScreen> {
                             controller: _confirmPasswordController,
                             obscureText: !_isConfirmPasswordVisible,
                             decoration: InputDecoration(
-                              labelText:
-                                  AppLocalizations.of(context)!.confirmNewPassword,
+                              labelText: AppLocalizations.of(context)!
+                                  .confirmNewPassword,
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _isConfirmPasswordVisible

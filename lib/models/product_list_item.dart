@@ -60,11 +60,11 @@ class _ProductListItemState extends State<ProductListItem> {
           context,
           isIOS
               ? CupertinoPageRoute(
-            builder: (context) => ProductScreen(product: widget.product),
-          )
+                  builder: (context) => ProductScreen(product: widget.product),
+                )
               : MaterialPageRoute(
-            builder: (context) => ProductScreen(product: widget.product),
-          ),
+                  builder: (context) => ProductScreen(product: widget.product),
+                ),
         );
       },
       child: Card(
@@ -81,11 +81,12 @@ class _ProductListItemState extends State<ProductListItem> {
               if (widget.product.imageUrl.isNotEmpty)
                 if (Theme.of(context).brightness == Brightness.dark)
                   FutureBuilder<Uint8List?>(
-                    future: ImageProcessor.removeWhiteBackground(widget.product.imageUrl),
+                    future: ImageProcessor.removeWhiteBackground(
+                        widget.product.imageUrl),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasData) {
-                          return Container(
+                          return SizedBox(
                             width: 40,
                             height: 40,
                             child: Image.memory(
@@ -94,7 +95,8 @@ class _ProductListItemState extends State<ProductListItem> {
                             ),
                           );
                         } else {
-                          return CategoryServices.iconFromCategory(widget.product.category);
+                          return CategoryServices.iconFromCategory(
+                              widget.product.category);
                         }
                       } else {
                         return const CupertinoActivityIndicator();
@@ -107,7 +109,8 @@ class _ProductListItemState extends State<ProductListItem> {
                     width: 100,
                     height: 100,
                     errorBuilder: (context, error, stackTrace) {
-                      return CategoryServices.iconFromCategory(widget.product.category);
+                      return CategoryServices.iconFromCategory(
+                          widget.product.category);
                     },
                   )
               else
@@ -135,14 +138,14 @@ class _ProductListItemState extends State<ProductListItem> {
                       style: TextStyle(
                         color: widget.selected
                             ? Theme.of(context)
-                            .colorScheme
-                            .onPrimary
-                            .withOpacity(0.9)
+                                .colorScheme
+                                .onPrimary
+                                .withOpacity(0.9)
                             : Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.color
-                            ?.withOpacity(0.9),
+                                .textTheme
+                                .bodyLarge
+                                ?.color
+                                ?.withOpacity(0.9),
                         fontSize: 14,
                       ),
                     ),
@@ -172,10 +175,10 @@ class _ProductListItemState extends State<ProductListItem> {
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
                                 : Theme.of(context)
-                                .elevatedButtonTheme
-                                .style
-                                ?.backgroundColor
-                                ?.resolve({}),
+                                    .elevatedButtonTheme
+                                    .style
+                                    ?.backgroundColor
+                                    ?.resolve({}),
                             child: IconButton(
                               icon: Icon(
                                 isIOS ? CupertinoIcons.minus : Icons.remove,
@@ -192,28 +195,28 @@ class _ProductListItemState extends State<ProductListItem> {
                           ),
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 20.0),
+                                const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Text('${widget.product.buyQuantity}',
                                 style: TextStyle(
                                     fontSize: 20.0,
                                     color: widget.selected
                                         ? Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary
+                                            .colorScheme
+                                            .onPrimary
                                         : Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color)),
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color)),
                           ),
                           Material(
                             shape: const CircleBorder(),
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
                                 : Theme.of(context)
-                                .elevatedButtonTheme
-                                .style
-                                ?.backgroundColor
-                                ?.resolve({}),
+                                    .elevatedButtonTheme
+                                    .style
+                                    ?.backgroundColor
+                                    ?.resolve({}),
                             child: IconButton(
                               icon: Icon(
                                 isIOS ? CupertinoIcons.plus : Icons.add,

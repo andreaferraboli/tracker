@@ -1,5 +1,4 @@
 import 'package:tracker/models/quantiy_update_type.dart';
-import 'package:tracker/models/purchase_history.dart';
 
 class Product {
   String productId;
