@@ -11,10 +11,10 @@ class FilterRecipesScreen extends StatefulWidget {
   const FilterRecipesScreen({super.key});
 
   @override
-  _FilterRecipesScreenState createState() => _FilterRecipesScreenState();
+  FilterRecipesScreenState createState() => FilterRecipesScreenState();
 }
 
-class _FilterRecipesScreenState extends State<FilterRecipesScreen> {
+class FilterRecipesScreenState extends State<FilterRecipesScreen> {
   List<Map<String, dynamic>> products = []; // Contiene i prodotti
   List<String> selectedNames = []; // Contiene i nomi selezionati
 

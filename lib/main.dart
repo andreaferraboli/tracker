@@ -47,15 +47,15 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   static void setLocale(BuildContext context, Locale newLocale) {
-    _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
+    MyAppState? state = context.findAncestorStateOfType<MyAppState>();
     state?.setLocale(newLocale);
   }
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isDarkTheme = false;
   Locale? _locale;
   static const String _languageKey = 'selected_language';

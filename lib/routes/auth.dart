@@ -11,10 +11,10 @@ class AuthPage extends ConsumerStatefulWidget {
   const AuthPage({super.key});
 
   @override
-  _AuthPageState createState() => _AuthPageState();
+  AuthPageState createState() => AuthPageState();
 }
 
-class _AuthPageState extends ConsumerState<AuthPage> {
+class AuthPageState extends ConsumerState<AuthPage> {
   bool isLogin = true;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;

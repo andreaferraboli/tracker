@@ -20,10 +20,10 @@ class MacronutrientDialog extends StatefulWidget {
   });
 
   @override
-  _MacronutrientDialogState createState() => _MacronutrientDialogState();
+  MacronutrientDialogState createState() => MacronutrientDialogState();
 }
 
-class _MacronutrientDialogState extends State<MacronutrientDialog> {
+class MacronutrientDialogState extends State<MacronutrientDialog> {
   late String editedName;
   late String editedValue;
   late TextEditingController _valueController;

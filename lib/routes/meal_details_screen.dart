@@ -123,7 +123,8 @@ class MealDetailScreen extends StatelessWidget {
                           .doc(FirebaseAuth.instance.currentUser!.uid);
 
                       DocumentSnapshot snapshot = await productDocRef.get();
-                      var existingProduct, product;
+                      dynamic existingProduct;
+                      Product? product;
                       if (snapshot.exists) {
                         final List<dynamic> productsList =
                             snapshot['products'] ?? [];
@@ -134,11 +135,12 @@ class MealDetailScreen extends StatelessWidget {
                             orElse: () => null);
                         product = Product.fromJson(existingProduct);
                       }
-                      if (!context.mounted) return;
+                      if (!context.mounted || product == null) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProductScreen(product: product),
+                          builder: (context) =>
+                              ProductScreen(product: product!),
                         ),
                       );
                     },

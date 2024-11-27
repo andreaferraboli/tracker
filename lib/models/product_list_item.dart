@@ -12,7 +12,7 @@ class ProductListItem extends StatefulWidget {
   final Product product;
   final void Function(double) onTotalPriceChange;
   final void Function() updateProductLists;
-  bool selected;
+  late bool selected;
 
   ProductListItem({
     super.key,
@@ -22,7 +22,7 @@ class ProductListItem extends StatefulWidget {
     this.selected = false,
   });
 
-  final GlobalKey<_ProductListItemState> _key = GlobalKey();
+  final GlobalKey<ProductListItemState> _key = GlobalKey();
 
   void setSelected(bool value) {
     selected = value;
@@ -34,10 +34,10 @@ class ProductListItem extends StatefulWidget {
   }
 
   @override
-  _ProductListItemState createState() => _ProductListItemState();
+  ProductListItemState createState() => ProductListItemState();
 }
 
-class _ProductListItemState extends State<ProductListItem> {
+class ProductListItemState extends State<ProductListItem> {
   void updateQuantity(int change) {
     setState(() {
       widget.product.buyQuantity += change;

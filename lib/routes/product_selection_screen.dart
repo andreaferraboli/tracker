@@ -24,10 +24,10 @@ class ProductSelectionScreen extends StatefulWidget {
   });
 
   @override
-  _ProductSelectionScreenState createState() => _ProductSelectionScreenState();
+  ProductSelectionScreenState createState() => ProductSelectionScreenState();
 }
 
-class _ProductSelectionScreenState extends State<ProductSelectionScreen> {
+class ProductSelectionScreenState extends State<ProductSelectionScreen> {
   final Map<String, List<String>> defaultCategories = {
     'Breakfast': ['dessert', 'dairy_products', 'fruit', 'drinks'],
     'Lunch': ['pasta_bread_rice', 'sauces_condiments', 'fruit', 'vegetables'],

@@ -20,10 +20,10 @@ class CategorySelectionRow extends StatefulWidget {
   });
 
   @override
-  _CategorySelectionRowState createState() => _CategorySelectionRowState();
+  CategorySelectionRowState createState() => CategorySelectionRowState();
 }
 
-class _CategorySelectionRowState extends State<CategorySelectionRow> {
+class CategorySelectionRowState extends State<CategorySelectionRow> {
   List<String> selectedCategories = [];
 
   @override

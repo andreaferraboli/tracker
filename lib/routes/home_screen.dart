@@ -25,10 +25,10 @@ class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key, required this.toggleTheme, this.user});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();

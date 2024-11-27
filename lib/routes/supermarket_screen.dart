@@ -27,10 +27,10 @@ class SupermarketScreen extends ConsumerStatefulWidget {
   const SupermarketScreen({super.key});
 
   @override
-  _SupermarketScreenState createState() => _SupermarketScreenState();
+  SupermarketScreenState createState() => SupermarketScreenState();
 }
 
-class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
+class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
   double totalBalance = 0.0; // Potresti calcolare il saldo basato sui prodotti
   List<ProductListItem> purchasedProducts = [];
   List<ProductListItem> originalProducts = [];
@@ -397,9 +397,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             TextButton(
               child: Text(AppLocalizations.of(dialogContext)!.cancel),
               onPressed: () {
-                if (dialogContext != null) {
-                  Navigator.of(dialogContext).pop();
-                }
+                Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
@@ -407,7 +405,7 @@ class _SupermarketScreenState extends ConsumerState<SupermarketScreen> {
               onPressed: () async {
                 List<ProductListItem> suggestedProducts =
                     await suggestProductsWithinBudget(budget);
-                if (!mounted || dialogContext == null) return;
+                if (!mounted) return;
                 setState(() {
                   selectedProducts = suggestedProducts;
                   purchasedProducts = purchasedProducts

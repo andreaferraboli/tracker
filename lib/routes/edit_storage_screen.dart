@@ -4,7 +4,6 @@ import 'package:tracker/services/icons_helper.dart';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/stores_provider.dart';
 
 class EditStorageScreen extends ConsumerStatefulWidget {
@@ -22,10 +21,10 @@ class EditStorageScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  _EditStorageScreenState createState() => _EditStorageScreenState();
+  EditStorageScreenState createState() => EditStorageScreenState();
 }
 
-class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
+class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
   late String storageName;
   late String selectedIcon;
   List<String> filteredIcons = [];
@@ -205,11 +204,10 @@ class _EditStorageScreenState extends ConsumerState<EditStorageScreen> {
   }
 
   void _deleteStorage() {
-    final storesNotifier = ref.read(storesProvider.notifier);
-    final index = storesNotifier.state
-        .indexWhere((store) => store['name'] == storageName);
+    final stores = ref.read(storesProvider);
+    final index = stores.indexWhere((store) => store['name'] == storageName);
     if (index != -1) {
-      storesNotifier.removeStore(index);
+      ref.read(storesProvider.notifier).removeStore(index);
     }
     Navigator.of(context).pop();
   }

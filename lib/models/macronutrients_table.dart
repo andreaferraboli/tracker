@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:tracker/l10n/app_localizations.dart';
-import 'package:tracker/models/macronutrientDialog.dart';
+import 'package:tracker/models/macronutrient_dialog.dart';
 
 class MacronutrientTable extends StatefulWidget {
   final void Function(Map<String, double>) onSave;
@@ -12,10 +12,10 @@ class MacronutrientTable extends StatefulWidget {
   const MacronutrientTable(this.onSave, [this.macronutrients]);
 
   @override
-  _MacronutrientTableState createState() => _MacronutrientTableState();
+  MacronutrientTableState createState() => MacronutrientTableState();
 }
 
-class _MacronutrientTableState extends State<MacronutrientTable> {
+class MacronutrientTableState extends State<MacronutrientTable> {
   bool _isEditing = false;
   String editedValue = "";
   late String editedName;

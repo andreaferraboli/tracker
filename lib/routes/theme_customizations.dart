@@ -42,7 +42,7 @@ class ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
                   currentColor = color;
                 });
               },
-              showLabel: true,
+              labelTypes: const [],
               pickerAreaHeightPercent: 0.8,
             ),
           ),

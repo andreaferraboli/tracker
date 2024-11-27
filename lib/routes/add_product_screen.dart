@@ -27,10 +27,10 @@ class AddProductScreen extends ConsumerStatefulWidget {
   const AddProductScreen({super.key, this.supermarketName, this.product});
 
   @override
-  _AddProductScreenState createState() => _AddProductScreenState();
+  AddProductScreenState createState() => AddProductScreenState();
 }
 
-class _AddProductScreenState extends ConsumerState<AddProductScreen> {
+class AddProductScreenState extends ConsumerState<AddProductScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Aggiornamento della mappa _productData per includere i nuovi parametri
