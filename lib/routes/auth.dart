@@ -78,6 +78,11 @@ class AuthPageState extends ConsumerState<AuthPage> {
             .collection('meals')
             .doc(userCredential.user!.uid)
             .set({"meals": []});
+
+        await FirebaseFirestore.instance
+            .collection('discounted_products')
+            .doc(userCredential.user!.uid)
+            .set({"discounted_products": []});
       }
 
       if (!mounted) return;

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/routes/language_screen.dart';
 import 'package:tracker/services/app_colors.dart';
@@ -91,6 +92,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
     // Caricamento nei provider
     ref.read(storesProvider.notifier).loadStores(stores);
+    ref.read(discountedProductsProvider.notifier).fetchDiscountedProducts();
     ref
         .read(supermarketsListProvider.notifier)
         .addAllSupermarkets(supermarkets);

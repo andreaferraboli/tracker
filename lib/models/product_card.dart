@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/quantiy_update_type.dart';
+import 'package:tracker/providers/discounted_products_provider.dart';
+import 'package:collection/collection.dart';
 
 import '../routes/product_screen.dart';
 
-class ProductCard extends StatefulWidget {
+class ProductCard extends ConsumerStatefulWidget {
   final Product product;
   final Function(Product, double)? addProductToMeal;
 
@@ -17,16 +21,17 @@ class ProductCard extends StatefulWidget {
   });
 
   @override
-  State<ProductCard> createState() => _ProductCardState();
+  ConsumerState<ProductCard> createState() => _ProductCardState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _ProductCardState extends ConsumerState<ProductCard> {
   double _weightFromTextField = 0; // Peso in grammi inserito nel TextField
   int _unitsFromTextField = 0; // Quantità in unità inserita nel TextField
   late TextEditingController _weightController;
   late TextEditingController _unitsController;
   late FocusNode _weightFocusNode;
   late FocusNode _unitsFocusNode;
+  bool _useDiscountedValidation = false;
 
   @override
   void initState() {
@@ -67,6 +72,25 @@ class _ProductCardState extends State<ProductCard> {
         throw const FormatException("Il peso non può essere negativo");
       }
 
+      final discountedProducts = ref.read(discountedProductsProvider);
+      final discountedProduct = discountedProducts
+          .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
+
+      if (discountedProduct != null && _useDiscountedValidation) {
+        // Check against discounted product only if _useDiscountedValidation is true
+        if (newWeight >
+            discountedProduct.discountedQuantityWeightOwned * 1000) {
+          throw const FormatException(
+              "Peso superiore alla quantità disponibile");
+        }
+      } else {
+        // Check against normal product
+        if (newWeight > widget.product.quantityWeightOwned * 1000) {
+          throw const FormatException(
+              "Peso superiore alla quantità disponibile");
+        }
+      }
+
       setState(() {
         _weightFromTextField = newWeight;
         if (!_unitsFocusNode.hasFocus) {
@@ -92,7 +116,7 @@ class _ProductCardState extends State<ProductCard> {
 
     try {
       final int newUnits = int.parse(value);
-      if (newUnits < 0 || newUnits > widget.product.quantityOwned) {
+      if (newUnits < 0) {
         setState(() {
           _unitsFromTextField = 0;
           if (!_weightFocusNode.hasFocus) {
@@ -100,6 +124,24 @@ class _ProductCardState extends State<ProductCard> {
           }
         });
         throw const FormatException("La quantità non può essere negativa");
+      }
+
+      final discountedProducts = ref.read(discountedProductsProvider);
+      final discountedProduct = discountedProducts
+          .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
+
+      if (discountedProduct != null && _useDiscountedValidation) {
+        // Check against discounted product only if _useDiscountedValidation is true
+        if (newUnits > discountedProduct.discountedQuantityOwned) {
+          throw const FormatException(
+              "Quantità superiore a quella disponibile");
+        }
+      } else {
+        // Check against normal product
+        if (newUnits > widget.product.quantityOwned) {
+          throw const FormatException(
+              "Quantità superiore a quella disponibile");
+        }
       }
 
       setState(() {
@@ -151,7 +193,9 @@ class _ProductCardState extends State<ProductCard> {
     double maxQuantity = widget.product.quantityUnitOwned > 0
         ? widget.product.quantityUnitOwned.toDouble()
         : 0;
-
+    final discountedProducts = ref.read(discountedProductsProvider);
+    final DiscountedProduct? discountedProduct = discountedProducts
+        .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -294,6 +338,30 @@ class _ProductCardState extends State<ProductCard> {
                                       },
                                     ),
                         ),
+                        if (discountedProduct != null)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _useDiscountedValidation =
+                                    !_useDiscountedValidation;
+                                maxQuantity = _useDiscountedValidation
+                                    ? discountedProduct.discountedQuantityOwned
+                                    : widget.product.quantityUnitOwned
+                                        .toDouble();
+                                widget.product.sliderValue = 0;
+                                _weightController.text = '0.0';
+                                _weightController.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                        offset: _weightController.text.length));
+                                _unitsController.text = '0';
+                                _unitsController.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                        offset: _unitsController.text.length));
+                              });
+                            },
+                            child: Icon(Icons.discount,
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
                       ],
                     ),
                   ],

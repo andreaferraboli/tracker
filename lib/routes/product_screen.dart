@@ -3,19 +3,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/models/discounted_product.dart';
+import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
 
-class ProductScreen extends StatelessWidget {
+class ProductScreen extends ConsumerWidget {
   final Product product;
 
   const ProductScreen({super.key, required this.product});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final discountedProducts = ref.watch(discountedProductsProvider);
+    final discountedVersion = discountedProducts
+        .where((p) => p.productId == product.productId)
+        .firstOrNull;
 
     void deleteProduct() async {
       User? user = FirebaseAuth.instance.currentUser;
@@ -129,17 +136,35 @@ class ProductScreen extends StatelessWidget {
                 const Spacer(flex: 1),
                 Expanded(
                   flex: 2,
-                  child: Text(
-                    '${AppLocalizations.of(context)!.price}: €${product.price.toStringAsFixed(2)}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Column(
+                    children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.price}: €${product.price.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      if (discountedVersion != null)
+                        Text(
+                          '${AppLocalizations.of(context)!.discountedPrice}: €${discountedVersion.discountedPrice.toStringAsFixed(2)}',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                    ],
                   ),
                 ),
                 const Spacer(flex: 1),
                 Expanded(
                   flex: 2,
-                  child: Text(
-                    '${AppLocalizations.of(context)!.unitPrice}: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Column(
+                    children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.unitPrice}: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      if (discountedVersion != null)
+                        Text(
+                          '${AppLocalizations.of(context)!.discountedUnitPrice}: €${(discountedVersion.discountedPrice / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                    ],
                   ),
                 ),
               ],
@@ -156,12 +181,18 @@ class ProductScreen extends StatelessWidget {
                 ),
                 const Spacer(flex: 1),
                 Expanded(
-                  flex: 2,
-                  child: Text(
-                    '${AppLocalizations.of(context)!.pricePerKg}: €${(product.price / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                ),
+                    flex: 2,
+                    child: Column(children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.pricePerKg}: €${(product.price / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      if (discountedVersion != null)
+                        Text(
+                          '${AppLocalizations.of(context)!.discountedPricePerKg}: €${(discountedVersion.discountedPrice / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                    ])),
                 const Spacer(flex: 1),
                 Expanded(
                   flex: 2,
@@ -189,14 +220,46 @@ class ProductScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                Column(
+                  children: [
+                    Text(
+                      '${AppLocalizations.of(context)!.quantityOwned}: ${product.quantityOwned}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    if (discountedVersion != null)
+                      Text(
+                        '${AppLocalizations.of(context)!.discountedQuantityOwned}: ${discountedVersion.discountedQuantityOwned}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      '${AppLocalizations.of(context)!.quantityUnitOwned}: ${product.quantityUnitOwned}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    if (discountedVersion != null)
+                      Text(
+                        '${AppLocalizations.of(context)!.discountedQuantityUnitOwned}: ${discountedVersion.discountedQuantityUnitOwned}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
                 Text(
-                  '${AppLocalizations.of(context)!.quantityOwned}: ${product.quantityOwned}',
+                  '${AppLocalizations.of(context)!.quantityWeightOwned}: ${product.quantityWeightOwned}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                Text(
-                  '${AppLocalizations.of(context)!.quantityUnitOwned}: ${product.quantityUnitOwned}',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                if (discountedVersion != null)
+                  Text(
+                    '${AppLocalizations.of(context)!.discountedQuantityWeightOwned}: ${discountedVersion.discountedQuantityWeightOwned}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
               ],
             ),
             const SizedBox(height: 16),
