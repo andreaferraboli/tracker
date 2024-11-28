@@ -38,20 +38,37 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
+    DocumentReference discountedDocRef =
+        FirebaseFirestore.instance.collection('discounted_products').doc(userId);
 
-    userDocRef.snapshots().listen((DocumentSnapshot snapshot) {
+    userDocRef.snapshots().listen((DocumentSnapshot snapshot) async {
       if (snapshot.exists) {
         final List<dynamic> productsArray = snapshot['products'] ?? [];
         final List<ProductStoreCard> productWidgets = [];
 
+        // Get discounted products
+        DocumentSnapshot discountedSnapshot = await discountedDocRef.get();
+        final List<dynamic> discountedProducts = discountedSnapshot.exists && discountedSnapshot.data() != null
+            ? (discountedSnapshot.data() as Map<String, dynamic>)['discounted_products'] ?? []
+            : [];
+
         if (productsArray.isNotEmpty &&
             productsArray[0]['productName'] != null) {
           for (var product in productsArray) {
-            if (product['store'] == widget.name.toLowerCase() &&
-                (product['quantityWeightOwned'] > 0)) {
-              productWidgets.add(
-                ProductStoreCard(product: Product.fromJson(product)),
+            if (product['store'] == widget.name.toLowerCase()) {
+              // Check if there's a discounted version of this product
+              final discountedProduct = discountedProducts.firstWhere(
+                (dp) => dp['productId'] == product['productId'],
+                orElse: () => null,
               );
+
+              // Add product if either regular or discounted version has weight > 0
+              if (product['quantityWeightOwned'] > 0 || 
+                  (discountedProduct != null && discountedProduct['discountedQuantityWeightOwned'] > 0)) {
+                productWidgets.add(
+                  ProductStoreCard(product: Product.fromJson(product)),
+                );
+              }
             }
           }
         }

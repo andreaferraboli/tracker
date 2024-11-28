@@ -53,16 +53,35 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
     DocumentReference userDocRef = FirebaseFirestore.instance
         .collection('products')
         .doc(FirebaseAuth.instance.currentUser!.uid);
+    DocumentReference discountedDocRef = FirebaseFirestore.instance
+        .collection('discounted_products')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
 
     try {
       DocumentSnapshot snapshot = await userDocRef.get();
+      DocumentSnapshot discountedSnapshot = await discountedDocRef.get();
 
       if (snapshot.exists) {
         final List<dynamic> productsArray = snapshot['products'] ?? [];
+        final List<dynamic> discountedProducts =
+            discountedSnapshot.exists && discountedSnapshot.data() != null
+                ? (discountedSnapshot.data()
+                        as Map<String, dynamic>)['discounted_products'] ??
+                    []
+                : [];
         final List<Product> loadedProducts = [];
 
         for (var product in productsArray) {
-          if (product['quantityWeightOwned'] > 0) {
+          // Check if there's a discounted version of this product
+          final discountedProduct = discountedProducts.firstWhere(
+            (dp) => dp['productId'] == product['productId'],
+            orElse: () => null,
+          );
+
+          // Add product if either regular or discounted version has weight > 0
+          if (product['quantityWeightOwned'] > 0 ||
+              (discountedProduct != null &&
+                  discountedProduct['discountedQuantityWeightOwned'] > 0)) {
             loadedProducts.add(Product.fromJson(product));
           }
         }
@@ -83,12 +102,26 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
   }
 
   void _saveMeal() async {
+    //TODO:non va il salvataggio con i prodotti scontati
     try {
       DocumentReference userDocRef = FirebaseFirestore.instance
           .collection('products')
           .doc(FirebaseAuth.instance.currentUser?.uid);
+      DocumentReference discountedDocRef = FirebaseFirestore.instance
+          .collection('discounted_products')
+          .doc(FirebaseAuth.instance.currentUser?.uid);
+
       DocumentSnapshot userDoc = await userDocRef.get();
+      DocumentSnapshot discountedDoc = await discountedDocRef.get();
+
       List<dynamic> products = userDoc['products'];
+      List<dynamic> discountedProducts =
+          discountedDoc.exists && discountedDoc.data() != null
+              ? (discountedDoc.data()
+                      as Map<String, dynamic>)['discounted_products'] ??
+                  []
+              : [];
+
       Map<String, double> macronutrients = {};
       double totalExpense = 0;
       List<Map<String, dynamic>> productsToSave =
@@ -97,102 +130,37 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
           macronutrients[key] = (macronutrients[key] ?? 0) +
               value * (mealProduct.selectedQuantity * 10);
         });
-        double pricePerKg = mealProduct.price / mealProduct.totalWeight;
+
+        // Cerca se il prodotto è scontato
+        final discountedProduct = discountedProducts.firstWhere(
+          (dp) => dp['productId'] == mealProduct.productId,
+          orElse: () => null,
+        );
+
+        // Usa il prezzo scontato se disponibile
+        final price = discountedProduct != null
+            ? discountedProduct['discountedPrice']
+            : mealProduct.price;
+
+        double pricePerKg = price / mealProduct.totalWeight;
         double productExpense = pricePerKg * mealProduct.selectedQuantity;
         totalExpense += productExpense;
-        int index = products.indexWhere(
-            (product) => product['productId'] == mealProduct.productId);
-        if (index != -1) {
-          // Controlla il tipo di aggiornamento della quantità
-          switch (mealProduct.quantityUpdateType) {
-            case QuantityUpdateType.slider:
-              // Aggiorna quantità in unità
-              products[index]['quantityUnitOwned'] -=
-                  (mealProduct.selectedQuantity / mealProduct.unitWeight)
-                      .round();
-              products[index]['quantityWeightOwned'] -=
-                  mealProduct.selectedQuantity;
-              if (products[index]['quantityUnitOwned'] <= 0) {
-                // Aggiorna il conteggio totale se le unità raggiungono zero
-                products[index]['quantityOwned'] -= 1;
-                products[index]['quantityUnitOwned'] = mealProduct.quantity;
-              }
-              break;
 
-            case QuantityUpdateType.weight:
-              // Aggiorna quantità in base al peso
-
-              if (products[index]['quantityWeightOwned'] >=
-                  mealProduct.unitWeight) {
-                if (mealProduct.selectedQuantity <=
-                    mealProduct.unitWeight * mealProduct.quantityUnitOwned) {
-                  products[index]['quantityUnitOwned'] -=
-                      (mealProduct.selectedQuantity / mealProduct.unitWeight)
-                          .ceil();
-                  if (products[index]['quantityUnitOwned'] <= 0) {
-                    products[index]['quantityOwned'] -= 1;
-                    products[index]['quantityUnitOwned'] = mealProduct.quantity;
-                  }
-                } else {
-                  products[index]['quantityOwned'] -= 1;
-                  if ((products[index]['quantityWeightOwned'] -
-                              mealProduct.selectedQuantity) %
-                          mealProduct.totalWeight ==
-                      0) {
-                    products[index]['quantityUnitOwned'] = mealProduct.quantity;
-                  } else {
-                    products[index]['quantityUnitOwned'] = mealProduct
-                            .quantity -
-                        ((mealProduct.selectedQuantity / mealProduct.unitWeight)
-                                .ceil() -
-                            mealProduct.quantityUnitOwned);
-                  }
-                }
-              }
-              products[index]['quantityWeightOwned'] -= double.parse(
-                  (mealProduct.selectedQuantity).toStringAsFixed(3));
-              if (products[index]['quantityWeightOwned'] <= 0) {
-                // Aggiorna il conteggio totale se il peso raggiunge zero
-                products[index]['quantityOwned'] = 0;
-                products[index]['quantityUnitOwned'] = 0;
-                products[index]['quantityWeightOwned'] = 0;
-              }
-              break;
-
-            case QuantityUpdateType.units:
-              // Aggiorna quantità totale
-              products[index]['quantityOwned'] -=
-                  mealProduct.selectedQuantity ~/ mealProduct.totalWeight;
-              products[index]['quantityWeightOwned'] -=
-                  mealProduct.selectedQuantity;
-              if (products[index]['quantityOwned'] <= 0 &&
-                  products[index]['quantityWeightOwned'] <=
-                      mealProduct.unitWeight) {
-                products[index]['quantityOwned'] = 0;
-                products[index]['quantityUnitOwned'] = 0;
-              }
-              break;
-
-            default:
-              // Gestione per tipi di aggiornamento non definiti
-              ToastNotifier.showError('Tipo di aggiornamento non supportato');
+        // Aggiorna le quantità solo nel documento appropriato
+        if (discountedProduct != null) {
+          // Se il prodotto è scontato, aggiorna solo nella collezione discounted_products
+          int index = discountedProducts.indexWhere(
+              (product) => product['productId'] == mealProduct.productId);
+          if (index != -1) {
+            _updateProductQuantities(discountedProducts[index], mealProduct);
           }
-          if (products[index]['quantityOwned'] <= 0) {
-            products[index]['quantityUnitOwned'] = 0;
+        } else {
+          // Se il prodotto non è scontato, aggiorna solo nella collezione products
+          int index = products.indexWhere(
+              (product) => product['productId'] == mealProduct.productId);
+          if (index != -1) {
+            _updateProductQuantities(products[index], mealProduct);
           }
-          products[index]['quantityWeightOwned'] = double.parse((products[index]
-                              ['quantityWeightOwned'])
-                          .toStringAsFixed(3))
-                      .toString()
-                      .endsWith('9') ||
-                  double.parse((products[index]['quantityWeightOwned'])
-                          .toStringAsFixed(3))
-                      .toString()
-                      .endsWith('1')
-              ? double.parse(
-                  (products[index]['quantityWeightOwned']).toStringAsFixed(2))
-              : double.parse(
-                  (products[index]['quantityWeightOwned']).toStringAsFixed(3));
         }
 
         return {
@@ -201,11 +169,31 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
           'price': productExpense.toStringAsFixed(3),
           'category': mealProduct.category,
           'quantitySelected': mealProduct.selectedQuantity,
+          'isDiscounted': discountedProduct != null,
+          'originalPrice': mealProduct.price,
+          'discountedPrice': discountedProduct?['discountedPrice'],
         };
       }).toList();
-      await userDocRef.update({
-        "products": products,
-      });
+
+      // Aggiorna solo i documenti che sono stati modificati
+      bool hasNormalProducts = mealProducts.any((p) =>
+          !discountedProducts.any((dp) => dp['productId'] == p.productId));
+      bool hasDiscountedProducts = mealProducts.any((p) =>
+          discountedProducts.any((dp) => dp['productId'] == p.productId));
+
+      if (hasNormalProducts) {
+        await userDocRef.update({
+          "products": products,
+        });
+      }
+
+      if (hasDiscountedProducts) {
+        await discountedDocRef.set({
+          "discounted_products": discountedProducts,
+        });
+      }
+
+      // Salva il pasto
       userDocRef = FirebaseFirestore.instance
           .collection('meals')
           .doc(FirebaseAuth.instance.currentUser!.uid);
@@ -221,6 +209,7 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
           }
         ])
       });
+
       if (!mounted) return;
       ToastNotifier.showSuccess(
           context, AppLocalizations.of(context)!.mealSavedSuccessfully);
@@ -229,8 +218,84 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
         return count++ == 2;
       });
     } catch (e) {
+      print(e);
       ToastNotifier.showError('Errore durante il salvataggio del pasto: $e');
     }
+  }
+
+  void _updateProductQuantities(dynamic product, Product mealProduct) {
+    switch (mealProduct.quantityUpdateType) {
+      case QuantityUpdateType.slider:
+        product['quantityUnitOwned'] -=
+            (mealProduct.selectedQuantity / mealProduct.unitWeight).round();
+        product['quantityWeightOwned'] -= mealProduct.selectedQuantity;
+        if (product['quantityUnitOwned'] <= 0) {
+          product['quantityOwned'] -= 1;
+          product['quantityUnitOwned'] = mealProduct.quantity;
+        }
+        break;
+
+      case QuantityUpdateType.weight:
+        if (product['quantityWeightOwned'] >= mealProduct.unitWeight) {
+          if (mealProduct.selectedQuantity <=
+              mealProduct.unitWeight * mealProduct.quantityUnitOwned) {
+            product['quantityUnitOwned'] -=
+                (mealProduct.selectedQuantity / mealProduct.unitWeight).ceil();
+            if (product['quantityUnitOwned'] <= 0) {
+              product['quantityOwned'] -= 1;
+              product['quantityUnitOwned'] = mealProduct.quantity;
+            }
+          } else {
+            product['quantityOwned'] -= 1;
+            if ((product['quantityWeightOwned'] -
+                        mealProduct.selectedQuantity) %
+                    mealProduct.totalWeight ==
+                0) {
+              product['quantityUnitOwned'] = mealProduct.quantity;
+            } else {
+              product['quantityUnitOwned'] = mealProduct.quantity -
+                  ((mealProduct.selectedQuantity / mealProduct.unitWeight)
+                          .ceil() -
+                      mealProduct.quantityUnitOwned);
+            }
+          }
+        }
+        product['quantityWeightOwned'] -=
+            double.parse((mealProduct.selectedQuantity).toStringAsFixed(3));
+        if (product['quantityWeightOwned'] <= 0) {
+          product['quantityOwned'] = 0;
+          product['quantityUnitOwned'] = 0;
+          product['quantityWeightOwned'] = 0;
+        }
+        break;
+
+      case QuantityUpdateType.units:
+        product['quantityOwned'] -=
+            mealProduct.selectedQuantity ~/ mealProduct.totalWeight;
+        product['quantityWeightOwned'] -= mealProduct.selectedQuantity;
+        if (product['quantityOwned'] <= 0 &&
+            product['quantityWeightOwned'] <= mealProduct.unitWeight) {
+          product['quantityOwned'] = 0;
+          product['quantityUnitOwned'] = 0;
+        }
+        break;
+
+      default:
+        ToastNotifier.showError('Tipo di aggiornamento non supportato');
+    }
+
+    if (product['quantityOwned'] <= 0) {
+      product['quantityUnitOwned'] = 0;
+    }
+    product['quantityWeightOwned'] = double.parse(
+                    (product['quantityWeightOwned']).toStringAsFixed(3))
+                .toString()
+                .endsWith('9') ||
+            double.parse((product['quantityWeightOwned']).toStringAsFixed(3))
+                .toString()
+                .endsWith('1')
+        ? double.parse((product['quantityWeightOwned']).toStringAsFixed(2))
+        : double.parse((product['quantityWeightOwned']).toStringAsFixed(3));
   }
 
   void _showFilterDialog() {

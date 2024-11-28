@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/image_processor.dart';
@@ -16,6 +17,7 @@ class ProductListItem extends ConsumerStatefulWidget {
   final void Function(double) onTotalPriceChange;
   final void Function() updateProductLists;
   late bool selected;
+  double? discountedPrice;
 
   ProductListItem({
     super.key,
@@ -23,6 +25,7 @@ class ProductListItem extends ConsumerStatefulWidget {
     required this.onTotalPriceChange,
     required this.updateProductLists,
     this.selected = false,
+    this.discountedPrice,
   });
 
   final GlobalKey<ProductListItemState> _key = GlobalKey();
@@ -31,7 +34,6 @@ class ProductListItem extends ConsumerStatefulWidget {
     selected = value;
   }
 
-  // Metodo per chiamare updateQuantity sullo stato
   void updateQuantity(int change) {
     _key.currentState?.updateQuantity(change);
   }
@@ -43,7 +45,12 @@ class ProductListItem extends ConsumerStatefulWidget {
 class ProductListItemState extends ConsumerState<ProductListItem> {
   final TextEditingController _discountedPriceController = TextEditingController();
 
+  double getCurrentPrice() {
+    return widget.discountedPrice ?? widget.product.price;
+  }
+
   void updateQuantity(int change) {
+    final oldQuantity = widget.product.buyQuantity;
     setState(() {
       widget.product.buyQuantity += change;
       widget.product.quantityWeightOwned += change * widget.product.totalWeight;
@@ -51,86 +58,41 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
         widget.product.buyQuantity = 0;
       }
     });
-    widget.onTotalPriceChange(widget.product.price * change);
+    
+    if (oldQuantity == 0 && widget.product.buyQuantity > 0) {
+      widget.onTotalPriceChange(getCurrentPrice() * widget.product.buyQuantity);
+    } else {
+      widget.onTotalPriceChange(getCurrentPrice() * change);
+    }
     widget.updateProductLists();
   }
 
-  @override
-  void dispose() {
-    _discountedPriceController.dispose();
-    super.dispose();
-  }
-
-  void _showDiscountDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
-
-        return isIOS
-            ? CupertinoAlertDialog(
-                title: Text(AppLocalizations.of(context)!.discountedPrice),
-                content: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CupertinoTextField(
-                    controller: _discountedPriceController,
-                    keyboardType: TextInputType.number,
-                    placeholder: AppLocalizations.of(context)!.enterDiscountedPrice,
-                  ),
-                ),
-                actions: [
-                  CupertinoDialogAction(
-                    child: Text(AppLocalizations.of(context)!.cancel),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  CupertinoDialogAction(
-                    child: Text(AppLocalizations.of(context)!.save),
-                    onPressed: () {
-                      _saveDiscountedProduct();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              )
-            : AlertDialog(
-                title: Text(AppLocalizations.of(context)!.discountedPrice),
-                content: TextField(
-                  controller: _discountedPriceController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.enterDiscountedPrice,
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    child: Text(AppLocalizations.of(context)!.cancel),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  TextButton(
-                    child: Text(AppLocalizations.of(context)!.save),
-                    onPressed: () {
-                      _saveDiscountedProduct();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              );
-      },
-    );
+  void _removeDiscount() {
+    if (widget.discountedPrice != null) {
+      final oldPrice = getCurrentPrice();
+      setState(() {
+        widget.discountedPrice = null;
+      });
+      
+      if (widget.product.buyQuantity > 0) {
+        final priceDifference = (oldPrice - widget.product.price) * widget.product.buyQuantity;
+        widget.onTotalPriceChange(-priceDifference);
+      }
+    }
   }
 
   void _saveDiscountedProduct() {
     final discountedPrice = double.tryParse(_discountedPriceController.text);
     if (discountedPrice != null) {
-      final discountedProduct = DiscountedProduct(
-        productId: widget.product.productId,
-        quantityBought: widget.product.buyQuantity,
-        discountedQuantityOwned: widget.product.quantityOwned,
-        discountedQuantityWeightOwned: widget.product.quantityWeightOwned,
-        discountedQuantityUnitOwned: widget.product.quantityUnitOwned,
-        discountedPrice: discountedPrice,
-      );
-      ref.read(discountedProductsProvider.notifier).addDiscountedProduct(discountedProduct);
+      final oldPrice = getCurrentPrice();
+      setState(() {
+        widget.discountedPrice = discountedPrice;
+      });
+      
+      if (widget.product.buyQuantity > 0) {
+        final priceDifference = (oldPrice - discountedPrice) * widget.product.buyQuantity;
+        widget.onTotalPriceChange(-priceDifference);
+      }
     }
   }
 
@@ -235,7 +197,9 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      '€${widget.product.price.toStringAsFixed(2)}, ${AppLocalizations.of(context)!.total} €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
+                      widget.discountedPrice != null
+                          ? '€${widget.discountedPrice!.toStringAsFixed(2)} (Scontato), ${AppLocalizations.of(context)!.total} €${(widget.discountedPrice! * widget.product.buyQuantity).toStringAsFixed(2)}'
+                          : '€${widget.product.price.toStringAsFixed(2)}, ${AppLocalizations.of(context)!.total} €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
                       style: TextStyle(
                         color: widget.selected
                             ? Theme.of(context).colorScheme.onPrimary
@@ -251,6 +215,19 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                 children: [
                   Column(
                     children: [
+                      IconButton(
+                        icon: Icon(
+                          widget.discountedPrice != null
+                              ? (isIOS ? CupertinoIcons.tag_fill : Icons.local_offer)
+                              : (isIOS ? HugeIcons.strokeRoundedDiscount : HugeIcons.strokeRoundedDiscount),
+                          color: widget.selected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : (widget.discountedPrice != null 
+                                  ? Colors.green 
+                                  : Theme.of(context).colorScheme.primary),
+                        ),
+                        onPressed: widget.discountedPrice != null ? _removeDiscount : _showDiscountDialog,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -284,7 +261,9 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                                 style: TextStyle(
                                     fontSize: 20.0,
                                     color: widget.selected
-                                        ? Theme.of(context).colorScheme.onPrimary
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary
                                         : Theme.of(context)
                                             .textTheme
                                             .bodyLarge
@@ -315,15 +294,6 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                           ),
                         ],
                       ),
-                      IconButton(
-                        icon: Icon(
-                          isIOS ? CupertinoIcons.tag : Icons.local_offer,
-                          color: widget.selected
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : Theme.of(context).colorScheme.primary,
-                        ),
-                        onPressed: _showDiscountDialog,
-                      ),
                       Text(
                         ' ${AppLocalizations.of(context)!.have}: ${widget.product.quantityOwned}',
                         style: TextStyle(
@@ -341,6 +311,66 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showDiscountDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
+        return isIOS
+            ? CupertinoAlertDialog(
+                title: Text(AppLocalizations.of(context)!.discountedPrice),
+                content: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CupertinoTextField(
+                    controller: _discountedPriceController,
+                    keyboardType: TextInputType.number,
+                    placeholder:
+                        AppLocalizations.of(context)!.enterDiscountedPrice,
+                  ),
+                ),
+                actions: [
+                  CupertinoDialogAction(
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  CupertinoDialogAction(
+                    child: Text(AppLocalizations.of(context)!.save),
+                    onPressed: () {
+                      _saveDiscountedProduct();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              )
+            : AlertDialog(
+                title: Text(AppLocalizations.of(context)!.discountedPrice),
+                content: TextField(
+                  controller: _discountedPriceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText:
+                        AppLocalizations.of(context)!.enterDiscountedPrice,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)!.save),
+                    onPressed: () {
+                      _saveDiscountedProduct();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+      },
     );
   }
 }

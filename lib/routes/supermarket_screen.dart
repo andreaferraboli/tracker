@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,8 +11,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/models/product_card.dart';
 import 'package:tracker/models/product_list_item.dart';
+import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
@@ -143,11 +147,15 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         return {
           'idProdotto': product.product.productId,
           'productName': product.product.productName,
-          'price': product.product.price,
-          'pricePerKg': (product.product.price / product.product.totalWeight)
+          'price': product.discountedPrice ??
+              product.product.price, // Usa il prezzo scontato se disponibile
+          'pricePerKg': ((product.discountedPrice ?? product.product.price) /
+                  product.product.totalWeight)
               .toStringAsFixed(3),
           'category': product.product.category,
           'quantita': product.product.buyQuantity,
+          'isDiscounted': product.discountedPrice != null,
+          'originalPrice': product.product.price,
         };
       }).toList();
 
@@ -163,19 +171,61 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
         for (var product in selectedProducts) {
           if (product.product.buyQuantity > 0) {
-            var existingProduct = productsList.firstWhere(
-                (p) => p['productId'] == product.product.productId,
-                orElse: () => null);
+            if (product.discountedPrice != null) {
+              final existingDiscountedProduct = ref
+                  .read(discountedProductsProvider)
+                  .firstWhereOrNull(
+                      (p) => p.productId == product.product.productId);
 
-            if (existingProduct != null) {
-              existingProduct['quantityOwned'] += product.product.buyQuantity;
-              existingProduct['quantityUnitOwned'] += product.product.quantity;
-              existingProduct['quantityWeightOwned'] +=
-                  product.product.buyQuantity * product.product.totalWeight;
+              if (existingDiscountedProduct != null) {
+                final updatedProduct = DiscountedProduct(
+                  productId: existingDiscountedProduct.productId,
+                  quantityBought: existingDiscountedProduct.quantityBought +
+                      product.product.buyQuantity,
+                  discountedQuantityOwned:
+                      existingDiscountedProduct.discountedQuantityOwned +
+                          product.product.buyQuantity,
+                  discountedQuantityWeightOwned: existingDiscountedProduct
+                          .discountedQuantityWeightOwned +
+                      product.product.totalWeight * product.product.buyQuantity,
+                  discountedQuantityUnitOwned:
+                      existingDiscountedProduct.discountedQuantityUnitOwned,
+                  discountedPrice: product.discountedPrice!,
+                );
+                ref
+                    .read(discountedProductsProvider.notifier)
+                    .updateDiscountedProduct(updatedProduct);
+              } else {
+                final newDiscountedProduct = DiscountedProduct(
+                  productId: product.product.productId,
+                  quantityBought: product.product.buyQuantity,
+                  discountedQuantityOwned:
+                      product.product.buyQuantity.toDouble(),
+                  discountedQuantityWeightOwned:
+                      product.product.totalWeight * product.product.buyQuantity,
+                  discountedQuantityUnitOwned: product.product.quantity,
+                  discountedPrice: product.discountedPrice!,
+                );
+                ref
+                    .read(discountedProductsProvider.notifier)
+                    .addDiscountedProduct(newDiscountedProduct);
+              }
             } else {
-              productsList.add(product.product.toJson());
-            }
+              var existingProduct = productsList.firstWhere(
+                  (p) => p['productId'] == product.product.productId,
+                  orElse: () => null);
 
+              if (existingProduct != null) {
+                // Aggiorna le quantità correttamente
+                existingProduct['quantityOwned'] += product.product.buyQuantity;
+                existingProduct['quantityUnitOwned'] +=
+                    product.product.buyQuantity * product.product.quantity;
+                existingProduct['quantityWeightOwned'] +=
+                    product.product.buyQuantity * product.product.totalWeight;
+              } else {
+                productsList.add(product.product.toJson());
+              }
+            }
             product.product.buyQuantity = 0;
           }
         }

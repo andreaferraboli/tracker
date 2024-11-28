@@ -181,121 +181,120 @@ class ExpenseDetailScreen extends StatelessWidget {
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
       const SizedBox(height: 8),
-      Expanded(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: expense.products.length,
-          itemBuilder: (context, index) {
-            final item = expense.products[index];
-            return GestureDetector(
-              onTap: () async {
-                DocumentReference productDocRef = FirebaseFirestore.instance
-                    .collection('products')
-                    .doc(FirebaseAuth.instance.currentUser!.uid);
+      ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: expense.products.length,
+        itemBuilder: (context, index) {
+          final item = expense.products[index];
+          return GestureDetector(
+            onTap: () async {
+              DocumentReference productDocRef = FirebaseFirestore.instance
+                  .collection('products')
+                  .doc(FirebaseAuth.instance.currentUser!.uid);
 
-                DocumentSnapshot snapshot = await productDocRef.get();
-                dynamic existingProduct;
-                Product? product;
-                if (snapshot.exists) {
-                  final List<dynamic> productsList = snapshot['products'] ?? [];
-                  existingProduct = productsList.firstWhere(
-                      (p) =>
-                          p['productId'] == expense.products[index].idProdotto,
-                      orElse: () => null);
-                  if (existingProduct != null) {
-                    product = Product.fromJson(existingProduct);
-                  }
+              DocumentSnapshot snapshot = await productDocRef.get();
+              dynamic existingProduct;
+              Product? product;
+              if (snapshot.exists) {
+                final List<dynamic> productsList = snapshot['products'] ?? [];
+                existingProduct = productsList.firstWhere(
+                    (p) =>
+                        p['productId'] == expense.products[index].idProdotto,
+                    orElse: () => null);
+                if (existingProduct != null) {
+                  product = Product.fromJson(existingProduct);
                 }
-                if (!context.mounted || product == null) return;
-                Navigator.push(
-                  context,
-                  Platform.isIOS
-                      ? CupertinoPageRoute(
-                          builder: (context) =>
-                              ProductScreen(product: product!),
-                        )
-                      : MaterialPageRoute(
-                          builder: (context) =>
-                              ProductScreen(product: product!),
-                        ),
-                );
-              },
-              child: Card(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.1),
-                              child: CategoryServices.iconFromCategory(
-                                  item.category),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.productName,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${AppLocalizations.of(context)!.quantity}: ${item.quantity} x €${item.price.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[700],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '€/Kg: ${item.pricePerKg}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[700],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+              }
+              if (!context.mounted || product == null) return;
+              Navigator.push(
+                context,
+                Platform.isIOS
+                    ? CupertinoPageRoute(
+                        builder: (context) =>
+                            ProductScreen(product: product!),
+                      )
+                    : MaterialPageRoute(
+                        builder: (context) =>
+                            ProductScreen(product: product!),
                       ),
-                      Text(
-                        '€${(item.quantity * item.price).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+              );
+            },
+            child: Card(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.1),
+                            child: CategoryServices.iconFromCategory(
+                                item.category),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.productName,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${AppLocalizations.of(context)!.quantity}: ${item.quantity} x €${item.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[700],
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '€/Kg: ${item.pricePerKg}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[700],
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Text(
+                      '€${(item.quantity * item.price).toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     ];
   }

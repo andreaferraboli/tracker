@@ -76,6 +76,29 @@ class DiscountedProductsNotifier extends StateNotifier<List<DiscountedProduct>> 
       }
     }
   }
+
+  Future<void> updateDiscountedProduct(DiscountedProduct product) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final docRef = FirebaseFirestore.instance
+            .collection('discounted_products')
+            .doc(user.uid);
+
+        final currentProducts = state.map((p) => 
+          p.productId == product.productId ? product : p
+        ).toList();
+
+        await docRef.set({
+          'discounted_products': currentProducts.map((p) => p.toJson()).toList(),
+        });
+
+        state = currentProducts;
+      } catch (e) {
+        print('Error updating discounted product: $e');
+      }
+    }
+  }
 }
 
 final discountedProductsProvider =

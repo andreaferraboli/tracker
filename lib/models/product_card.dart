@@ -76,19 +76,12 @@ class _ProductCardState extends ConsumerState<ProductCard> {
       final discountedProduct = discountedProducts
           .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
 
-      if (discountedProduct != null && _useDiscountedValidation) {
-        // Check against discounted product only if _useDiscountedValidation is true
-        if (newWeight >
-            discountedProduct.discountedQuantityWeightOwned * 1000) {
-          throw const FormatException(
-              "Peso superiore alla quantità disponibile");
-        }
-      } else {
-        // Check against normal product
-        if (newWeight > widget.product.quantityWeightOwned * 1000) {
-          throw const FormatException(
-              "Peso superiore alla quantità disponibile");
-        }
+      final double maxWeight = _useDiscountedValidation && discountedProduct != null
+          ? discountedProduct.discountedQuantityWeightOwned * 1000
+          : widget.product.quantityWeightOwned * 1000;
+
+      if (newWeight > maxWeight) {
+        throw const FormatException("Peso superiore alla quantità disponibile");
       }
 
       setState(() {
@@ -130,18 +123,12 @@ class _ProductCardState extends ConsumerState<ProductCard> {
       final discountedProduct = discountedProducts
           .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
 
-      if (discountedProduct != null && _useDiscountedValidation) {
-        // Check against discounted product only if _useDiscountedValidation is true
-        if (newUnits > discountedProduct.discountedQuantityOwned) {
-          throw const FormatException(
-              "Quantità superiore a quella disponibile");
-        }
-      } else {
-        // Check against normal product
-        if (newUnits > widget.product.quantityOwned) {
-          throw const FormatException(
-              "Quantità superiore a quella disponibile");
-        }
+      final num maxUnits = _useDiscountedValidation && discountedProduct != null
+          ? discountedProduct.discountedQuantityOwned.toInt()
+          : widget.product.quantityOwned;
+
+      if (newUnits > maxUnits) {
+        throw const FormatException("Quantità superiore a quella disponibile");
       }
 
       setState(() {
@@ -190,12 +177,22 @@ class _ProductCardState extends ConsumerState<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    double maxQuantity = widget.product.quantityUnitOwned > 0
-        ? widget.product.quantityUnitOwned.toDouble()
-        : 0;
     final discountedProducts = ref.read(discountedProductsProvider);
     final DiscountedProduct? discountedProduct = discountedProducts
         .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
+
+    // Calcola il valore massimo per lo slider in base alla selezione del prodotto scontato
+    double maxQuantity = _useDiscountedValidation && discountedProduct != null
+        ? discountedProduct.discountedQuantityUnitOwned.toDouble()
+        : widget.product.quantityUnitOwned > 0
+            ? widget.product.quantityUnitOwned.toDouble()
+            : 0;
+
+    // Calcola la quantità da mostrare in base alla selezione del prodotto scontato
+    final double displayQuantityWeight = _useDiscountedValidation && discountedProduct != null
+        ? discountedProduct.discountedQuantityWeightOwned
+        : widget.product.quantityWeightOwned;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -241,7 +238,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${(widget.product.quantityWeightOwned * 1000).toStringAsFixed((widget.product.quantityWeightOwned * 1000) % 1 == 0 ? 0 : 2)} ${AppLocalizations.of(context)!.gramsAvailable}',
+                      '${(displayQuantityWeight * 1000).toStringAsFixed((displayQuantityWeight * 1000) % 1 == 0 ? 0 : 2)} ${AppLocalizations.of(context)!.gramsAvailable}',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
@@ -344,23 +341,18 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                               setState(() {
                                 _useDiscountedValidation =
                                     !_useDiscountedValidation;
-                                maxQuantity = _useDiscountedValidation
-                                    ? discountedProduct.discountedQuantityOwned
-                                    : widget.product.quantityUnitOwned
-                                        .toDouble();
+                                // Reset dei valori quando si cambia modalità
                                 widget.product.sliderValue = 0;
-                                _weightController.text = '0.0';
-                                _weightController.selection =
-                                    TextSelection.fromPosition(TextPosition(
-                                        offset: _weightController.text.length));
+                                _weightFromTextField = 0;
+                                _unitsFromTextField = 0;
+                                _weightController.text = '0';
                                 _unitsController.text = '0';
-                                _unitsController.selection =
-                                    TextSelection.fromPosition(TextPosition(
-                                        offset: _unitsController.text.length));
                               });
                             },
                             child: Icon(Icons.discount,
-                                color: Theme.of(context).colorScheme.primary),
+                                color: _useDiscountedValidation 
+                                    ? Theme.of(context).colorScheme.primary 
+                                    : Colors.grey),
                           ),
                       ],
                     ),
