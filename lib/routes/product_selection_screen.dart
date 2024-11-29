@@ -545,7 +545,9 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
                 ExpansionTile(
                   title: Text(
                     AppLocalizations.of(context)!.selectedProducts,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Platform.isIOS
+    ? CupertinoTheme.of(context).textTheme.textStyle
+    : Theme.of(context).textTheme.bodyLarge,
                   ),
                   initiallyExpanded: mealProducts.isNotEmpty,
                   leading: const Icon(Icons.food_bank),
@@ -589,7 +591,9 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
                 ExpansionTile(
                   title: Text(
                     AppLocalizations.of(context)!.listProducts,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Platform.isIOS
+    ? CupertinoTheme.of(context).textTheme.textStyle
+    : Theme.of(context).textTheme.bodyLarge,
                   ),
                   initiallyExpanded: true,
                   leading: const Icon(Icons.list),

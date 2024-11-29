@@ -112,7 +112,9 @@ class ProductScreen extends ConsumerWidget {
                   flex: 3,
                   child: Text(
                     '${AppLocalizations.of(context)!.productName}: ${product.productName}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
                 Expanded(
@@ -127,10 +129,12 @@ class ProductScreen extends ConsumerWidget {
             Row(
               children: [
                 Expanded(
-                  flex: 4,
+                  flex: 2,
                   child: Text(
                     '${AppLocalizations.of(context)!.quantity}: ${product.quantity}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
                 const Spacer(flex: 1),
@@ -140,12 +144,26 @@ class ProductScreen extends ConsumerWidget {
                     children: [
                       Text(
                         '${AppLocalizations.of(context)!.price}: €${product.price.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: isIOS
+                            ? CupertinoTheme.of(context).textTheme.textStyle
+                            : Theme.of(context).textTheme.bodyLarge,
                       ),
                       if (discountedVersion != null)
-                        Text(
-                          '${AppLocalizations.of(context)!.discountedPrice}: €${discountedVersion.discountedPrice.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.bodyLarge,
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.discount,
+                              color: Colors.green,
+                              size: 14,
+                            ),
+                            Text(
+                              ': €${discountedVersion.discountedPrice.toStringAsFixed(2)}-${((product.price - discountedVersion.discountedPrice) / product.price * 100).toStringAsFixed(0)}%',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   ),
@@ -157,12 +175,26 @@ class ProductScreen extends ConsumerWidget {
                     children: [
                       Text(
                         '${AppLocalizations.of(context)!.unitPrice}: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: isIOS
+                            ? CupertinoTheme.of(context).textTheme.textStyle
+                            : Theme.of(context).textTheme.bodyLarge,
                       ),
                       if (discountedVersion != null)
-                        Text(
-                          '${AppLocalizations.of(context)!.discountedUnitPrice}: €${(discountedVersion.discountedPrice / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
-                          style: Theme.of(context).textTheme.bodyLarge,
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.discount,
+                              color: Colors.green,
+                              size: 14,
+                            ),
+                            Text(
+                              ': €${(discountedVersion.discountedPrice / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   ),
@@ -176,7 +208,9 @@ class ProductScreen extends ConsumerWidget {
                   flex: 4,
                   child: Text(
                     '${AppLocalizations.of(context)!.totalWeight} (kg/l): ${product.totalWeight}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
                 const Spacer(flex: 1),
@@ -185,12 +219,26 @@ class ProductScreen extends ConsumerWidget {
                     child: Column(children: [
                       Text(
                         '${AppLocalizations.of(context)!.pricePerKg}: €${(product.price / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: isIOS
+                            ? CupertinoTheme.of(context).textTheme.textStyle
+                            : Theme.of(context).textTheme.bodyLarge,
                       ),
                       if (discountedVersion != null)
-                        Text(
-                          '${AppLocalizations.of(context)!.discountedPricePerKg}: €${(discountedVersion.discountedPrice / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
-                          style: Theme.of(context).textTheme.bodyLarge,
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.discount,
+                              color: Colors.green,
+                              size: 14,
+                            ),
+                            Text(
+                              ': €${(discountedVersion.discountedPrice / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                     ])),
                 const Spacer(flex: 1),
@@ -198,7 +246,9 @@ class ProductScreen extends ConsumerWidget {
                   flex: 2,
                   child: Text(
                     '${AppLocalizations.of(context)!.unitWeight}: ${(product.totalWeight / (product.quantity > 0 ? product.quantity : 1) * 1000).toStringAsFixed(3)} g',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               ],
@@ -209,11 +259,15 @@ class ProductScreen extends ConsumerWidget {
               children: [
                 Text(
                   '${AppLocalizations.of(context)!.category}: ${AppLocalizations.of(context)!.translateCategory(product.category)}',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: isIOS
+                      ? CupertinoTheme.of(context).textTheme.textStyle
+                      : Theme.of(context).textTheme.bodyLarge,
                 ),
                 Text(
                   '${AppLocalizations.of(context)!.store}: ${AppLocalizations.of(context)!.getStorageTitle(product.store)}',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: isIOS
+                      ? CupertinoTheme.of(context).textTheme.textStyle
+                      : Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
@@ -224,12 +278,26 @@ class ProductScreen extends ConsumerWidget {
                   children: [
                     Text(
                       '${AppLocalizations.of(context)!.quantityOwned}: ${product.quantityOwned}',
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: isIOS
+                          ? CupertinoTheme.of(context).textTheme.textStyle
+                          : Theme.of(context).textTheme.bodyLarge,
                     ),
                     if (discountedVersion != null)
-                      Text(
-                        '${AppLocalizations.of(context)!.discountedQuantityOwned}: ${discountedVersion.discountedQuantityOwned}',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.discount,
+                            color: Colors.green,
+                            size: 14,
+                          ),
+                          Text(
+                            ': ${discountedVersion.discountedQuantityOwned}',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
                   ],
                 ),
@@ -237,12 +305,26 @@ class ProductScreen extends ConsumerWidget {
                   children: [
                     Text(
                       '${AppLocalizations.of(context)!.quantityUnitOwned}: ${product.quantityUnitOwned}',
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: isIOS
+                          ? CupertinoTheme.of(context).textTheme.textStyle
+                          : Theme.of(context).textTheme.bodyLarge,
                     ),
                     if (discountedVersion != null)
-                      Text(
-                        '${AppLocalizations.of(context)!.discountedQuantityUnitOwned}: ${discountedVersion.discountedQuantityUnitOwned}',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.discount,
+                            color: Colors.green,
+                            size: 14,
+                          ),
+                          Text(
+                            ': ${discountedVersion.discountedQuantityUnitOwned}',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
                   ],
                 ),
@@ -253,12 +335,26 @@ class ProductScreen extends ConsumerWidget {
               children: [
                 Text(
                   '${AppLocalizations.of(context)!.quantityWeightOwned}: ${product.quantityWeightOwned}',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: isIOS
+                      ? CupertinoTheme.of(context).textTheme.textStyle
+                      : Theme.of(context).textTheme.bodyLarge,
                 ),
                 if (discountedVersion != null)
-                  Text(
-                    '${AppLocalizations.of(context)!.discountedQuantityWeightOwned}: ${discountedVersion.discountedQuantityWeightOwned}',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.discount,
+                        color: Colors.green,
+                        size: 14,
+                      ),
+                      Text(
+                        ': ${discountedVersion.discountedQuantityWeightOwned}',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
               ],
             ),
@@ -305,19 +401,27 @@ class ProductScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               '${AppLocalizations.of(context)!.expirationDate}: ${product.expirationDate}',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: isIOS
+                  ? CupertinoTheme.of(context).textTheme.textStyle
+                  : Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
               '${AppLocalizations.of(context)!.supermarket}: ${product.supermarket}',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: isIOS
+                  ? CupertinoTheme.of(context).textTheme.textStyle
+                  : Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
               '${AppLocalizations.of(context)!.purchaseDate}: ${product.purchaseDate}',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: isIOS
+                  ? CupertinoTheme.of(context).textTheme.textStyle
+                  : Theme.of(context).textTheme.bodyLarge,
             ),
             Text(
               '${AppLocalizations.of(context)!.barcode}: ${product.barcode}',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: isIOS
+                  ? CupertinoTheme.of(context).textTheme.textStyle
+                  : Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),

@@ -20,6 +20,7 @@ import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../models/meal.dart';
 import '../providers/supermarket_provider.dart';
@@ -317,6 +318,8 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
   void _showFilterDialog() {
     if (!mounted) return;
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -324,7 +327,10 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           future: CategoryServices.getCategoryNames(),
           builder: (dialogContext, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: isIOS
+                      ? const CupertinoActivityIndicator()
+                      : const CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(
                   child: Text(
@@ -332,51 +338,105 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             } else {
               String selectedCategory = '';
               List<String> categoryNames = snapshot.data ?? [];
-              return AlertDialog(
-                title:
-                    Text(AppLocalizations.of(dialogContext)!.filterByCategory),
-                content: DropdownButtonFormField<String>(
-                  value: selectedCategory.isEmpty ? null : selectedCategory,
-                  items: categoryNames.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(AppLocalizations.of(dialogContext)!
-                          .translateCategory(category)),
+              return isIOS
+                  ? CupertinoAlertDialog(
+                      title: Text(
+                          AppLocalizations.of(dialogContext)!.filterByCategory),
+                      content: DropdownButtonFormField<String>(
+                        value:
+                            selectedCategory.isEmpty ? null : selectedCategory,
+                        items: categoryNames.map((String category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(AppLocalizations.of(dialogContext)!
+                                .translateCategory(category)),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (!mounted) return;
+                          setState(() {
+                            selectedCategory = newValue!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(dialogContext)!
+                              .selectCategory,
+                        ),
+                      ),
+                      actions: <Widget>[
+                        CupertinoDialogAction(
+                          child:
+                              Text(AppLocalizations.of(dialogContext)!.cancel),
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop();
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child:
+                              Text(AppLocalizations.of(dialogContext)!.filter),
+                          onPressed: () {
+                            if (!mounted) return;
+                            setState(() {
+                              purchasedProducts = originalProducts
+                                  .where((product) =>
+                                      product.product.category ==
+                                      selectedCategory)
+                                  .toList();
+                            });
+                            Navigator.of(dialogContext).pop();
+                          },
+                        ),
+                      ],
+                    )
+                  : AlertDialog(
+                      title: Text(
+                          AppLocalizations.of(dialogContext)!.filterByCategory),
+                      content: DropdownButtonFormField<String>(
+                        value:
+                            selectedCategory.isEmpty ? null : selectedCategory,
+                        items: categoryNames.map((String category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(AppLocalizations.of(dialogContext)!
+                                .translateCategory(category)),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (!mounted) return;
+                          setState(() {
+                            selectedCategory = newValue!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(dialogContext)!
+                              .selectCategory,
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child:
+                              Text(AppLocalizations.of(dialogContext)!.cancel),
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop();
+                          },
+                        ),
+                        TextButton(
+                          child:
+                              Text(AppLocalizations.of(dialogContext)!.filter),
+                          onPressed: () {
+                            if (!mounted) return;
+                            setState(() {
+                              purchasedProducts = originalProducts
+                                  .where((product) =>
+                                      product.product.category ==
+                                      selectedCategory)
+                                  .toList();
+                            });
+                            Navigator.of(dialogContext).pop();
+                          },
+                        ),
+                      ],
                     );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (!mounted) return;
-                    setState(() {
-                      selectedCategory = newValue!;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    labelText:
-                        AppLocalizations.of(dialogContext)!.selectCategory,
-                  ),
-                ),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text(AppLocalizations.of(dialogContext)!.cancel),
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text(AppLocalizations.of(dialogContext)!.filter),
-                    onPressed: () {
-                      if (!mounted) return;
-                      setState(() {
-                        purchasedProducts = originalProducts
-                            .where((product) =>
-                                product.product.category == selectedCategory)
-                            .toList();
-                      });
-                      Navigator.of(dialogContext).pop();
-                    },
-                  ),
-                ],
-              );
             }
           },
         );
@@ -630,73 +690,84 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text(ref.watch(supermarketProvider))),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                double fontSize = 18.0; // Dimensione font di base
-                String totalText =
-                    '${AppLocalizations.of(context)!.totalBalance}: €${totalBalance.toStringAsFixed(2)}';
-                double textWidth = (totalText.length * fontSize) *
-                    0.99; // Stima della larghezza del testo
+    final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
-                // Se il testo supera la larghezza disponibile, riduci la dimensione del font
-                if (textWidth > constraints.maxWidth) {
-                  fontSize = fontSize - 2; // Riduci in proporzione
-                }
+    final Widget body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double fontSize = 18.0; // Dimensione font di base
+              String totalText =
+                  '${AppLocalizations.of(context)!.totalBalance}: €${totalBalance.toStringAsFixed(2)}';
+              double textWidth = (totalText.length * fontSize) *
+                  0.99; // Stima della larghezza del testo
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  // Posiziona i pulsanti alla fine
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Utilizza il font size calcolato
-                    Text(
-                      totalText,
-                      style: TextStyle(fontSize: fontSize),
-                    ),
-                    // Pulsante filtro
-                    IconButton(
-                      onPressed: _showFilterDialog,
-                      icon: Icon(Icons.filter_list,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                    // Pulsante ricerca
-                    IconButton(
-                      onPressed: _showSearchDialog,
-                      icon: Icon(Icons.search,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                    IconButton(
-                      onPressed: _showAiDialog,
-                      icon: Icon(HugeIcons.strokeRoundedAiBrain01,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                    // Pulsante reset filtri e ricerca
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          purchasedProducts = originalProducts;
-                        });
-                      },
-                      icon: Icon(Icons.refresh,
-                          color: Theme.of(context).iconTheme.color),
-                    ),
-                  ],
-                );
-              },
-            ),
+              // Se il testo supera la larghezza disponibile, riduci la dimensione del font
+              if (textWidth > constraints.maxWidth) {
+                fontSize = fontSize - 2; // Riduci in proporzione
+              }
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Posiziona i pulsanti alla fine
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Utilizza il font size calcolato
+                  Text(
+                    totalText,
+                    style: TextStyle(fontSize: fontSize),
+                  ),
+                  // Pulsante filtro
+                  IconButton(
+                    onPressed: _showFilterDialog,
+                    icon: Icon(Icons.filter_list,
+                        color: Theme.of(context).iconTheme.color),
+                  ),
+                  // Pulsante ricerca
+                  IconButton(
+                    onPressed: _showSearchDialog,
+                    icon: Icon(Icons.search,
+                        color: Theme.of(context).iconTheme.color),
+                  ),
+                  IconButton(
+                    onPressed: _showAiDialog,
+                    icon: Icon(HugeIcons.strokeRoundedAiBrain01,
+                        color: Theme.of(context).iconTheme.color),
+                  ),
+                  // Pulsante reset filtri e ricerca
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        purchasedProducts = originalProducts;
+                      });
+                    },
+                    icon: Icon(Icons.refresh,
+                        color: Theme.of(context).iconTheme.color),
+                  ),
+                ],
+              );
+            },
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            if (isIOS)
+              // Stile iOS per i pulsanti
+              CupertinoButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AddProductScreen()),
+                  );
+                },
+                child: Text(AppLocalizations.of(context)!.addProduct),
+              )
+            else
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -707,6 +778,18 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                 },
                 child: Text(AppLocalizations.of(context)!.addProduct),
               ),
+            if (isIOS)
+              CupertinoButton(
+                color: const Color.fromARGB(255, 33, 78, 52),
+                onPressed: () async {
+                  await saveExpense();
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.saveExpense,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              )
+            else
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 33, 78, 52),
@@ -714,8 +797,29 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                 onPressed: () async {
                   await saveExpense();
                 },
-                child: Text(AppLocalizations.of(context)!.saveExpense),
+                child: Text(
+                  AppLocalizations.of(context)!.saveExpense,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
+            if (isIOS)
+              CupertinoButton(
+                onPressed: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime(2015, 8),
+                    lastDate: DateTime(2101),
+                  );
+                  if (picked != null && picked != selectedDate) {
+                    setState(() {
+                      selectedDate = picked;
+                    });
+                  }
+                },
+                child: const Icon(CupertinoIcons.calendar),
+              )
+            else
               IconButton(
                 icon: const Icon(Icons.calendar_today),
                 onPressed: () async {
@@ -732,73 +836,96 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   }
                 },
               ),
-            ],
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Sezione per i prodotti acquistati con quantità selezionata > 0
-                  ExpansionTile(
-                    title: Text(
-                      AppLocalizations.of(context)!.selectedProducts,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    initiallyExpanded: selectedProducts.isNotEmpty,
-                    leading: const Icon(Icons.shopping_cart),
-                    children: selectedProducts.isEmpty
-                        ? [
-                            Center(
-                              child: Text(AppLocalizations.of(context)!
-                                  .noSelectedProducts),
-                            ),
-                          ]
-                        : [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: selectedProducts.length,
-                              itemBuilder: (context, index) {
-                                final product = selectedProducts[index];
-                                return product;
-                              },
-                            ),
-                          ],
+          ],
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Sezione per i prodotti acquistati con quantità selezionata > 0
+                ExpansionTile(
+                  title: Text(
+                    AppLocalizations.of(context)!.selectedProducts,
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
-                  ExpansionTile(
-                    title: Text(
-                      AppLocalizations.of(context)!.listProducts,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    initiallyExpanded: true,
-                    leading: const Icon(Icons.list),
-                    children: purchasedProducts.isEmpty
-                        ? [
-                            Center(
-                              child: Text(
-                                AppLocalizations.of(context)!.noSavedProducts,
-                                style: const TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ]
-                        : [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: purchasedProducts.length,
-                              itemBuilder: (context, index) {
-                                final product = purchasedProducts[index];
-                                return product;
-                              },
-                            ),
-                          ],
+                  initiallyExpanded: selectedProducts.isNotEmpty,
+                  leading: const Icon(Icons.shopping_cart),
+                  children: selectedProducts.isEmpty
+                      ? [
+                          Center(
+                            child: Text(AppLocalizations.of(context)!
+                                .noSelectedProducts),
+                          ),
+                        ]
+                      : [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: selectedProducts.length,
+                            itemBuilder: (context, index) {
+                              final product = selectedProducts[index];
+                              return product;
+                            },
+                          ),
+                        ],
+                ),
+                ExpansionTile(
+                  title: Text(
+                    AppLocalizations.of(context)!.listProducts,
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
-                ],
-              ),
+                  initiallyExpanded: true,
+                  leading: const Icon(Icons.list),
+                  children: purchasedProducts.isEmpty
+                      ? [
+                          Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.noSavedProducts,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ]
+                      : [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: purchasedProducts.length,
+                            itemBuilder: (context, index) {
+                              final product = purchasedProducts[index];
+                              return product;
+                            },
+                          ),
+                        ],
+                ),
+              ],
             ),
-          )
-        ],
+          ),
+        )
+      ],
+    );
+
+    if (isIOS) {
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(ref.watch(supermarketProvider)),
+          backgroundColor: Colors.transparent,
+          border: null,
+        ),
+        child: SafeArea(
+          child: body,
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text(ref.watch(supermarketProvider))),
       ),
+      body: body,
     );
   }
 }

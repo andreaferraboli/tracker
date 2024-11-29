@@ -317,7 +317,11 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.viewMeals),
             ),
-            child: _buildBody(),
+            child: SafeArea(
+              child: Material(
+                child: _buildBody(),
+              ),
+            ),
           )
         : Scaffold(
             appBar:

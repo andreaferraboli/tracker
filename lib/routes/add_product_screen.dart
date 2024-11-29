@@ -48,14 +48,6 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     'quantityWeightOwned': 0,
     'unit': '',
     'macronutrients': {},
-    // {
-    //   'Proteins': 0.0,
-    //   'Carbohydrates': 0.0,
-    //   'Energy': 0.0,
-    //   'Fiber': 0.0,
-    //   'Fats': 0.0,
-    //   'Sugars': 0.0,
-    // },
     'expirationDate': '',
     'supermarket': '',
     'purchaseDate': '',
@@ -83,6 +75,14 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
   final TextEditingController _nameProductController = TextEditingController();
   final TextEditingController _barcodeController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
+  final TextEditingController _discountedPriceController =
+      TextEditingController();
+  final TextEditingController _discountedQuantityOwnedController =
+      TextEditingController();
+  final TextEditingController _discountedQuantityUnitOwnedController =
+      TextEditingController();
+  final TextEditingController _discountedQuantityWeightOwnedController =
+      TextEditingController();
 
   //aggiungi i controller per ogni campo di testo
 
@@ -148,6 +148,10 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     _totalWeightController.dispose();
     _nameProductController.dispose();
     _barcodeController.dispose();
+    _discountedPriceController.dispose();
+    _discountedQuantityOwnedController.dispose();
+    _discountedQuantityUnitOwnedController.dispose();
+    _discountedQuantityWeightOwnedController.dispose();
     super.dispose();
   }
 

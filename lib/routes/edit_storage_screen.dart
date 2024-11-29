@@ -73,7 +73,11 @@ class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
                 ],
               ),
             ),
-            child: _buildContent(context),
+            child: SafeArea(
+              child: Material(
+                child: _buildContent(context),
+              ),
+            ),
           )
         : Scaffold(
             appBar: AppBar(

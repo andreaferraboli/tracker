@@ -199,7 +199,11 @@ class ViewExpensesScreenState extends State<ViewExpensesScreen> {
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.viewExpenses),
             ),
-            child: _buildBody(),
+            child: SafeArea(
+              child: Material(
+                child: _buildBody(),
+              ),
+            ),
           )
         : Scaffold(
             appBar: AppBar(

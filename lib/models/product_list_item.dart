@@ -43,7 +43,8 @@ class ProductListItem extends ConsumerStatefulWidget {
 }
 
 class ProductListItemState extends ConsumerState<ProductListItem> {
-  final TextEditingController _discountedPriceController = TextEditingController();
+  final TextEditingController _discountedPriceController =
+      TextEditingController();
 
   double getCurrentPrice() {
     return widget.discountedPrice ?? widget.product.price;
@@ -58,7 +59,7 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
         widget.product.buyQuantity = 0;
       }
     });
-    
+
     if (oldQuantity == 0 && widget.product.buyQuantity > 0) {
       widget.onTotalPriceChange(getCurrentPrice() * widget.product.buyQuantity);
     } else {
@@ -73,9 +74,10 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
       setState(() {
         widget.discountedPrice = null;
       });
-      
+
       if (widget.product.buyQuantity > 0) {
-        final priceDifference = (oldPrice - widget.product.price) * widget.product.buyQuantity;
+        final priceDifference =
+            (oldPrice - widget.product.price) * widget.product.buyQuantity;
         widget.onTotalPriceChange(-priceDifference);
       }
     }
@@ -88,9 +90,10 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
       setState(() {
         widget.discountedPrice = discountedPrice;
       });
-      
+
       if (widget.product.buyQuantity > 0) {
-        final priceDifference = (oldPrice - discountedPrice) * widget.product.buyQuantity;
+        final priceDifference =
+            (oldPrice - discountedPrice) * widget.product.buyQuantity;
         widget.onTotalPriceChange(-priceDifference);
       }
     }
@@ -218,15 +221,21 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                       IconButton(
                         icon: Icon(
                           widget.discountedPrice != null
-                              ? (isIOS ? CupertinoIcons.tag_fill : Icons.local_offer)
-                              : (isIOS ? HugeIcons.strokeRoundedDiscount : HugeIcons.strokeRoundedDiscount),
+                              ? (isIOS
+                                  ? CupertinoIcons.tag_fill
+                                  : Icons.local_offer)
+                              : (isIOS
+                                  ? HugeIcons.strokeRoundedDiscount
+                                  : HugeIcons.strokeRoundedDiscount),
                           color: widget.selected
                               ? Theme.of(context).colorScheme.onPrimary
-                              : (widget.discountedPrice != null 
-                                  ? Colors.green 
+                              : (widget.discountedPrice != null
+                                  ? Colors.green
                                   : Theme.of(context).colorScheme.primary),
                         ),
-                        onPressed: widget.discountedPrice != null ? _removeDiscount : _showDiscountDialog,
+                        onPressed: widget.discountedPrice != null
+                            ? _removeDiscount
+                            : _showDiscountDialog,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -235,20 +244,17 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                             shape: const CircleBorder(),
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context)
-                                    .elevatedButtonTheme
-                                    .style
-                                    ?.backgroundColor
-                                    ?.resolve({}),
+                                : Theme.of(context).primaryColor,
+                            elevation: 2,
                             child: IconButton(
                               icon: Icon(
                                 isIOS ? CupertinoIcons.minus : Icons.remove,
-                                color: !widget.selected
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.primary,
+                                color: widget.selected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onPrimary,
+                                size: 20,
                               ),
-                              iconSize: 30.0,
-                              padding: const EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(8.0),
                               onPressed: () {
                                 updateQuantity(-1);
                               },
@@ -256,37 +262,36 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                           ),
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Text('${widget.product.buyQuantity}',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: widget.selected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color)),
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Text(
+                              '${widget.product.buyQuantity}',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: widget.selected
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
+                              ),
+                            ),
                           ),
                           Material(
                             shape: const CircleBorder(),
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context)
-                                    .elevatedButtonTheme
-                                    .style
-                                    ?.backgroundColor
-                                    ?.resolve({}),
+                                : Theme.of(context).primaryColor,
+                            elevation: 2,
                             child: IconButton(
                               icon: Icon(
                                 isIOS ? CupertinoIcons.plus : Icons.add,
-                                color: !widget.selected
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.primary,
+                                color: widget.selected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onPrimary,
+                                size: 20,
                               ),
-                              iconSize: 30.0,
-                              padding: const EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(8.0),
                               onPressed: () {
                                 updateQuantity(1);
                               },

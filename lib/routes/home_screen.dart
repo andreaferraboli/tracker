@@ -148,119 +148,55 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     final drawerContent = ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
-        if (Platform.isIOS)
-          Container(
-            padding: const EdgeInsets.only(
-              top: 70.0,
-              bottom: 20.0,
-              left: 20.0,
-            ),
-            color: CupertinoTheme.of(context).barBackgroundColor,
-            child: Text(
-              AppLocalizations.of(context)!.menu,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-        else
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).appBarTheme.backgroundColor,
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.menu,
-              style: TextStyle(
-                color: Theme.of(context).appBarTheme.foregroundColor,
-                fontSize: 24,
-              ),
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Theme.of(context).appBarTheme.backgroundColor,
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.menu,
+            style: TextStyle(
+              color: Theme.of(context).appBarTheme.foregroundColor,
+              fontSize: 24,
             ),
           ),
-        Platform.isIOS
-            ? CupertinoListTile(
-                title: Text(AppLocalizations.of(context)!.changeLanguage),
-                leading: const Icon(CupertinoIcons.globe),
-                trailing: const CupertinoListTileChevron(),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const LanguageScreen(),
-                    ),
-                  );
-                },
-              )
-            : ListTile(
-                leading: const Icon(Icons.language),
-                title: Text(AppLocalizations.of(context)!.changeLanguage),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LanguageScreen(),
-                    ),
-                  );
-                },
+        ),
+        ListTile(
+          leading: const Icon(Icons.language),
+          title: Text(AppLocalizations.of(context)!.changeLanguage),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LanguageScreen(),
               ),
-        Platform.isIOS
-            ? CupertinoListTile(
-                title: Text(AppLocalizations.of(context)!.modifyThemeColors),
-                leading: const Icon(CupertinoIcons.paintbrush),
-                trailing: const CupertinoListTileChevron(),
-                onTap: () {
-                  Navigator.pushNamed(context, '/themeCustomization');
-                },
-              )
-            : ListTile(
-                leading: const Icon(Icons.format_paint),
-                title: Text(AppLocalizations.of(context)!.modifyThemeColors),
-                onTap: () {
-                  Navigator.pushNamed(context, '/themeCustomization');
-                },
-              ),
-        Platform.isIOS
-            ? CupertinoListTile(
-                title: Text(AppLocalizations.of(context)!.changeTheme),
-                leading: const Icon(CupertinoIcons.sun_max),
-                onTap: () {
-                  widget.toggleTheme();
-                  Navigator.pop(context);
-                },
-              )
-            : ListTile(
-                leading: const Icon(Icons.brightness_6),
-                title: Text(AppLocalizations.of(context)!.changeTheme),
-                onTap: () {
-                  widget.toggleTheme();
-                  Navigator.pop(context);
-                },
-              ),
-        Platform.isIOS
-            ? CupertinoListTile(
-                title: Text(AppLocalizations.of(context)!.logout),
-                leading: const Icon(CupertinoIcons.square_arrow_right),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
-                  AppColors.resetAllColors();
-                  ref
-                      .read(supermarketsListProvider.notifier)
-                      .resetSupermarkets();
-                  Navigator.pop(context);
-                },
-              )
-            : ListTile(
-                leading: const Icon(Icons.logout),
-                title: Text(AppLocalizations.of(context)!.logout),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
-                  AppColors.resetAllColors();
-                  ref
-                      .read(supermarketsListProvider.notifier)
-                      .resetSupermarkets();
-                  Navigator.pop(context);
-                },
-              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.format_paint),
+          title: Text(AppLocalizations.of(context)!.modifyThemeColors),
+          onTap: () {
+            Navigator.pushNamed(context, '/themeCustomization');
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.brightness_6),
+          title: Text(AppLocalizations.of(context)!.changeTheme),
+          onTap: () {
+            widget.toggleTheme();
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.logout),
+          title: Text(AppLocalizations.of(context)!.logout),
+          onTap: () {
+            FirebaseAuth.instance.signOut();
+            AppColors.resetAllColors();
+            ref.read(supermarketsListProvider.notifier).resetSupermarkets();
+            Navigator.pop(context);
+          },
+        ),
       ],
     );
 
@@ -272,7 +208,86 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             padding: EdgeInsets.zero,
             child: const Icon(CupertinoIcons.bars),
             onPressed: () {
-              Scaffold.of(context).openDrawer();
+              showCupertinoModalPopup(
+                context: context,
+                builder: (BuildContext context) => CupertinoActionSheet(
+                  title: Text(AppLocalizations.of(context)!.menu),
+                  actions: <Widget>[
+                    CupertinoActionSheetAction(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.globe),
+                          const SizedBox(width: 10),
+                          Text(AppLocalizations.of(context)!.changeLanguage),
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => const LanguageScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    CupertinoActionSheetAction(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.paintbrush),
+                          const SizedBox(width: 10),
+                          Text(AppLocalizations.of(context)!.modifyThemeColors),
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/themeCustomization');
+                      },
+                    ),
+                    CupertinoActionSheetAction(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.sun_max),
+                          const SizedBox(width: 10),
+                          Text(AppLocalizations.of(context)!.changeTheme),
+                        ],
+                      ),
+                      onPressed: () {
+                        widget.toggleTheme();
+                        Navigator.pop(context);
+                      },
+                    ),
+                    CupertinoActionSheetAction(
+                      isDestructiveAction: true,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.square_arrow_right),
+                          const SizedBox(width: 10),
+                          Text(AppLocalizations.of(context)!.logout),
+                        ],
+                      ),
+                      onPressed: () {
+                        FirebaseAuth.instance.signOut();
+                        AppColors.resetAllColors();
+                        ref
+                            .read(supermarketsListProvider.notifier)
+                            .resetSupermarkets();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                  cancelButton: CupertinoActionSheetAction(
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              );
             },
           ),
           trailing: widget.user == null
@@ -309,10 +324,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
         ),
-        child: Scaffold(
-          drawer: Drawer(child: drawerContent),
-          body: gridContent,
-        ),
+        child: gridContent,
       );
     }
 
@@ -396,7 +408,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40),
+              Icon(icon, size: 40, color: Colors.white),
               const SizedBox(height: 10),
               Text(label, textAlign: TextAlign.center),
             ],
