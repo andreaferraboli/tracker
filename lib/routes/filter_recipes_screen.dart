@@ -74,6 +74,8 @@ class FilterRecipesScreenState extends State<FilterRecipesScreen> {
               middle: Text(AppLocalizations.of(context)!.filterRecipes),
             )
           : AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.filterRecipes),
             ),
       body: products.isEmpty

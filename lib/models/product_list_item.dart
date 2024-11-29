@@ -118,7 +118,7 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
       },
       child: Card(
         color: widget.selected
-            ? Theme.of(context).primaryColor
+            ? Theme.of(context).colorScheme.primary
             : Theme.of(context).cardColor,
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
         elevation: 3,
@@ -244,7 +244,7 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                             shape: const CircleBorder(),
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).primaryColor,
+                                : Theme.of(context).colorScheme.primary,
                             elevation: 2,
                             child: IconButton(
                               icon: Icon(
@@ -281,7 +281,7 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                             shape: const CircleBorder(),
                             color: widget.selected
                                 ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).primaryColor,
+                                : Theme.of(context).colorScheme.primary,
                             elevation: 2,
                             child: IconButton(
                               icon: Icon(

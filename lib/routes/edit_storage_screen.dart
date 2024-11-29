@@ -81,6 +81,8 @@ class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.editStorage),
               actions: [
                 IconButton(

@@ -41,17 +41,17 @@ class ImageProcessor extends StatefulWidget {
   static img.Image _processImage(img.Image srcImage) {
     // Create a new image with alpha channel
     final processedImage = img.Image.from(srcImage);
-    
+
     // Iterate through pixels and make white pixels transparent
     for (int y = 0; y < processedImage.height; y++) {
       for (int x = 0; x < processedImage.width; x++) {
         final pixel = processedImage.getPixel(x, y);
-        
+
         // Get RGB values
         final r = pixel.r;
         final g = pixel.g;
         final b = pixel.b;
-        
+
         // Check if pixel is close to white (with some tolerance)
         if (r > 240 && g > 240 && b > 240) {
           // Set pixel to fully transparent
@@ -75,6 +75,8 @@ class _ImageProcessorState extends State<ImageProcessor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
+        centerTitle: true,
         title: const Text('Image Processor'),
       ),
       body: Center(

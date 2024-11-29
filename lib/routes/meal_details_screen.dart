@@ -59,6 +59,8 @@ class MealDetailScreen extends StatelessWidget {
               ),
             )
           : AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(localizations.mealString(meal.mealType)),
               actions: [
                 IconButton(

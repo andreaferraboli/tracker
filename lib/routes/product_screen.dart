@@ -81,6 +81,8 @@ class ProductScreen extends ConsumerWidget {
               ),
             )
           : AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(product.productName),
               actions: [
                 IconButton(
@@ -348,7 +350,7 @@ class ProductScreen extends ConsumerWidget {
                         size: 14,
                       ),
                       Text(
-                        ': ${discountedVersion.discountedQuantityWeightOwned}',
+                        ': ${discountedVersion.discountedQuantityWeightOwned.toStringAsFixed(3)}',
                         style: TextStyle(
                           color: Colors.green,
                           fontSize: 14,

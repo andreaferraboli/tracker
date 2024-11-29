@@ -330,6 +330,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
+        centerTitle: true,
         title: Text(
           AppLocalizations.of(context)!.home,
           style:

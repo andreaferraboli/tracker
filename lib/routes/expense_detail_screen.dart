@@ -123,6 +123,8 @@ class ExpenseDetailScreen extends StatelessWidget {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.expenseDetailTitle),
               actions: [
                 IconButton(
@@ -199,8 +201,7 @@ class ExpenseDetailScreen extends StatelessWidget {
               if (snapshot.exists) {
                 final List<dynamic> productsList = snapshot['products'] ?? [];
                 existingProduct = productsList.firstWhere(
-                    (p) =>
-                        p['productId'] == expense.products[index].idProdotto,
+                    (p) => p['productId'] == expense.products[index].idProdotto,
                     orElse: () => null);
                 if (existingProduct != null) {
                   product = Product.fromJson(existingProduct);
@@ -211,12 +212,10 @@ class ExpenseDetailScreen extends StatelessWidget {
                 context,
                 Platform.isIOS
                     ? CupertinoPageRoute(
-                        builder: (context) =>
-                            ProductScreen(product: product!),
+                        builder: (context) => ProductScreen(product: product!),
                       )
                     : MaterialPageRoute(
-                        builder: (context) =>
-                            ProductScreen(product: product!),
+                        builder: (context) => ProductScreen(product: product!),
                       ),
               );
             },
@@ -236,9 +235,8 @@ class ExpenseDetailScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: Theme.of(context)
-                                .primaryColor
-                                .withOpacity(0.1),
+                            backgroundColor:
+                                Theme.of(context).primaryColor.withOpacity(0.1),
                             child: CategoryServices.iconFromCategory(
                                 item.category),
                           ),

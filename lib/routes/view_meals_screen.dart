@@ -324,8 +324,10 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
             ),
           )
         : Scaffold(
-            appBar:
-                AppBar(title: Text(AppLocalizations.of(context)!.viewMeals)),
+            appBar: AppBar(
+                titleSpacing: 0,
+                centerTitle: true,
+                title: Text(AppLocalizations.of(context)!.viewMeals)),
             body: _buildBody(),
           );
   }

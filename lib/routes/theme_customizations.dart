@@ -119,6 +119,8 @@ class ThemeCustomizationScreenState extends State<ThemeCustomizationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
+        centerTitle: true,
         title: Text(AppLocalizations.of(context)!.customizeTheme),
         actions: [
           IconButton(

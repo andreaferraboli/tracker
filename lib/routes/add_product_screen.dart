@@ -873,6 +873,8 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     } else {
       return Scaffold(
         appBar: AppBar(
+          titleSpacing: 0,
+          centerTitle: true,
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back,

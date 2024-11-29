@@ -53,6 +53,8 @@ class LanguageScreen extends StatelessWidget {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.language),
             ),
             body: ListView(
@@ -108,7 +110,8 @@ class LanguageScreen extends StatelessWidget {
         ),
         title: Text(languageName),
         trailing: isSelected
-            ? const Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeGreen)
+            ? const Icon(CupertinoIcons.check_mark,
+                color: CupertinoColors.activeGreen)
             : null,
         onTap: () {
           MyApp.setLocale(context, Locale(languageCode));
@@ -122,9 +125,8 @@ class LanguageScreen extends StatelessWidget {
         backgroundImage: flagImage,
       ),
       title: Text(languageName),
-      trailing: isSelected
-          ? const Icon(Icons.check, color: Colors.green)
-          : null,
+      trailing:
+          isSelected ? const Icon(Icons.check, color: Colors.green) : null,
       onTap: () {
         MyApp.setLocale(context, Locale(languageCode));
         Navigator.pop(context);

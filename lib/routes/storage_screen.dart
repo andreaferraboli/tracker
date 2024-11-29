@@ -38,8 +38,9 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
   Future<void> _fetchProducts(String userId, WidgetRef ref) async {
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('products').doc(userId);
-    DocumentReference discountedDocRef =
-        FirebaseFirestore.instance.collection('discounted_products').doc(userId);
+    DocumentReference discountedDocRef = FirebaseFirestore.instance
+        .collection('discounted_products')
+        .doc(userId);
 
     userDocRef.snapshots().listen((DocumentSnapshot snapshot) async {
       if (snapshot.exists) {
@@ -48,9 +49,12 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
 
         // Get discounted products
         DocumentSnapshot discountedSnapshot = await discountedDocRef.get();
-        final List<dynamic> discountedProducts = discountedSnapshot.exists && discountedSnapshot.data() != null
-            ? (discountedSnapshot.data() as Map<String, dynamic>)['discounted_products'] ?? []
-            : [];
+        final List<dynamic> discountedProducts =
+            discountedSnapshot.exists && discountedSnapshot.data() != null
+                ? (discountedSnapshot.data()
+                        as Map<String, dynamic>)['discounted_products'] ??
+                    []
+                : [];
 
         if (productsArray.isNotEmpty &&
             productsArray[0]['productName'] != null) {
@@ -63,8 +67,9 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
               );
 
               // Add product if either regular or discounted version has weight > 0
-              if (product['quantityWeightOwned'] > 0 || 
-                  (discountedProduct != null && discountedProduct['discountedQuantityWeightOwned'] > 0)) {
+              if (product['quantityWeightOwned'] > 0 ||
+                  (discountedProduct != null &&
+                      discountedProduct['discountedQuantityWeightOwned'] > 0)) {
                 productWidgets.add(
                   ProductStoreCard(product: Product.fromJson(product)),
                 );
@@ -99,9 +104,10 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
           )
         : Scaffold(
             appBar: AppBar(
-              title: Center(
-                  child: Text(AppLocalizations.of(context)!
-                      .getStorageTitle(widget.name))),
+              titleSpacing: 0,
+              centerTitle: true,
+              title: Text(
+                  AppLocalizations.of(context)!.getStorageTitle(widget.name)),
             ),
             body: _buildBody(),
           );
@@ -197,6 +203,7 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
                   ),
           ],
         ),
+        const SizedBox(height: 16),
         Expanded(
           child: storedProducts.isNotEmpty
               ? GridView.builder(

@@ -78,8 +78,12 @@ class PeriodSelector extends StatelessWidget {
           )
         else
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+            ),
             onPressed: onSelectDate,
-            child: const Icon(Icons.calendar_today),
+            child: Icon(Icons.calendar_today,
+                color: Theme.of(context).colorScheme.primary),
           ),
 
         // Pulsante successivo

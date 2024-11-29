@@ -35,7 +35,7 @@ class MacronutrientTableState extends State<MacronutrientTable> {
     "Sodium"
   ];
 
-  late Map<String, double> macronutrients;
+  Map<String, double> macronutrients = <String, double>{};
 
   @override
   void initState() {

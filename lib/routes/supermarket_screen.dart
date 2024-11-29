@@ -756,29 +756,6 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             if (isIOS)
-              // Stile iOS per i pulsanti
-              CupertinoButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AddProductScreen()),
-                  );
-                },
-                child: Text(AppLocalizations.of(context)!.addProduct),
-              )
-            else
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AddProductScreen()),
-                  );
-                },
-                child: Text(AppLocalizations.of(context)!.addProduct),
-              ),
-            if (isIOS)
               CupertinoButton(
                 color: const Color.fromARGB(255, 33, 78, 52),
                 onPressed: () async {
@@ -801,6 +778,47 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   AppLocalizations.of(context)!.saveExpense,
                   style: const TextStyle(color: Colors.white),
                 ),
+              ),
+            if (isIOS)
+              // Stile iOS per i pulsanti
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 3,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                child: CupertinoButton(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const AddProductScreen()),
+                    );
+                  },
+                  child: Text(AppLocalizations.of(context)!.addProduct),
+                ),
+              )
+            else
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  side: BorderSide(
+                    width: 3,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AddProductScreen()),
+                  );
+                },
+                child: Text(AppLocalizations.of(context)!.addProduct,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary)),
               ),
             if (isIOS)
               CupertinoButton(
@@ -923,7 +941,9 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text(ref.watch(supermarketProvider))),
+        titleSpacing: 0,
+        centerTitle: true,
+        title: Text(ref.watch(supermarketProvider)),
       ),
       body: body,
     );

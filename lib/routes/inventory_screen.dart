@@ -24,6 +24,8 @@ class InventoryScreen extends ConsumerWidget {
               middle: Text(AppLocalizations.of(context)!.inventory),
             )
           : AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.inventory),
             ),
       body: Padding(

@@ -15,9 +15,9 @@ class AddMealScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     Color colazioneColor = const Color.fromRGBO(30, 144, 255, 1.0);
-    Color pranzoColor = const Color.fromRGBO(243, 238, 13, 1.0);
+    Color pranzoColor = const Color.fromRGBO(0, 194, 0, 1.0);
     Color merendaColor = const Color.fromRGBO(236, 124, 38, 1.0);
-    Color cenaColor = const Color.fromRGBO(0, 194, 0, 1.0);
+    Color cenaColor = const Color.fromARGB(255, 201, 6, 240);
 
     final List<MealType> mealTypes = [
       MealType(
@@ -91,6 +91,8 @@ class AddMealScreen extends StatelessWidget {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.insertMealType),
             ),
             body: Padding(

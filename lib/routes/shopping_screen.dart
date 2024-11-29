@@ -24,13 +24,16 @@ class ShoppingScreen extends ConsumerWidget {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.shoppingTitle),
             ),
             body: _buildBody(context, ref, selectedSupermarkets),
           );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref, List<String> selectedSupermarkets) {
+  Widget _buildBody(
+      BuildContext context, WidgetRef ref, List<String> selectedSupermarkets) {
     return GridView.count(
       crossAxisCount: 2,
       padding: const EdgeInsets.all(16.0),
@@ -50,7 +53,8 @@ class ShoppingScreen extends ConsumerWidget {
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
                 title: Text(AppLocalizations.of(context)!.confirmDelete),
-                content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
+                content: Text(
+                    AppLocalizations.of(context)!.confirmDeleteMessage(name)),
                 actions: [
                   CupertinoDialogAction(
                     onPressed: () {
@@ -77,7 +81,8 @@ class ShoppingScreen extends ConsumerWidget {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text(AppLocalizations.of(context)!.confirmDelete),
-                content: Text(AppLocalizations.of(context)!.confirmDeleteMessage(name)),
+                content: Text(
+                    AppLocalizations.of(context)!.confirmDeleteMessage(name)),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -158,7 +163,8 @@ class ShoppingScreen extends ConsumerWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return CupertinoActionSheet(
-                    title: Text(AppLocalizations.of(context)!.selectSupermarket),
+                    title:
+                        Text(AppLocalizations.of(context)!.selectSupermarket),
                     actions: addSupermarketArray.map((name) {
                       return CupertinoActionSheetAction(
                         onPressed: () {
@@ -200,8 +206,10 @@ class ShoppingScreen extends ConsumerWidget {
                               itemBuilder: (context, index) {
                                 final name = addSupermarketArray[index];
                                 return ListTile(
-                                  leading: Image.asset('assets/images/$name.png',
-                                      width: 50, height: 50),
+                                  leading: Image.asset(
+                                      'assets/images/$name.png',
+                                      width: 50,
+                                      height: 50),
                                   title: Text(name),
                                   onTap: () {
                                     ref

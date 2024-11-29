@@ -63,6 +63,9 @@ class RecipeTipsScreenState extends State<RecipeTipsScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
+
               title: Text(AppLocalizations.of(context)!
                   .recipeTips), // Traduci se necessario
             ),

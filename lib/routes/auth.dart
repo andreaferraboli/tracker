@@ -120,6 +120,8 @@ class AuthPageState extends ConsumerState<AuthPage> {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(isLogin
                   ? AppLocalizations.of(context)!.login
                   : AppLocalizations.of(context)!.signUp),

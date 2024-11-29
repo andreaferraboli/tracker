@@ -25,7 +25,7 @@ class MealTypeCard extends StatelessWidget {
     }
 
     return Card(
-      elevation: 4,
+      elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onTap,
@@ -35,14 +35,8 @@ class MealTypeCard extends StatelessWidget {
           height: 80,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                mealType!.color.withOpacity(0.7),
-                mealType!.color,
-              ],
-            ),
+            color: Colors.transparent,
+            border: Border.all(width: 3, color: mealType!.color),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -50,13 +44,13 @@ class MealTypeCard extends StatelessWidget {
               Icon(
                 mealType!.icon,
                 size: 48,
-                color: Theme.of(context).colorScheme.primary,
+                color: mealType!.color,
               ),
               const SizedBox(height: 8),
               Text(
                 mealType!.mealString(context),
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: mealType!.color,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

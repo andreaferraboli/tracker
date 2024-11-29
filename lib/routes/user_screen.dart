@@ -102,6 +102,8 @@ class _UserScreenState extends State<UserScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.userProfile),
             ),
             body: _buildBody(),

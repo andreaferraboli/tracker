@@ -207,6 +207,8 @@ class ViewExpensesScreenState extends State<ViewExpensesScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(AppLocalizations.of(context)!.viewExpenses),
             ),
             body: _buildBody(),

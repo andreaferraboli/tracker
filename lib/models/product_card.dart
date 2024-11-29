@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tracker/models/base_product.dart';
 import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/quantiy_update_type.dart';
@@ -76,9 +77,10 @@ class _ProductCardState extends ConsumerState<ProductCard> {
       final discountedProduct = discountedProducts
           .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
 
-      final double maxWeight = _useDiscountedValidation && discountedProduct != null
-          ? discountedProduct.discountedQuantityWeightOwned * 1000
-          : widget.product.quantityWeightOwned * 1000;
+      final double maxWeight =
+          _useDiscountedValidation && discountedProduct != null
+              ? discountedProduct.discountedQuantityWeightOwned * 1000
+              : widget.product.quantityWeightOwned * 1000;
 
       if (newWeight > maxWeight) {
         throw const FormatException("Peso superiore alla quantità disponibile");
@@ -189,9 +191,10 @@ class _ProductCardState extends ConsumerState<ProductCard> {
             : 0;
 
     // Calcola la quantità da mostrare in base alla selezione del prodotto scontato
-    final double displayQuantityWeight = _useDiscountedValidation && discountedProduct != null
-        ? discountedProduct.discountedQuantityWeightOwned
-        : widget.product.quantityWeightOwned;
+    final double displayQuantityWeight =
+        _useDiscountedValidation && discountedProduct != null
+            ? discountedProduct.discountedQuantityWeightOwned
+            : widget.product.quantityWeightOwned;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -248,29 +251,53 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                     // Slider per selezionare la quantità
                     Theme.of(context).platform == TargetPlatform.iOS
                         ? CupertinoSlider(
-                            value: widget.product.sliderValue,
+                            value: _useDiscountedValidation &&
+                                    discountedProduct != null
+                                ? discountedProduct.sliderValue
+                                : widget.product.sliderValue,
                             min: 0,
                             max: maxQuantity,
-                            divisions: widget.product.quantityUnitOwned > 0
-                                ? widget.product.quantityUnitOwned
-                                : null,
+                            divisions: _useDiscountedValidation &&
+                                    discountedProduct != null
+                                ? discountedProduct.discountedQuantityUnitOwned
+                                : widget.product.quantityUnitOwned > 0
+                                    ? widget.product.quantityUnitOwned
+                                    : null,
                             onChanged: (value) {
                               setState(() {
-                                widget.product.sliderValue = value;
+                                if (_useDiscountedValidation &&
+                                    discountedProduct != null) {
+                                  discountedProduct.sliderValue = value;
+                                } else {
+                                  widget.product.sliderValue = value;
+                                }
                               });
                             },
                           )
                         : Slider(
-                            value: widget.product.sliderValue,
+                            value: _useDiscountedValidation &&
+                                    discountedProduct != null
+                                ? discountedProduct.sliderValue
+                                : widget.product.sliderValue,
                             min: 0,
                             max: maxQuantity,
-                            divisions: widget.product.quantityUnitOwned > 0
-                                ? widget.product.quantityUnitOwned
-                                : null,
-                            label: '${widget.product.sliderValue}',
+                            divisions: _useDiscountedValidation &&
+                                    discountedProduct != null
+                                ? discountedProduct.discountedQuantityUnitOwned
+                                : widget.product.quantityUnitOwned > 0
+                                    ? widget.product.quantityUnitOwned
+                                    : null,
+                            label: _useDiscountedValidation
+                                ? null
+                                : '${_useDiscountedValidation && discountedProduct != null ? discountedProduct.sliderValue : widget.product.sliderValue}',
                             onChanged: (value) {
                               setState(() {
-                                widget.product.sliderValue = value;
+                                if (_useDiscountedValidation &&
+                                    discountedProduct != null) {
+                                  discountedProduct.sliderValue = value;
+                                } else {
+                                  widget.product.sliderValue = value;
+                                }
                               });
                             },
                           ),
@@ -350,8 +377,8 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                               });
                             },
                             child: Icon(Icons.discount,
-                                color: _useDiscountedValidation 
-                                    ? Theme.of(context).colorScheme.primary 
+                                color: _useDiscountedValidation
+                                    ? Theme.of(context).colorScheme.primary
                                     : Colors.grey),
                           ),
                       ],
@@ -367,23 +394,31 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                   ? CupertinoButton(
                       onPressed: (_weightFromTextField > 0 ||
                               _unitsFromTextField > 0 ||
-                              widget.product.sliderValue > 0)
+                              (_useDiscountedValidation &&
+                                          discountedProduct != null
+                                      ? discountedProduct.sliderValue
+                                      : widget.product.sliderValue) >
+                                  0)
                           ? () {
                               double quantity = 0;
-                              if (widget.product.sliderValue > 0) {
-                                widget.product.quantityUpdateType =
+                              final selectedProduct =
+                                  _useDiscountedValidation &&
+                                          discountedProduct != null
+                                      ? discountedProduct
+                                      : widget.product;
+
+                              if (selectedProduct.sliderValue > 0) {
+                                selectedProduct.quantityUpdateType =
                                     QuantityUpdateType.slider;
-                                quantity = double.parse(
-                                    (widget.product.sliderValue *
-                                            widget.product.unitWeight)
-                                        .toStringAsFixed(3));
+                                quantity = selectedProduct.sliderValue *
+                                    widget.product.unitWeight;
                               } else if (_unitsFromTextField > 0) {
-                                widget.product.quantityUpdateType =
+                                selectedProduct.quantityUpdateType =
                                     QuantityUpdateType.units;
                                 quantity = _unitsFromTextField.toDouble() *
                                     widget.product.totalWeight;
                               } else if (_weightFromTextField > 0) {
-                                widget.product.quantityUpdateType =
+                                selectedProduct.quantityUpdateType =
                                     QuantityUpdateType.weight;
                                 quantity = double.parse(
                                     (_weightFromTextField / 1000)
@@ -401,23 +436,31 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                   : ElevatedButton(
                       onPressed: (_weightFromTextField > 0 ||
                               _unitsFromTextField > 0 ||
-                              widget.product.sliderValue > 0)
+                              (_useDiscountedValidation &&
+                                          discountedProduct != null
+                                      ? discountedProduct.sliderValue
+                                      : widget.product.sliderValue) >
+                                  0)
                           ? () {
                               double quantity = 0;
-                              if (widget.product.sliderValue > 0) {
-                                widget.product.quantityUpdateType =
+                              final BaseProduct selectedProduct =
+                                  _useDiscountedValidation &&
+                                          discountedProduct != null
+                                      ? discountedProduct
+                                      : widget.product;
+
+                              if (selectedProduct.sliderValue > 0) {
+                                selectedProduct.quantityUpdateType =
                                     QuantityUpdateType.slider;
-                                quantity = double.parse(
-                                    (widget.product.sliderValue *
-                                            widget.product.unitWeight)
-                                        .toStringAsFixed(3));
+                                quantity = selectedProduct.sliderValue *
+                                    widget.product.unitWeight;
                               } else if (_unitsFromTextField > 0) {
-                                widget.product.quantityUpdateType =
+                                selectedProduct.quantityUpdateType =
                                     QuantityUpdateType.units;
                                 quantity = _unitsFromTextField.toDouble() *
                                     widget.product.totalWeight;
                               } else if (_weightFromTextField > 0) {
-                                widget.product.quantityUpdateType =
+                                selectedProduct.quantityUpdateType =
                                     QuantityUpdateType.weight;
                                 quantity = double.parse(
                                     (_weightFromTextField / 1000)

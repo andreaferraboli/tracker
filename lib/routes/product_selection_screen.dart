@@ -103,127 +103,127 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
 
   void _saveMeal() async {
     //TODO:non va il salvataggio con i prodotti scontati
-    try {
-      DocumentReference userDocRef = FirebaseFirestore.instance
-          .collection('products')
-          .doc(FirebaseAuth.instance.currentUser?.uid);
-      DocumentReference discountedDocRef = FirebaseFirestore.instance
-          .collection('discounted_products')
-          .doc(FirebaseAuth.instance.currentUser?.uid);
+    // try {
+    DocumentReference userDocRef = FirebaseFirestore.instance
+        .collection('products')
+        .doc(FirebaseAuth.instance.currentUser?.uid);
+    DocumentReference discountedDocRef = FirebaseFirestore.instance
+        .collection('discounted_products')
+        .doc(FirebaseAuth.instance.currentUser?.uid);
 
-      DocumentSnapshot userDoc = await userDocRef.get();
-      DocumentSnapshot discountedDoc = await discountedDocRef.get();
+    DocumentSnapshot userDoc = await userDocRef.get();
+    DocumentSnapshot discountedDoc = await discountedDocRef.get();
 
-      List<dynamic> products = userDoc['products'];
-      List<dynamic> discountedProducts =
-          discountedDoc.exists && discountedDoc.data() != null
-              ? (discountedDoc.data()
-                      as Map<String, dynamic>)['discounted_products'] ??
-                  []
-              : [];
+    List<dynamic> products = userDoc['products'];
+    List<dynamic> discountedProducts =
+        discountedDoc.exists && discountedDoc.data() != null
+            ? (discountedDoc.data()
+                    as Map<String, dynamic>)['discounted_products'] ??
+                []
+            : [];
 
-      Map<String, double> macronutrients = {};
-      double totalExpense = 0;
-      List<Map<String, dynamic>> productsToSave =
-          mealProducts.map((mealProduct) {
-        mealProduct.macronutrients.forEach((key, value) {
-          macronutrients[key] = (macronutrients[key] ?? 0) +
-              value * (mealProduct.selectedQuantity * 10);
-        });
+    Map<String, double> macronutrients = {};
+    double totalExpense = 0;
+    List<Map<String, dynamic>> productsToSave = mealProducts.map((mealProduct) {
+      mealProduct.macronutrients.forEach((key, value) {
+        macronutrients[key] = (macronutrients[key] ?? 0) +
+            value * (mealProduct.selectedQuantity * 10);
+      });
 
-        // Cerca se il prodotto è scontato
-        final discountedProduct = discountedProducts.firstWhere(
-          (dp) => dp['productId'] == mealProduct.productId,
-          orElse: () => null,
-        );
+      // Cerca se il prodotto è scontato
+      final discountedProduct = discountedProducts.firstWhere(
+        (dp) => dp['productId'] == mealProduct.productId,
+        orElse: () => null,
+      );
 
-        // Usa il prezzo scontato se disponibile
-        final price = discountedProduct != null
-            ? discountedProduct['discountedPrice']
-            : mealProduct.price;
+      // Usa il prezzo scontato se disponibile
+      final price = discountedProduct != null
+          ? discountedProduct['discountedPrice']
+          : mealProduct.price;
 
-        double pricePerKg = price / mealProduct.totalWeight;
-        double productExpense = pricePerKg * mealProduct.selectedQuantity;
-        totalExpense += productExpense;
+      double pricePerKg = price / mealProduct.totalWeight;
+      double productExpense = pricePerKg * mealProduct.selectedQuantity;
+      totalExpense += productExpense;
 
-        // Aggiorna le quantità solo nel documento appropriato
-        if (discountedProduct != null) {
-          // Se il prodotto è scontato, aggiorna solo nella collezione discounted_products
-          int index = discountedProducts.indexWhere(
-              (product) => product['productId'] == mealProduct.productId);
-          if (index != -1) {
-            _updateProductQuantities(discountedProducts[index], mealProduct);
-          }
-        } else {
-          // Se il prodotto non è scontato, aggiorna solo nella collezione products
-          int index = products.indexWhere(
-              (product) => product['productId'] == mealProduct.productId);
-          if (index != -1) {
-            _updateProductQuantities(products[index], mealProduct);
-          }
+      // Aggiorna le quantità solo nel documento appropriato
+      if (discountedProduct != null) {
+        // Se il prodotto è scontato, aggiorna solo nella collezione discounted_products
+        int index = discountedProducts.indexWhere(
+            (product) => product['productId'] == mealProduct.productId);
+        if (index != -1) {
+          _updateProductQuantities(discountedProducts[index], mealProduct);
         }
-
-        return {
-          'idProdotto': mealProduct.productId,
-          'productName': mealProduct.productName,
-          'price': productExpense.toStringAsFixed(3),
-          'category': mealProduct.category,
-          'quantitySelected': mealProduct.selectedQuantity,
-          'isDiscounted': discountedProduct != null,
-          'originalPrice': mealProduct.price,
-          'discountedPrice': discountedProduct?['discountedPrice'],
-        };
-      }).toList();
-
-      // Aggiorna solo i documenti che sono stati modificati
-      bool hasNormalProducts = mealProducts.any((p) =>
-          !discountedProducts.any((dp) => dp['productId'] == p.productId));
-      bool hasDiscountedProducts = mealProducts.any((p) =>
-          discountedProducts.any((dp) => dp['productId'] == p.productId));
-
-      if (hasNormalProducts) {
-        await userDocRef.update({
-          "products": products,
-        });
+      } else {
+        // Se il prodotto non è scontato, aggiorna solo nella collezione products
+        int index = products.indexWhere(
+            (product) => product['productId'] == mealProduct.productId);
+        if (index != -1) {
+          _updateProductQuantities(products[index], mealProduct);
+        }
       }
 
-      if (hasDiscountedProducts) {
-        await discountedDocRef.set({
-          "discounted_products": discountedProducts,
-        });
-      }
+      return {
+        'idProdotto': mealProduct.productId,
+        'productName': mealProduct.productName,
+        'price': productExpense.toStringAsFixed(3),
+        'category': mealProduct.category,
+        'quantitySelected': mealProduct.selectedQuantity,
+        'isDiscounted': discountedProduct != null,
+        'originalPrice': mealProduct.price,
+        'discountedPrice': discountedProduct?['discountedPrice'],
+      };
+    }).toList();
 
-      // Salva il pasto
-      userDocRef = FirebaseFirestore.instance
-          .collection('meals')
-          .doc(FirebaseAuth.instance.currentUser!.uid);
+    // Aggiorna solo i documenti che sono stati modificati
+    bool hasNormalProducts = mealProducts.any(
+        (p) => !discountedProducts.any((dp) => dp['productId'] == p.productId));
+    bool hasDiscountedProducts = mealProducts.any(
+        (p) => discountedProducts.any((dp) => dp['productId'] == p.productId));
+
+    if (hasNormalProducts) {
       await userDocRef.update({
-        'meals': FieldValue.arrayUnion([
-          {
-            'id': DateTime.now().toIso8601String(),
-            'mealType': widget.mealType.name,
-            'totalExpense': totalExpense.toStringAsFixed(3),
-            'products': productsToSave,
-            'macronutrients': macronutrients,
-            'date': DateFormat('yyyy-MM-dd').format(selectedDate),
-          }
-        ])
+        "products": products,
       });
-
-      if (!mounted) return;
-      ToastNotifier.showSuccess(
-          context, AppLocalizations.of(context)!.mealSavedSuccessfully);
-      int count = 0;
-      Navigator.of(context).popUntil((route) {
-        return count++ == 2;
-      });
-    } catch (e) {
-      print(e);
-      ToastNotifier.showError('Errore durante il salvataggio del pasto: $e');
     }
+
+    if (hasDiscountedProducts) {
+      await discountedDocRef.set({
+        "discounted_products": discountedProducts,
+      });
+    }
+
+    // Salva il pasto
+    userDocRef = FirebaseFirestore.instance
+        .collection('meals')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+    await userDocRef.update({
+      'meals': FieldValue.arrayUnion([
+        {
+          'id': DateTime.now().toIso8601String(),
+          'mealType': widget.mealType.name,
+          'totalExpense': totalExpense.toStringAsFixed(3),
+          'products': productsToSave,
+          'macronutrients': macronutrients,
+          'date': DateFormat('yyyy-MM-dd').format(selectedDate),
+        }
+      ])
+    });
+
+    if (!mounted) return;
+    ToastNotifier.showSuccess(
+        context, AppLocalizations.of(context)!.mealSavedSuccessfully);
+    int count = 0;
+    Navigator.of(context).popUntil((route) {
+      return count++ == 2;
+    });
+    // } catch (e) {
+    //   print(e);
+    //   ToastNotifier.showError('Errore durante il salvataggio del pasto: $e');
+    // }
   }
 
   void _updateProductQuantities(dynamic product, Product mealProduct) {
+    //TODO: non va il salvataggio con i prodotti scontati
     switch (mealProduct.quantityUpdateType) {
       case QuantityUpdateType.slider:
         product['quantityUnitOwned'] -=
@@ -434,6 +434,8 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              titleSpacing: 0,
+              centerTitle: true,
               title: Text(
                   "${AppLocalizations.of(context)!.search}-${widget.mealType.mealString(context)}"),
               backgroundColor: widget.mealType.color,
@@ -546,8 +548,8 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
                   title: Text(
                     AppLocalizations.of(context)!.selectedProducts,
                     style: Platform.isIOS
-    ? CupertinoTheme.of(context).textTheme.textStyle
-    : Theme.of(context).textTheme.bodyLarge,
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                   initiallyExpanded: mealProducts.isNotEmpty,
                   leading: const Icon(Icons.food_bank),
@@ -592,8 +594,8 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
                   title: Text(
                     AppLocalizations.of(context)!.listProducts,
                     style: Platform.isIOS
-    ? CupertinoTheme.of(context).textTheme.textStyle
-    : Theme.of(context).textTheme.bodyLarge,
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                   initiallyExpanded: true,
                   leading: const Icon(Icons.list),
