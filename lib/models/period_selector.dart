@@ -79,6 +79,7 @@ class PeriodSelector extends StatelessWidget {
         else
           ElevatedButton(
             style: ElevatedButton.styleFrom(
+              shadowColor: Colors.transparent,
               backgroundColor: Colors.transparent,
             ),
             onPressed: onSelectDate,

@@ -808,7 +808,9 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             else
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
+                  backgroundColor: Colors
+                      .transparent,
+                  shadowColor: Colors.transparent,
                   side: BorderSide(
                     width: 3,
                     color: Theme.of(context).colorScheme.primary,
