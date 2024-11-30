@@ -673,6 +673,17 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                 ),
               ),
               CupertinoButton(
+                child: Icon(CupertinoIcons.delete,
+                    color: Theme.of(context).colorScheme.error),
+                onPressed: () {
+                  setState(() {
+                    _imageUrlController.clear();
+                    _selectedImage = null;
+                    _productData['imageUrl'] = '';
+                  });
+                },
+              ),
+              CupertinoButton(
                 child: Icon(CupertinoIcons.check_mark,
                     color: Theme.of(context).colorScheme.primary),
                 onPressed: () {
@@ -717,6 +728,16 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                 ),
               ),
               IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    _imageUrlController.clear();
+                    _selectedImage = null;
+                    _productData['imageUrl'] = '';
+                  });
+                },
+              ),
+              IconButton(
                 icon: Icon(Icons.save,
                     color: Theme.of(context).colorScheme.primary),
                 onPressed: () {
@@ -741,8 +762,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       user = FirebaseAuth.instance.currentUser;
-      if (_selectedImage != null ||
-          _productData['imageUrl'] != widget.product?.imageUrl) {
+      if (_selectedImage != null) {
         if (user != null) {
           final storageRef = FirebaseStorage.instance
               .ref()
@@ -822,13 +842,13 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
         _productData['price'] / _productData['quantity'];
     _productData['unitWeight'] =
         _productData['totalWeight'] / _productData['quantity'];
-    if (_productData['quantityUnitOwned'] == 0) {
-      _productData['quantityUnitOwned'] = _productData['quantity'];
-    }
-    if (_productData['quantityWeightOwned'] == 0) {
-      _productData['quantityWeightOwned'] =
-          _productData['totalWeight'] * _productData['quantityOwned'];
-    }
+    // if (_productData['quantityUnitOwned'] == 0) {
+    //   _productData['quantityUnitOwned'] = _productData['quantity'];
+    // }
+    // if (_productData['quantityWeightOwned'] == 0) {
+    //   _productData['quantityWeightOwned'] =
+    //       _productData['totalWeight'] * _productData['quantityOwned'];
+    // }
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       user = FirebaseAuth.instance.currentUser;
