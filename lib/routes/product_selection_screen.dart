@@ -3,10 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product_added_to_meal.dart';
 import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
+import 'package:tracker/providers/discounted_products_provider.dart';
+import 'package:tracker/providers/products_provider.dart';
 
 import '../models/category_selection_row.dart';
 import '../models/meal_type.dart';
@@ -15,7 +18,7 @@ import '../models/product_card.dart';
 import '../models/quantiy_update_type.dart';
 import '../services/toast_notifier.dart';
 
-class ProductSelectionScreen extends StatefulWidget {
+class ProductSelectionScreen extends ConsumerStatefulWidget {
   final MealType mealType;
 
   const ProductSelectionScreen({
@@ -27,7 +30,8 @@ class ProductSelectionScreen extends StatefulWidget {
   ProductSelectionScreenState createState() => ProductSelectionScreenState();
 }
 
-class ProductSelectionScreenState extends State<ProductSelectionScreen> {
+class ProductSelectionScreenState
+    extends ConsumerState<ProductSelectionScreen> {
   final Map<String, List<String>> defaultCategories = {
     'Breakfast': ['dessert', 'dairy_products', 'fruit', 'drinks'],
     'Lunch': ['pasta_bread_rice', 'sauces_condiments', 'fruit', 'vegetables'],
@@ -184,12 +188,21 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
       await userDocRef.update({
         "products": products,
       });
+      // Aggiorna anche il provider
+      final productsLocalProvider =
+          ref.read(productsProvider.notifier).fetchProducts();
     }
 
     if (hasDiscountedProducts) {
+      discountedProducts
+          .removeWhere((p) => p['discountedQuantityWeightOwned'] == 0);
+
       await discountedDocRef.set({
         "discounted_products": discountedProducts,
       });
+
+      // Aggiorna anche il provider
+      ref.read(discountedProductsProvider.notifier).fetchDiscountedProducts();
     }
 
     // Salva il pasto
@@ -223,60 +236,73 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
   }
 
   void _updateProductQuantities(dynamic product, Product mealProduct) {
+    String globalQuantityUnitOwned = 'quantityUnitOwned';
+    String globalQuantityOwned = 'quantityOwned';
+    String globalQuantityWeightOwned = 'quantityWeightOwned';
+    if (product.containsKey('quantityUnitOwned')) {
+      globalQuantityUnitOwned = 'quantityUnitOwned';
+      globalQuantityOwned = 'quantityOwned';
+      globalQuantityWeightOwned = 'quantityWeightOwned';
+    } else if (product.containsKey('discountedQuantityUnitOwned')) {
+      globalQuantityUnitOwned = 'discountedQuantityUnitOwned';
+      globalQuantityOwned = 'discountedQuantityOwned';
+      globalQuantityWeightOwned = 'discountedQuantityWeightOwned';
+    }
+
     //TODO: non va il salvataggio con i prodotti scontati
     switch (mealProduct.quantityUpdateType) {
       case QuantityUpdateType.slider:
-        product['quantityUnitOwned'] -=
+        product[globalQuantityUnitOwned] -=
             (mealProduct.selectedQuantity / mealProduct.unitWeight).round();
-        product['quantityWeightOwned'] -= mealProduct.selectedQuantity;
-        if (product['quantityUnitOwned'] <= 0) {
-          product['quantityOwned'] -= 1;
-          product['quantityUnitOwned'] = mealProduct.quantity;
+        product[globalQuantityWeightOwned] -= mealProduct.selectedQuantity;
+        if (product[globalQuantityUnitOwned] <= 0) {
+          product[globalQuantityOwned] -= 1;
+          product[globalQuantityUnitOwned] = mealProduct.quantity;
         }
         break;
 
       case QuantityUpdateType.weight:
-        if (product['quantityWeightOwned'] >= mealProduct.unitWeight) {
+        if (product[globalQuantityWeightOwned] >= mealProduct.unitWeight) {
           if (mealProduct.selectedQuantity <=
               mealProduct.unitWeight * mealProduct.quantityUnitOwned) {
-            product['quantityUnitOwned'] -=
+            product[globalQuantityUnitOwned] -=
                 (mealProduct.selectedQuantity / mealProduct.unitWeight).ceil();
-            if (product['quantityUnitOwned'] <= 0) {
-              product['quantityOwned'] -= 1;
-              product['quantityUnitOwned'] = mealProduct.quantity;
+            if (product[globalQuantityUnitOwned] <= 0) {
+              product[globalQuantityOwned] -= 1;
+              product[globalQuantityUnitOwned] = mealProduct.quantity;
             }
           } else {
-            product['quantityOwned'] -= 1;
-            if ((product['quantityWeightOwned'] -
+            product[globalQuantityOwned] -= 1;
+            if ((product[globalQuantityWeightOwned] -
                         mealProduct.selectedQuantity) %
                     mealProduct.totalWeight ==
                 0) {
-              product['quantityUnitOwned'] = mealProduct.quantity;
+              product[globalQuantityUnitOwned] = mealProduct.quantity;
             } else {
-              product['quantityUnitOwned'] = mealProduct.quantity -
+              product[globalQuantityUnitOwned] = mealProduct.quantity -
                   ((mealProduct.selectedQuantity / mealProduct.unitWeight)
                           .ceil() -
                       mealProduct.quantityUnitOwned);
             }
           }
         }
-        product['quantityWeightOwned'] -=
+        product[globalQuantityWeightOwned] -=
             double.parse((mealProduct.selectedQuantity).toStringAsFixed(3));
-        if (product['quantityWeightOwned'] <= 0) {
-          product['quantityOwned'] = 0;
-          product['quantityUnitOwned'] = 0;
-          product['quantityWeightOwned'] = 0;
+        if (product[globalQuantityWeightOwned] <= 0) {
+          product[globalQuantityOwned] = 0;
+          product[globalQuantityUnitOwned] = 0;
+          product[globalQuantityWeightOwned] = 0;
         }
         break;
 
       case QuantityUpdateType.units:
-        product['quantityOwned'] -=
+        product[globalQuantityOwned] -=
             mealProduct.selectedQuantity ~/ mealProduct.totalWeight;
-        product['quantityWeightOwned'] -= mealProduct.selectedQuantity;
-        if (product['quantityOwned'] <= 0 &&
-            product['quantityWeightOwned'] <= mealProduct.unitWeight) {
-          product['quantityOwned'] = 0;
-          product['quantityUnitOwned'] = 0;
+        product[globalQuantityWeightOwned] -= mealProduct.selectedQuantity;
+        if (product[globalQuantityOwned] <= 0 &&
+            product[globalQuantityWeightOwned] <= mealProduct.unitWeight) {
+          product[globalQuantityOwned] = 0;
+          product[globalQuantityUnitOwned] = 0;
         }
         break;
 
@@ -284,18 +310,19 @@ class ProductSelectionScreenState extends State<ProductSelectionScreen> {
         ToastNotifier.showError('Tipo di aggiornamento non supportato');
     }
 
-    if (product['quantityOwned'] <= 0) {
-      product['quantityUnitOwned'] = 0;
+    if (product[globalQuantityOwned] <= 0) {
+      product[globalQuantityUnitOwned] = 0;
     }
-    product['quantityWeightOwned'] = double.parse(
-                    (product['quantityWeightOwned']).toStringAsFixed(3))
+    product[globalQuantityWeightOwned] = double.parse(
+                    (product[globalQuantityWeightOwned]).toStringAsFixed(3))
                 .toString()
                 .endsWith('9') ||
-            double.parse((product['quantityWeightOwned']).toStringAsFixed(3))
+            double.parse(
+                    (product[globalQuantityWeightOwned]).toStringAsFixed(3))
                 .toString()
                 .endsWith('1')
-        ? double.parse((product['quantityWeightOwned']).toStringAsFixed(2))
-        : double.parse((product['quantityWeightOwned']).toStringAsFixed(3));
+        ? double.parse((product[globalQuantityWeightOwned]).toStringAsFixed(2))
+        : double.parse((product[globalQuantityWeightOwned]).toStringAsFixed(3));
   }
 
   void _showFilterDialog() {

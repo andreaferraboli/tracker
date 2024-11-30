@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di a
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
+import 'package:tracker/services/toast_notifier.dart';
 
 import '../models/meal.dart';
 import '../models/product.dart';
@@ -15,28 +18,93 @@ class MealDetailScreen extends StatelessWidget {
 
   const MealDetailScreen({super.key, required this.meal});
 
-  Future<void> deleteMeal(Meal meal) async {
-    // Recupera l'ID dell'utente
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-    final mealsDocRef =
-        FirebaseFirestore.instance.collection('meals').doc(userId);
+  Future<bool?> _showDeleteConfirmation(BuildContext context) {
+    if (Platform.isIOS) {
+      return showCupertinoDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text(AppLocalizations.of(context)!.confirm),
+            content: Text(AppLocalizations.of(context)!.confirmDeleteMeal),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(AppLocalizations.of(context)!.no),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                child: Text(AppLocalizations.of(context)!.yes),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      return showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.confirm),
+            content: Text(AppLocalizations.of(context)!.confirmDeleteMeal),
+            actions: <Widget>[
+              TextButton(
+                child: Text(AppLocalizations.of(context)!.no),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              TextButton(
+                child: Text(AppLocalizations.of(context)!.yes,
+                    style: const TextStyle(color: Colors.red)),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
-    // Ottiene il documento dei pasti
-    final mealsDoc = await mealsDocRef.get();
+  Future<void> deleteMeal(Meal meal, BuildContext context) async {
+    final confirm = await _showDeleteConfirmation(context);
+    if (confirm == true) {
+      // Recupera l'ID dell'utente
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final mealsDocRef =
+          FirebaseFirestore.instance.collection('meals').doc(userId);
 
-    // Verifica se il documento esiste e contiene dati
-    if (!mealsDoc.exists || mealsDoc.data() == null) return;
+      // Ottiene il documento dei pasti
+      final mealsDoc = await mealsDocRef.get();
 
-    // Recupera la lista dei pasti
-    final meals = (mealsDoc.data()!['meals'] as List)
-        .map((meal) => Meal.fromJson(meal))
-        .toList();
+      // Verifica se il documento esiste e contiene dati
+      if (!mealsDoc.exists || mealsDoc.data() == null) return;
 
-    // Rimuove il pasto specifico
-    meals.removeWhere((m) => m.id == meal.id);
+      // Recupera la lista dei pasti
+      final meals = (mealsDoc.data()!['meals'] as List)
+          .map((meal) => Meal.fromJson(meal))
+          .toList();
 
-    // Aggiorna il documento dei pasti
-    await mealsDocRef.update({'meals': meals.map((m) => m.toJson()).toList()});
+      // Rimuove il pasto specifico
+      meals.removeWhere((m) => m.id == meal.id);
+
+      // Aggiorna il documento dei pasti
+      await mealsDocRef
+          .update({'meals': meals.map((m) => m.toJson()).toList()});
+
+      if (!context.mounted) return;
+      Navigator.of(context).pop(meals);
+      ToastNotifier.showSuccess(
+        context,
+        AppLocalizations.of(context)!.mealDeleted,
+      );
+    }
   }
 
   @override
@@ -53,7 +121,7 @@ class MealDetailScreen extends StatelessWidget {
               middle: Text(localizations.mealString(meal.mealType)),
               trailing: GestureDetector(
                 onTap: () async {
-                  // Azione per eliminare il pasto
+                  await deleteMeal(meal, context);
                 },
                 child: const Icon(CupertinoIcons.trash, color: Colors.red),
               ),
@@ -67,7 +135,7 @@ class MealDetailScreen extends StatelessWidget {
                   icon: const Icon(Icons.delete),
                   color: Colors.red,
                   onPressed: () async {
-                    // Azione per eliminare il pasto
+                    await deleteMeal(meal, context);
                   },
                 ),
               ],

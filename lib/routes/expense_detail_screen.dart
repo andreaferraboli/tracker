@@ -115,7 +115,10 @@ class ExpenseDetailScreen extends StatelessWidget {
               middle: Text(AppLocalizations.of(context)!.expenseDetailTitle),
               trailing: CupertinoButton(
                 padding: EdgeInsets.zero,
-                child: const Icon(CupertinoIcons.delete),
+                child: const Icon(
+                  CupertinoIcons.delete,
+                  color: CupertinoColors.destructiveRed,
+                ),
                 onPressed: () => _deleteExpense(context),
               ),
             ),
@@ -128,7 +131,7 @@ class ExpenseDetailScreen extends StatelessWidget {
               title: Text(AppLocalizations.of(context)!.expenseDetailTitle),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () => _deleteExpense(context),
                 ),
               ],

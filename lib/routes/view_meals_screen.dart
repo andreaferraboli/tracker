@@ -233,6 +233,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
     }
 
     Map<String, int> counts = {};
+    Set<String> daysWithMeals = {};
     for (Meal meal in filteredMeals) {
       String key;
       DateTime mealDate = DateTime.parse(meal.date);
@@ -256,10 +257,14 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
       if (key.isNotEmpty) {
         macronutrientData[key] = (macronutrientData[key] ?? 0) +
             (meal.macronutrients[selectedMacronutrient] ?? 0);
-        counts[key] = (counts[key] ?? 0) + 1;
+        if (selectedPeriod == 'month' || selectedPeriod == 'year') {
+          if (!daysWithMeals.contains(meal.date)) {
+            daysWithMeals.add(meal.date);
+            counts[key] = (counts[key] ?? 0) + 1;
+          }
+        }
       }
     }
-
     if (selectedPeriod == 'month' || selectedPeriod == 'year') {
       macronutrientData.updateAll((key, value) => value / (counts[key] ?? 1));
     }

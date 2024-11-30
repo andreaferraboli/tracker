@@ -3,11 +3,11 @@ import 'package:tracker/models/quantiy_update_type.dart';
 
 class DiscountedProduct extends BaseProduct {
   final String productId;
-  final int quantityBought;
-  final double discountedQuantityOwned;
-  final double discountedQuantityWeightOwned;
-  final int discountedQuantityUnitOwned;
-  final double discountedPrice;
+  int quantityBought;
+  double discountedQuantityOwned;
+  double discountedQuantityWeightOwned;
+  int discountedQuantityUnitOwned;
+  double discountedPrice;
 
   DiscountedProduct({
     required this.productId,
@@ -16,12 +16,9 @@ class DiscountedProduct extends BaseProduct {
     required this.discountedQuantityWeightOwned,
     required this.discountedQuantityUnitOwned,
     required this.discountedPrice,
-    double sliderValue = 0,
-    QuantityUpdateType quantityUpdateType = QuantityUpdateType.slider,
-  }) : super(
-          sliderValue: sliderValue,
-          quantityUpdateType: quantityUpdateType,
-        );
+    super.sliderValue,
+    QuantityUpdateType super.quantityUpdateType,
+  });
 
   @override
   Map<String, dynamic> toJson() {

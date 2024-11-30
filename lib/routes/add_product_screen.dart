@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,8 +10,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
+import 'package:tracker/providers/discounted_products_provider.dart';
 
 import '../models/product.dart';
 import '../providers/stores_provider.dart';
@@ -57,7 +60,8 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     'unitWeight': 0.0,
     'unitPrice': 0.0,
   };
-
+  DiscountedProduct? discountedProduct;
+  List<DiscountedProduct> discountedProducts = [];
   List<String> categories = [];
   var stores = [];
   String? selectedCategory;
@@ -90,7 +94,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
   void initState() {
     super.initState();
     _loadCategories();
-
+    discountedProducts = ref.read(discountedProductsProvider);
     stores = ref.read(storesProvider);
     if (widget.product != null) {
       _productData['barcode'] = widget.product!.barcode;
@@ -116,6 +120,8 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['quantityWeightOwned'] = widget.product!.quantityWeightOwned;
       selectedCategory = widget.product!.category;
       selectedStore = widget.product!.store;
+      discountedProduct = discountedProducts.firstWhereOrNull(
+          (element) => element.productId == widget.product!.productId);
     } else {
       _productData['supermarket'] =
           widget.supermarketName ?? ref.read(supermarketProvider);
@@ -135,6 +141,14 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     _totalWeightController.text = _productData['totalWeight'].toString();
     _nameProductController.text = _productData['productName'];
     _barcodeController.text = _productData['barcode'];
+    _discountedPriceController.text =
+        discountedProduct?.discountedPrice.toString() ?? '';
+    _discountedQuantityOwnedController.text =
+        discountedProduct?.discountedQuantityOwned.toString() ?? '';
+    _discountedQuantityUnitOwnedController.text =
+        discountedProduct?.discountedQuantityUnitOwned.toString() ?? '';
+    _discountedQuantityWeightOwnedController.text =
+        discountedProduct?.discountedQuantityWeightOwned.toString() ?? '';
   }
 
   @override
@@ -746,6 +760,18 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
           });
         }
       }
+      if (discountedProduct != null) {
+        if (discountedProduct!.discountedQuantityWeightOwned == 0) {
+          ref
+              .read(discountedProductsProvider.notifier)
+              .removeDiscountedProduct(discountedProduct!.productId);
+          discountedProduct = null;
+        } else {
+          ref
+              .read(discountedProductsProvider.notifier)
+              .updateDiscountedProduct(discountedProduct!);
+        }
+      }
 
       // Save product to Firestore
       DocumentReference userDocRef =
@@ -770,6 +796,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
         if (index != -1) {
           products[index] = _productData;
         }
+
 // Aggiorna il documento con l'array aggiornato
         await userDocRef.update({
           "products": products,
@@ -1055,6 +1082,90 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                     ),
                   ],
                 ),
+                if (discountedProduct != null)
+                  Column(
+                    children: [
+                      const Divider(),
+                      Text(
+                        AppLocalizations.of(context)!.discountedProduct,
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTextField(
+                              AppLocalizations.of(context)!
+                                  .discountedQuantityOwned,
+                              _discountedQuantityOwnedController,
+                              (value) {
+                                value = value?.replaceAll(',', '.');
+                                setState(() {
+                                  discountedProduct!.discountedQuantityOwned =
+                                      double.tryParse(value ?? '0') ?? 0;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildTextField(
+                              AppLocalizations.of(context)!
+                                  .discountedQuantityUnitOwned,
+                              _discountedQuantityUnitOwnedController,
+                              (value) {
+                                setState(() {
+                                  value = value?.replaceAll(',', '.');
+                                  discountedProduct!
+                                          .discountedQuantityUnitOwned =
+                                      int.tryParse(value ?? '0') ?? 0;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTextField(
+                              AppLocalizations.of(context)!
+                                  .discountedQuantityWeightOwned,
+                              _discountedQuantityWeightOwnedController,
+                              (value) {
+                                setState(() {
+                                  value = value?.replaceAll(',', '.');
+                                  discountedProduct!
+                                          .discountedQuantityWeightOwned =
+                                      double.tryParse(value ?? '0') ?? 0.0;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildTextField(
+                              AppLocalizations.of(context)!.discountedPrice,
+                              _discountedPriceController,
+                              (value) {
+                                setState(() {
+                                  value = value?.replaceAll(',', '.');
+                                  discountedProduct!.discountedPrice =
+                                      double.tryParse(value ?? '0') ?? 0.0;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(),
+                    ],
+                  ),
                 Row(
                   children: [
                     Flexible(
@@ -1146,6 +1257,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
                 _buildBottomButtons(),
               ],
             ),

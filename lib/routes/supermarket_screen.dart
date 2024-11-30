@@ -13,7 +13,6 @@ import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/product.dart';
-import 'package:tracker/models/product_card.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/providers/meals_provider.dart';
@@ -186,12 +185,15 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   discountedQuantityOwned:
                       existingDiscountedProduct.discountedQuantityOwned +
                           product.product.buyQuantity,
-                  discountedQuantityWeightOwned: existingDiscountedProduct
-                          .discountedQuantityWeightOwned +
-                      product.product.totalWeight * product.product.buyQuantity,
+                  discountedQuantityWeightOwned: double.parse(
+                      (existingDiscountedProduct.discountedQuantityWeightOwned +
+                              product.product.totalWeight *
+                                  product.product.buyQuantity)
+                          .toStringAsFixed(3)),
                   discountedQuantityUnitOwned:
                       existingDiscountedProduct.discountedQuantityUnitOwned,
-                  discountedPrice: product.discountedPrice!,
+                  discountedPrice:
+                      double.parse(product.discountedPrice!.toStringAsFixed(2)),
                 );
                 ref
                     .read(discountedProductsProvider.notifier)
@@ -202,10 +204,13 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   quantityBought: product.product.buyQuantity,
                   discountedQuantityOwned:
                       product.product.buyQuantity.toDouble(),
-                  discountedQuantityWeightOwned:
-                      product.product.totalWeight * product.product.buyQuantity,
+                  discountedQuantityWeightOwned: double.parse(
+                      (product.product.totalWeight *
+                              product.product.buyQuantity)
+                          .toStringAsFixed(3)),
                   discountedQuantityUnitOwned: product.product.quantity,
-                  discountedPrice: product.discountedPrice!,
+                  discountedPrice:
+                      double.parse(product.discountedPrice!.toStringAsFixed(2)),
                 );
                 ref
                     .read(discountedProductsProvider.notifier)
@@ -543,147 +548,147 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
     double currentSum = 0.0;
     List<Meal> meals = ref.read(mealsProvider);
 
-    try {
-      // Mappa per aggregare i consumi dei prodotti (productId -> quantità totale consumata)
-      Map<String, double> productConsumption = {};
+    // try {
+    // Mappa per aggregare i consumi dei prodotti (productId -> quantità totale consumata)
+    Map<String, double> productConsumption = {};
 
-      // Se non ci sono pasti, seleziona randomicamente dai prodotti originali
-      if (meals.isEmpty) {
-        while (currentSum < budget) {
-          var randomProduct = (originalProducts.toList()..shuffle()).first;
-          double cost = randomProduct.product.price;
+    // Se non ci sono pasti, seleziona randomicamente dai prodotti originali
+    if (meals.isEmpty) {
+      while (currentSum < budget) {
+        var randomProduct = (originalProducts.toList()..shuffle()).first;
+        double cost = randomProduct.product.price;
 
-          if (currentSum + cost <= budget) {
-            randomProduct.updateQuantity(1);
-            randomProduct.product.buyQuantity = 1;
-            randomProduct.setSelected(true);
-            suggestedProducts.add(randomProduct);
-            currentSum += cost;
-            _updateTotalBalance(cost);
-          } else {
-            break;
-          }
-        }
-        return suggestedProducts;
-      }
-
-      // Trova il range temporale (numero di settimane di dati)
-      DateTime firstDate = meals
-          .map((meal) => DateTime.parse(meal.date))
-          .reduce((a, b) => a.isBefore(b) ? a : b);
-      DateTime lastDate = meals
-          .map((meal) => DateTime.parse(meal.date))
-          .reduce((a, b) => a.isAfter(b) ? a : b);
-      int totalWeeks = ((lastDate.difference(firstDate).inDays) / 7).ceil();
-
-      // Calcola i consumi aggregati
-      for (var meal in meals) {
-        for (var product in meal.products) {
-          final productId = product['idProdotto'] as String;
-          final quantity = product['quantitySelected'] as double;
-          productConsumption.update(
-            productId,
-            (value) => value + quantity,
-            ifAbsent: () => quantity,
-          );
+        if (currentSum + cost <= budget) {
+          randomProduct.updateQuantity(1);
+          randomProduct.product.buyQuantity = 1;
+          randomProduct.setSelected(true);
+          suggestedProducts.add(randomProduct);
+          currentSum += cost;
+          _updateTotalBalance(cost);
+        } else {
+          break;
         }
       }
-
-      // Calcola la media settimanale per ciascun prodotto
-      Map<String, double> weeklyAverageConsumption = productConsumption.map(
-        (key, value) => MapEntry(key, value / totalWeeks),
-      );
-
-      // Calcola il punteggio di necessità per ciascun prodotto
-      const double epsilon = 0.1; // Fattore di scalatura
-      final HashMap<String, double> categoryZValues =
-          HashMap<String, double>.from({
-        "meat": 1.9, // La carne scade molto rapidamente.
-        "fish": 2, // Il pesce scade anche più velocemente della carne.
-        "pasta_bread_rice": 1.1, // Alimenti secchi, molto stabili.
-        "sauces_condiments": 1.4, // Salse e condimenti hanno una durata media.
-        "vegetables": 1.6, // Le verdure fresche scadono relativamente presto.
-        "fruit": 1.7, // La frutta, a seconda del tipo, scade velocemente.
-        "dairy_products": 1.8, // I latticini hanno una durata breve.
-        "water": 1.0, // L'acqua non scade praticamente mai.
-        "dessert": 1.1, // I dolci confezionati hanno una durata moderata.
-        "salty_snacks": 1.2, // Snack salati, stabili per lungo tempo.
-        "drinks": 1.3, // Bevande confezionate hanno una buona durata.
-      });
-
-      List<Map<String, dynamic>> necessityScores = [];
-
-      for (var product in originalProducts) {
-        final productId = product.product.productId;
-        double alpha =
-            categoryZValues[product.product.category] ?? 1.0; // Esponente
-        double quantityOwned = product.product.quantityWeightOwned;
-        double weeklyConsumption = weeklyAverageConsumption[productId] ?? 0.0;
-
-        double necessityScore = 0.0;
-        if (weeklyConsumption > 0) {
-          necessityScore = pow(2.7172,
-                  ((weeklyConsumption / (epsilon + quantityOwned)) - 1)) *
-              alpha;
-        }
-
-        necessityScores.add({
-          'product': product,
-          'necessityScore': necessityScore,
-        });
-      }
-
-      // Ordina i prodotti per necessityScore decrescente
-      necessityScores
-          .sort((a, b) => b['necessityScore'].compareTo(a['necessityScore']));
-
-      // Seleziona i prodotti fino a raggiungere il budget
-      for (var entry in necessityScores) {
-        var product = entry['product'];
-        double weeklyConsumption =
-            weeklyAverageConsumption[product.product.productId] ?? 0.0;
-        double quantityWeightOwned = product.product.quantityWeightOwned;
-
-        int quantityToBuy =
-            (weeklyConsumption - quantityWeightOwned).abs().ceil();
-        double totalCost = product.product.price * quantityToBuy;
-
-        if (currentSum + totalCost <= budget) {
-          product.updateQuantity(quantityToBuy);
-          product.product.buyQuantity = quantityToBuy;
-          product.setSelected(true);
-          if (quantityToBuy > 0) {
-            suggestedProducts.add(product);
-          }
-          currentSum += totalCost;
-          _updateTotalBalance(totalCost);
-        }
-      }
-
-      // Se il budget non è stato raggiunto, aggiungi prodotti casuali dagli originalProducts
-      if (currentSum < budget) {
-        var remainingBudget = budget - currentSum;
-
-        for (var product in (originalProducts.toList()..shuffle())) {
-          double cost = product.product.price;
-
-          if (currentSum + cost <= budget) {
-            product.updateQuantity(1);
-            product.product.buyQuantity = 1;
-            product.setSelected(true);
-            suggestedProducts.add(product);
-            currentSum += cost;
-            _updateTotalBalance(cost);
-          }
-
-          if (currentSum >= budget) {
-            break;
-          }
-        }
-      }
-    } catch (e) {
-      ToastNotifier.showError('Errore durante il recupero dei pasti: $e');
+      return suggestedProducts;
     }
+
+    // Trova il range temporale (numero di settimane di dati)
+    DateTime firstDate = meals
+        .map((meal) => DateTime.parse(meal.date))
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+    DateTime lastDate = meals
+        .map((meal) => DateTime.parse(meal.date))
+        .reduce((a, b) => a.isAfter(b) ? a : b);
+    int totalWeeks = ((lastDate.difference(firstDate).inDays) / 7).ceil();
+
+    // Calcola i consumi aggregati
+    for (var meal in meals) {
+      for (var product in meal.products) {
+        final productId = product['idProdotto'] as String;
+        final quantity = product['quantitySelected'] as double;
+        productConsumption.update(
+          productId,
+          (value) => value + quantity,
+          ifAbsent: () => quantity,
+        );
+      }
+    }
+
+    // Calcola la media settimanale per ciascun prodotto
+    Map<String, double> weeklyAverageConsumption = productConsumption.map(
+      (key, value) => MapEntry(key, value / totalWeeks),
+    );
+
+    // Calcola il punteggio di necessità per ciascun prodotto
+    const double epsilon = 0.1; // Fattore di scalatura
+    final HashMap<String, double> categoryZValues =
+        HashMap<String, double>.from({
+      "meat": 1.9, // La carne scade molto rapidamente.
+      "fish": 2.0, // Il pesce scade anche più velocemente della carne.
+      "pasta_bread_rice": 1.1, // Alimenti secchi, molto stabili.
+      "sauces_condiments": 1.4, // Salse e condimenti hanno una durata media.
+      "vegetables": 1.6, // Le verdure fresche scadono relativamente presto.
+      "fruit": 1.7, // La frutta, a seconda del tipo, scade velocemente.
+      "dairy_products": 1.8, // I latticini hanno una durata breve.
+      "water": 1.0, // L'acqua non scade praticamente mai.
+      "dessert": 1.1, // I dolci confezionati hanno una durata moderata.
+      "salty_snacks": 1.2, // Snack salati, stabili per lungo tempo.
+      "drinks": 1.3, // Bevande confezionate hanno una buona durata.
+    });
+
+    List<Map<String, dynamic>> necessityScores = [];
+
+    for (var product in originalProducts) {
+      final productId = product.product.productId;
+      double alpha =
+          categoryZValues[product.product.category] ?? 1.0; // Esponente
+      double quantityOwned = product.product.quantityWeightOwned;
+      double weeklyConsumption = weeklyAverageConsumption[productId] ?? 0.0;
+
+      double necessityScore = 0.0;
+      if (weeklyConsumption > 0) {
+        necessityScore =
+            pow(2.7172, ((weeklyConsumption / (epsilon + quantityOwned)) - 1)) *
+                alpha;
+      }
+
+      necessityScores.add({
+        'product': product,
+        'necessityScore': necessityScore,
+      });
+    }
+
+    // Ordina i prodotti per necessityScore decrescente
+    necessityScores
+        .sort((a, b) => b['necessityScore'].compareTo(a['necessityScore']));
+
+    // Seleziona i prodotti fino a raggiungere il budget
+    for (var entry in necessityScores) {
+      var product = entry['product'];
+      double weeklyConsumption =
+          weeklyAverageConsumption[product.product.productId] ?? 0.0;
+      double quantityWeightOwned = product.product.quantityWeightOwned;
+
+      int quantityToBuy =
+          (weeklyConsumption - quantityWeightOwned).abs().ceil();
+      double totalCost = product.product.price * quantityToBuy;
+
+      if (currentSum + totalCost <= budget) {
+        product.updateQuantity(quantityToBuy);
+        product.product.buyQuantity = quantityToBuy;
+        product.setSelected(true);
+        if (quantityToBuy > 0) {
+          suggestedProducts.add(product);
+        }
+        currentSum += totalCost;
+        _updateTotalBalance(totalCost);
+      }
+    }
+
+    // Se il budget non è stato raggiunto, aggiungi prodotti casuali dagli originalProducts
+    if (currentSum < budget) {
+      var remainingBudget = budget - currentSum;
+
+      for (var product in (originalProducts.toList()..shuffle())) {
+        double cost = product.product.price;
+
+        if (currentSum + cost <= budget) {
+          product.updateQuantity(1);
+          product.product.buyQuantity = 1;
+          product.setSelected(true);
+          suggestedProducts.add(product);
+          currentSum += cost;
+          _updateTotalBalance(cost);
+        }
+
+        if (currentSum >= budget) {
+          break;
+        }
+      }
+    }
+    // } catch (e) {
+    //   ToastNotifier.showError('Errore durante il recupero dei pasti: $e');
+    // }
 
     return suggestedProducts;
   }

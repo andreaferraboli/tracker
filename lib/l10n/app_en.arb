@@ -48,6 +48,7 @@
   "discountedQuantityWeightOwned": "Discounted Weight",
   "discountedUnitPrice": "Discounted Unit Price",
   "drinks": "Drinks",
+  "discountedProduct": "Discounted Product",
   "edit_macronutrient": "Edit Macronutrient",
   "edit_value_100g": "Edit value (100g)",
   "editButtonTooltip": "Edit macronutrient",

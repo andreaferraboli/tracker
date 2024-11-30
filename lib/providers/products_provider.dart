@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/product.dart';
@@ -23,6 +25,32 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
 
   void loadProducts(List<Product> products) {
     state = products;
+  }
+
+  Future<void> fetchProducts() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('products')
+            .doc(user.uid)
+            .get();
+
+        if (snapshot.exists && snapshot.data() != null) {
+          final data = snapshot.data()!;
+          if (data['products'] != null) {
+            final List<dynamic> productsData = data['products'];
+            final products = productsData
+                .map((product) => Product.fromJson(product))
+                .toList();
+            state = products;
+          }
+        }
+      } catch (e) {
+        // Handle error
+        print('Error fetching products: $e');
+      }
+    }
   }
 }
 

@@ -6,7 +6,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/product.dart';
-import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
@@ -153,14 +152,14 @@ class ProductScreen extends ConsumerWidget {
                       if (discountedVersion != null)
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.discount,
                               color: Colors.green,
                               size: 14,
                             ),
                             Text(
                               ': €${discountedVersion.discountedPrice.toStringAsFixed(2)}-${((product.price - discountedVersion.discountedPrice) / product.price * 100).toStringAsFixed(0)}%',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.green,
                                 fontSize: 14,
                               ),
@@ -184,14 +183,14 @@ class ProductScreen extends ConsumerWidget {
                       if (discountedVersion != null)
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.discount,
                               color: Colors.green,
                               size: 14,
                             ),
                             Text(
                               ': €${(discountedVersion.discountedPrice / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.green,
                                 fontSize: 14,
                               ),
@@ -228,14 +227,14 @@ class ProductScreen extends ConsumerWidget {
                       if (discountedVersion != null)
                         Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.discount,
                               color: Colors.green,
                               size: 14,
                             ),
                             Text(
                               ': €${(discountedVersion.discountedPrice / (product.totalWeight > 0 ? product.totalWeight : 1)).toStringAsFixed(3)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.green,
                                 fontSize: 14,
                               ),
@@ -287,14 +286,14 @@ class ProductScreen extends ConsumerWidget {
                     if (discountedVersion != null)
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.discount,
                             color: Colors.green,
                             size: 14,
                           ),
                           Text(
                             ': ${discountedVersion.discountedQuantityOwned}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.green,
                               fontSize: 14,
                             ),
@@ -314,14 +313,14 @@ class ProductScreen extends ConsumerWidget {
                     if (discountedVersion != null)
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.discount,
                             color: Colors.green,
                             size: 14,
                           ),
                           Text(
                             ': ${discountedVersion.discountedQuantityUnitOwned}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.green,
                               fontSize: 14,
                             ),
@@ -344,14 +343,14 @@ class ProductScreen extends ConsumerWidget {
                 if (discountedVersion != null)
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.discount,
                         color: Colors.green,
                         size: 14,
                       ),
                       Text(
                         ': ${discountedVersion.discountedQuantityWeightOwned.toStringAsFixed(3)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.green,
                           fontSize: 14,
                         ),

@@ -48,12 +48,9 @@ class Product extends BaseProduct {
     this.unitWeight = 0,
     this.unitPrice = 0,
     this.selectedQuantity = 0,
-    double sliderValue = 0,
-    QuantityUpdateType quantityUpdateType = QuantityUpdateType.slider,
-  }) : super(
-          sliderValue: sliderValue,
-          quantityUpdateType: quantityUpdateType,
-        );
+    super.sliderValue,
+    QuantityUpdateType super.quantityUpdateType,
+  });
 
   // Metodo per la deserializzazione da JSON (fromJson)
   factory Product.fromJson(Map<String, dynamic> json) {

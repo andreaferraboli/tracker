@@ -5,10 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:tracker/l10n/app_localizations.dart';
-import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/image_processor.dart';
 import 'package:tracker/models/product.dart';
-import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
 
@@ -201,7 +199,7 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                     const SizedBox(height: 10),
                     Text(
                       widget.discountedPrice != null
-                          ? '€${widget.discountedPrice!.toStringAsFixed(2)} (Scontato), ${AppLocalizations.of(context)!.total} €${(widget.discountedPrice! * widget.product.buyQuantity).toStringAsFixed(2)}'
+                          ? '€${widget.discountedPrice!.toStringAsFixed(2)} (${AppLocalizations.of(context)!.discountedPrice}), ${AppLocalizations.of(context)!.total} €${(widget.discountedPrice! * widget.product.buyQuantity).toStringAsFixed(2)}'
                           : '€${widget.product.price.toStringAsFixed(2)}, ${AppLocalizations.of(context)!.total} €${(widget.product.price * widget.product.buyQuantity).toStringAsFixed(2)}',
                       style: TextStyle(
                         color: widget.selected
@@ -256,7 +254,9 @@ class ProductListItemState extends ConsumerState<ProductListItem> {
                               ),
                               padding: const EdgeInsets.all(8.0),
                               onPressed: () {
-                                updateQuantity(-1);
+                                if (widget.product.buyQuantity > 0) {
+                                  updateQuantity(-1);
+                                }
                               },
                             ),
                           ),
