@@ -137,6 +137,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
 
   Future<void> saveExpense() async {
     if (!mounted) return;
+    List<DiscountedProduct> productToAdd = [], productToUpdate = [];
     try {
       DocumentReference userDocRef = FirebaseFirestore.instance
           .collection('expenses')
@@ -195,9 +196,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   discountedPrice:
                       double.parse(product.discountedPrice!.toStringAsFixed(2)),
                 );
-                ref
-                    .read(discountedProductsProvider.notifier)
-                    .updateDiscountedProduct(updatedProduct);
+                productToUpdate.add(updatedProduct);
               } else {
                 final newDiscountedProduct = DiscountedProduct(
                   productId: product.product.productId,
@@ -212,9 +211,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   discountedPrice:
                       double.parse(product.discountedPrice!.toStringAsFixed(2)),
                 );
-                ref
-                    .read(discountedProductsProvider.notifier)
-                    .addDiscountedProduct(newDiscountedProduct);
+                productToAdd.add(newDiscountedProduct);
               }
             } else {
               var existingProduct = productsList.firstWhere(
@@ -224,18 +221,31 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
               if (existingProduct != null) {
                 // Aggiorna le quantità correttamente
                 existingProduct['quantityOwned'] += product.product.buyQuantity;
-                existingProduct['quantityUnitOwned'] +=
-                    product.product.buyQuantity * product.product.quantity;
+                if (existingProduct['quantityUnitOwned'] == 0) {
+                  existingProduct['quantityUnitOwned'] =
+                      product.product.quantity;
+                }
                 existingProduct['quantityWeightOwned'] +=
                     product.product.buyQuantity * product.product.totalWeight;
               } else {
+                // Aggiungi il nuovo prodotto
+                product.product.quantityOwned =
+                    product.product.buyQuantity.toDouble();
+                product.product.quantityUnitOwned = product.product.quantity;
+                product.product.quantityWeightOwned =
+                    product.product.buyQuantity * product.product.totalWeight;
                 productsList.add(product.product.toJson());
               }
             }
             product.product.buyQuantity = 0;
           }
         }
-
+        ref
+            .read(discountedProductsProvider.notifier)
+            .updateDiscountedProducts(productToUpdate);
+        ref
+            .read(discountedProductsProvider.notifier)
+            .addDiscountedProducts(productToAdd);
         await productDocRef.update({
           'products': productsList,
         });
@@ -808,8 +818,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
             else
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors
-                      .transparent,
+                  backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                   side: BorderSide(
                     width: 3,

@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/discounted_product.dart';
 
-class DiscountedProductsNotifier extends StateNotifier<List<DiscountedProduct>> {
+class DiscountedProductsNotifier
+    extends StateNotifier<List<DiscountedProduct>> {
   DiscountedProductsNotifier() : super([]);
 
   void loadDiscountedProducts(List<DiscountedProduct> products) {
@@ -46,12 +47,34 @@ class DiscountedProductsNotifier extends StateNotifier<List<DiscountedProduct>> 
 
         final currentProducts = [...state, product];
         await docRef.set({
-          'discounted_products': currentProducts.map((p) => p.toJson()).toList(),
+          'discounted_products':
+              currentProducts.map((p) => p.toJson()).toList(),
         });
 
         state = currentProducts;
       } catch (e) {
         print('Error adding discounted product: $e');
+      }
+    }
+  }
+
+  Future<void> addDiscountedProducts(List<DiscountedProduct> products) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final docRef = FirebaseFirestore.instance
+            .collection('discounted_products')
+            .doc(user.uid);
+
+        final currentProducts = [...state, ...products];
+        await docRef.set({
+          'discounted_products':
+              currentProducts.map((p) => p.toJson()).toList(),
+        });
+
+        state = currentProducts;
+      } catch (e) {
+        print('Error adding discounted products: $e');
       }
     }
   }
@@ -67,12 +90,42 @@ class DiscountedProductsNotifier extends StateNotifier<List<DiscountedProduct>> 
         final currentProducts =
             state.where((p) => p.productId != productId).toList();
         await docRef.set({
-          'discounted_products': currentProducts.map((p) => p.toJson()).toList(),
+          'discounted_products':
+              currentProducts.map((p) => p.toJson()).toList(),
         });
 
         state = currentProducts;
       } catch (e) {
         print('Error removing discounted product: $e');
+      }
+    }
+  }
+
+  Future<void> updateDiscountedProducts(
+      List<DiscountedProduct> products) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final docRef = FirebaseFirestore.instance
+            .collection('discounted_products')
+            .doc(user.uid);
+
+        final productIds = products.map((product) => product.productId).toSet();
+        final currentProducts = state
+            .map((p) => productIds.contains(p.productId)
+                ? products
+                    .firstWhere((product) => product.productId == p.productId)
+                : p)
+            .toList();
+
+        await docRef.set({
+          'discounted_products':
+              currentProducts.map((p) => p.toJson()).toList(),
+        });
+
+        state = currentProducts;
+      } catch (e) {
+        print('Error updating discounted products: $e');
       }
     }
   }
@@ -85,12 +138,13 @@ class DiscountedProductsNotifier extends StateNotifier<List<DiscountedProduct>> 
             .collection('discounted_products')
             .doc(user.uid);
 
-        final currentProducts = state.map((p) => 
-          p.productId == product.productId ? product : p
-        ).toList();
+        final currentProducts = state
+            .map((p) => p.productId == product.productId ? product : p)
+            .toList();
 
         await docRef.set({
-          'discounted_products': currentProducts.map((p) => p.toJson()).toList(),
+          'discounted_products':
+              currentProducts.map((p) => p.toJson()).toList(),
         });
 
         state = currentProducts;

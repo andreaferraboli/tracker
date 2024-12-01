@@ -5,6 +5,8 @@ class ProductBought {
   final double price;
   final String category;
   final String pricePerKg;
+  final double? originalPrice;
+  final bool? isDiscounted;
 
   ProductBought({
     required this.idProdotto,
@@ -13,6 +15,8 @@ class ProductBought {
     required this.category,
     required this.pricePerKg,
     required this.price,
+    this.originalPrice,
+    this.isDiscounted,
   });
 
   factory ProductBought.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,8 @@ class ProductBought {
       category: json['category'],
       pricePerKg: json['pricePerKg'],
       price: json['price'],
+      originalPrice: json['originalPrice'] ?? json['price'],
+      isDiscounted: json['isDiscounted'] ?? false,
     );
   }
 
@@ -34,6 +40,8 @@ class ProductBought {
       'category': category,
       'pricePerKg': pricePerKg,
       'price': price,
+      'originalPrice': originalPrice ?? price,
+      'isDiscounted': isDiscounted ?? false,
     };
   }
 }
