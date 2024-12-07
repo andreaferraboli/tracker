@@ -32,7 +32,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
   late TextEditingController _unitsController;
   late FocusNode _weightFocusNode;
   late FocusNode _unitsFocusNode;
-  bool _useDiscountedValidation = false;
+  bool useDiscountedValidation = false;
 
   @override
   void initState() {
@@ -78,7 +78,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
           .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
 
       final double maxWeight =
-          _useDiscountedValidation && discountedProduct != null
+          useDiscountedValidation && discountedProduct != null
               ? discountedProduct.discountedQuantityWeightOwned * 1000
               : widget.product.quantityWeightOwned * 1000;
 
@@ -125,7 +125,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
       final discountedProduct = discountedProducts
           .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
 
-      final num maxUnits = _useDiscountedValidation && discountedProduct != null
+      final num maxUnits = useDiscountedValidation && discountedProduct != null
           ? discountedProduct.discountedQuantityOwned.toInt()
           : widget.product.quantityOwned;
 
@@ -184,7 +184,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
         .firstWhereOrNull((dp) => dp.productId == widget.product.productId);
 
     // Calcola il valore massimo per lo slider in base alla selezione del prodotto scontato
-    double maxQuantity = _useDiscountedValidation && discountedProduct != null
+    double maxQuantity = useDiscountedValidation && discountedProduct != null
         ? discountedProduct.discountedQuantityUnitOwned.toDouble()
         : widget.product.quantityUnitOwned > 0
             ? widget.product.quantityUnitOwned.toDouble()
@@ -192,7 +192,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
 
     // Calcola la quantità da mostrare in base alla selezione del prodotto scontato
     final double displayQuantityWeight =
-        _useDiscountedValidation && discountedProduct != null
+        useDiscountedValidation && discountedProduct != null
             ? discountedProduct.discountedQuantityWeightOwned
             : widget.product.quantityWeightOwned;
 
@@ -251,13 +251,13 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                     // Slider per selezionare la quantità
                     Theme.of(context).platform == TargetPlatform.iOS
                         ? CupertinoSlider(
-                            value: _useDiscountedValidation &&
+                            value: useDiscountedValidation &&
                                     discountedProduct != null
                                 ? discountedProduct.sliderValue
                                 : widget.product.sliderValue,
                             min: 0,
                             max: maxQuantity,
-                            divisions: _useDiscountedValidation &&
+                            divisions: useDiscountedValidation &&
                                     discountedProduct != null
                                 ? discountedProduct.discountedQuantityUnitOwned
                                 : widget.product.quantityUnitOwned > 0
@@ -265,7 +265,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                                     : null,
                             onChanged: (value) {
                               setState(() {
-                                if (_useDiscountedValidation &&
+                                if (useDiscountedValidation &&
                                     discountedProduct != null) {
                                   discountedProduct.sliderValue = value;
                                 } else {
@@ -275,24 +275,24 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                             },
                           )
                         : Slider(
-                            value: _useDiscountedValidation &&
+                            value: useDiscountedValidation &&
                                     discountedProduct != null
                                 ? discountedProduct.sliderValue
                                 : widget.product.sliderValue,
                             min: 0,
                             max: maxQuantity,
-                            divisions: _useDiscountedValidation &&
+                            divisions: useDiscountedValidation &&
                                     discountedProduct != null
                                 ? discountedProduct.discountedQuantityUnitOwned
                                 : widget.product.quantityUnitOwned > 0
                                     ? widget.product.quantityUnitOwned
                                     : null,
-                            label: _useDiscountedValidation
+                            label: useDiscountedValidation
                                 ? null
-                                : '${_useDiscountedValidation && discountedProduct != null ? discountedProduct.sliderValue : widget.product.sliderValue}',
+                                : '${useDiscountedValidation && discountedProduct != null ? discountedProduct.sliderValue : widget.product.sliderValue}',
                             onChanged: (value) {
                               setState(() {
-                                if (_useDiscountedValidation &&
+                                if (useDiscountedValidation &&
                                     discountedProduct != null) {
                                   discountedProduct.sliderValue = value;
                                 } else {
@@ -366,8 +366,10 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                _useDiscountedValidation =
-                                    !_useDiscountedValidation;
+                                useDiscountedValidation =
+                                    !useDiscountedValidation;
+                                widget.product.useDiscountedValidation =
+                                    useDiscountedValidation;
                                 // Reset dei valori quando si cambia modalità
                                 widget.product.sliderValue = 0;
                                 _weightFromTextField = 0;
@@ -377,7 +379,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                               });
                             },
                             child: Icon(Icons.discount,
-                                color: _useDiscountedValidation
+                                color: useDiscountedValidation
                                     ? Theme.of(context).colorScheme.primary
                                     : Colors.grey),
                           ),
@@ -394,18 +396,17 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                   ? CupertinoButton(
                       onPressed: (_weightFromTextField > 0 ||
                               _unitsFromTextField > 0 ||
-                              (_useDiscountedValidation &&
+                              (useDiscountedValidation &&
                                           discountedProduct != null
                                       ? discountedProduct.sliderValue
                                       : widget.product.sliderValue) >
                                   0)
                           ? () {
                               double quantity = 0;
-                              final selectedProduct =
-                                  _useDiscountedValidation &&
-                                          discountedProduct != null
-                                      ? discountedProduct
-                                      : widget.product;
+                              final selectedProduct = useDiscountedValidation &&
+                                      discountedProduct != null
+                                  ? discountedProduct
+                                  : widget.product;
 
                               if (selectedProduct.sliderValue > 0) {
                                 selectedProduct.quantityUpdateType =
@@ -436,7 +437,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                   : ElevatedButton(
                       onPressed: (_weightFromTextField > 0 ||
                               _unitsFromTextField > 0 ||
-                              (_useDiscountedValidation &&
+                              (useDiscountedValidation &&
                                           discountedProduct != null
                                       ? discountedProduct.sliderValue
                                       : widget.product.sliderValue) >
@@ -444,7 +445,7 @@ class _ProductCardState extends ConsumerState<ProductCard> {
                           ? () {
                               double quantity = 0;
                               final BaseProduct selectedProduct =
-                                  _useDiscountedValidation &&
+                                  useDiscountedValidation &&
                                           discountedProduct != null
                                       ? discountedProduct
                                       : widget.product;

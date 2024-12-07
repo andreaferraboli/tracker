@@ -24,6 +24,7 @@ class Product extends BaseProduct {
   double totalWeight;
   double unitWeight;
   double unitPrice;
+  bool useDiscountedValidation;
 
   Product({
     required this.productId,
@@ -50,6 +51,7 @@ class Product extends BaseProduct {
     this.selectedQuantity = 0,
     super.sliderValue,
     QuantityUpdateType super.quantityUpdateType,
+    this.useDiscountedValidation = false,
   });
 
   // Metodo per la deserializzazione da JSON (fromJson)
@@ -142,6 +144,8 @@ class Product extends BaseProduct {
       unitWeight: unitWeight,
       unitPrice: unitPrice,
       selectedQuantity: selectedQuantity,
+      quantityUpdateType: quantityUpdateType ?? QuantityUpdateType.slider,
+      useDiscountedValidation: useDiscountedValidation,
     );
   }
 }

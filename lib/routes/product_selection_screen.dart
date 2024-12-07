@@ -141,16 +141,17 @@ class ProductSelectionScreenState
       );
 
       // Usa il prezzo scontato se disponibile
-      final price = discountedProduct != null
-          ? discountedProduct['discountedPrice']
-          : mealProduct.price;
+      final price =
+          discountedProduct != null && mealProduct.useDiscountedValidation
+              ? discountedProduct['discountedPrice']
+              : mealProduct.price;
 
       double pricePerKg = price / mealProduct.totalWeight;
       double productExpense = pricePerKg * mealProduct.selectedQuantity;
       totalExpense += productExpense;
 
       // Aggiorna le quantità solo nel documento appropriato
-      if (discountedProduct != null) {
+      if (discountedProduct != null && mealProduct.useDiscountedValidation) {
         // Se il prodotto è scontato, aggiorna solo nella collezione discounted_products
         int index = discountedProducts.indexWhere(
             (product) => product['productId'] == mealProduct.productId);
@@ -172,18 +173,19 @@ class ProductSelectionScreenState
         'price': productExpense.toStringAsFixed(3),
         'category': mealProduct.category,
         'quantitySelected': mealProduct.selectedQuantity,
-        'isDiscounted': discountedProduct != null,
+        'isDiscounted': mealProduct.useDiscountedValidation,
         'originalPrice': mealProduct.price,
         'discountedPrice': discountedProduct?['discountedPrice'],
       };
     }).toList();
 
     // Aggiorna solo i documenti che sono stati modificati
-    bool hasNormalProducts = mealProducts.any(
-        (p) => !discountedProducts.any((dp) => dp['productId'] == p.productId));
-    bool hasDiscountedProducts = mealProducts.any(
-        (p) => discountedProducts.any((dp) => dp['productId'] == p.productId));
-
+    // bool hasNormalProducts = mealProducts.any(
+    //     (p) => !discountedProducts.any((dp) => dp['productId'] == p.productId));
+    // bool hasDiscountedProducts = mealProducts.any(
+    //     (p) => discountedProducts.any((dp) => dp['productId'] == p.productId));
+    bool hasNormalProducts = true;
+    bool hasDiscountedProducts = true;
     if (hasNormalProducts) {
       await userDocRef.update({
         "products": products,
@@ -272,7 +274,18 @@ class ProductSelectionScreenState
               product[globalQuantityUnitOwned] = mealProduct.quantity;
             }
           } else {
-            product[globalQuantityOwned] -= 1;
+            // correggi per togliere le quantità non di fisso 1 ma dipende da quanto è mealProduct.selectedQuantity rispetto a mealProduct.totalWeight
+            double counter = 0;
+            do {
+              if (counter == 0) {
+                counter =
+                    mealProduct.unitWeight * mealProduct.quantityUnitOwned;
+              } else {
+                product[globalQuantityOwned] -= 1;
+                counter = counter + mealProduct.totalWeight;
+              }
+            } while (counter < mealProduct.selectedQuantity);
+            //ho inserito esattamente una quantità che mi fa arrivare ad avere solo scatole piene
             if ((product[globalQuantityWeightOwned] -
                         mealProduct.selectedQuantity) %
                     mealProduct.totalWeight ==
