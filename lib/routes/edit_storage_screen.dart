@@ -141,9 +141,10 @@ class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
+                          width: 3,
                           color: selectedIcon == iconName
-                              ? Theme.of(context).primaryColor
-                              : Colors.grey),
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.transparent),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(

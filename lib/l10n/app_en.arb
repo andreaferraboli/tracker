@@ -156,7 +156,7 @@
   "purchaseDate": "Purchase Date",
   "quantity": "Quantity",
   "quantityInKg": "Quantity in weight (kg)",
-  "quantityOwned": "Quantity Owned",
+  "quantityOwned": "Packages Owned",
   "quantityUnitOwned": "Units Owned",
   "quantityWeightOwned": "total weight owned",
   "recipeTips": "Recipe Tips",

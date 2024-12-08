@@ -113,7 +113,7 @@ class FilterRecipesScreenState extends State<FilterRecipesScreen> {
                         onTap: () => toggleSelection(product['productName']),
                         child: Card(
                           color: isSelected
-                              ? Theme.of(context).primaryColor
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(

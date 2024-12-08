@@ -238,8 +238,10 @@ class ExpenseDetailScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).primaryColor.withOpacity(0.1),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.1),
                             child: CategoryServices.iconFromCategory(
                                 item.category),
                           ),
