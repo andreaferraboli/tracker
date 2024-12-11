@@ -93,7 +93,7 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.userProfile),
@@ -131,7 +131,7 @@ class _UserScreenState extends State<UserScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Campo per la password corrente
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoTextField(
                             controller: _currentPasswordController,
                             obscureText: !_isCurrentPasswordVisible,
@@ -174,7 +174,7 @@ class _UserScreenState extends State<UserScreen> {
                           ),
                     const SizedBox(height: 8),
                     // Campo per la nuova password
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoTextField(
                             controller: _newPasswordController,
                             obscureText: !_isNewPasswordVisible,
@@ -217,7 +217,7 @@ class _UserScreenState extends State<UserScreen> {
                           ),
                     const SizedBox(height: 8),
                     // Campo per confermare la nuova password
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoTextField(
                             controller: _confirmPasswordController,
                             obscureText: !_isConfirmPasswordVisible,
@@ -260,7 +260,7 @@ class _UserScreenState extends State<UserScreen> {
                           ),
                     const SizedBox(height: 8),
                     // Bottone per aggiornare la password
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoButton.filled(
                             onPressed: _reauthenticateAndChangePassword,
                             child: Text(

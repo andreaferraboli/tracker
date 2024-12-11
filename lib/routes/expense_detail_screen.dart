@@ -42,7 +42,7 @@ class ExpenseDetailScreen extends StatelessWidget {
   }
 
   Future<bool?> _showDeleteConfirmation(BuildContext context) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return showCupertinoDialog<bool>(
         context: context,
         builder: (BuildContext context) {
@@ -109,7 +109,7 @@ class ExpenseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.expenseDetailTitle),
@@ -141,7 +141,7 @@ class ExpenseDetailScreen extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CustomScrollView(
             slivers: [
               SliverSafeArea(
@@ -213,7 +213,7 @@ class ExpenseDetailScreen extends StatelessWidget {
               if (!context.mounted || product == null) return;
               Navigator.push(
                 context,
-                Platform.isIOS
+                Platform.isIOS && false
                     ? CupertinoPageRoute(
                         builder: (context) => ProductScreen(product: product!),
                       )

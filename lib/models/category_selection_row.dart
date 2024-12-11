@@ -47,7 +47,7 @@ class CategorySelectionRowState extends State<CategorySelectionRow> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Platform.isIOS
+        return Platform.isIOS && false
             ? CupertinoAlertDialog(
                 title: Text(AppLocalizations.of(context)!.customizeCategories),
                 content: SizedBox(

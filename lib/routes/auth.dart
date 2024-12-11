@@ -109,7 +109,7 @@ class AuthPageState extends ConsumerState<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(isLogin
@@ -139,7 +139,7 @@ class AuthPageState extends ConsumerState<AuthPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Platform.isIOS
+              Platform.isIOS && false
                   ? CupertinoTextField(
                       controller: _emailController,
                       placeholder: AppLocalizations.of(context)!.email,
@@ -162,7 +162,7 @@ class AuthPageState extends ConsumerState<AuthPage> {
                       },
                     ),
               const SizedBox(height: 12),
-              Platform.isIOS
+              Platform.isIOS && false
                   ? CupertinoTextField(
                       controller: _passwordController,
                       placeholder: AppLocalizations.of(context)!.password,
@@ -210,7 +210,7 @@ class AuthPageState extends ConsumerState<AuthPage> {
                     ),
               if (!isLogin) ...[
                 const SizedBox(height: 12),
-                Platform.isIOS
+                Platform.isIOS && false
                     ? CupertinoTextField(
                         controller: _confirmPasswordController,
                         placeholder:
@@ -262,7 +262,7 @@ class AuthPageState extends ConsumerState<AuthPage> {
                         },
                       ),
                 const SizedBox(height: 12),
-                Platform.isIOS
+                Platform.isIOS && false
                     ? CupertinoTextField(
                         controller: _usernameController,
                         placeholder: AppLocalizations.of(context)!.username,
@@ -282,7 +282,7 @@ class AuthPageState extends ConsumerState<AuthPage> {
                       ),
               ],
               const SizedBox(height: 12),
-              Platform.isIOS
+              Platform.isIOS && false
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [

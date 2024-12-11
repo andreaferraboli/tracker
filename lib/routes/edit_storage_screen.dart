@@ -52,7 +52,7 @@ class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.editStorage),
@@ -104,7 +104,7 @@ class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          Platform.isIOS
+          Platform.isIOS && false
               ? CupertinoTextField(
                   controller: nameController,
                   placeholder: AppLocalizations.of(context)!.storageName,
@@ -169,7 +169,7 @@ class EditStorageScreenState extends ConsumerState<EditStorageScreen> {
   void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => Platform.isIOS
+      builder: (ctx) => Platform.isIOS && false
           ? CupertinoAlertDialog(
               title: Text(AppLocalizations.of(context)!.confirmDelete),
               content: Text(AppLocalizations.of(context)!

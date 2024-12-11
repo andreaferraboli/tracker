@@ -15,7 +15,7 @@ class ShoppingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedSupermarkets = ref.watch(supermarketsListProvider);
 
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.shoppingTitle),
@@ -47,7 +47,7 @@ class ShoppingScreen extends ConsumerWidget {
 
   void _showDeleteConfirmationDialog(
       BuildContext context, String name, WidgetRef ref) {
-    Platform.isIOS
+    Platform.isIOS && false
         ? showCupertinoDialog(
             context: context,
             builder: (BuildContext context) {
@@ -158,7 +158,7 @@ class ShoppingScreen extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        Platform.isIOS
+        Platform.isIOS && false
             ? showCupertinoModalPopup(
                 context: context,
                 builder: (BuildContext context) {

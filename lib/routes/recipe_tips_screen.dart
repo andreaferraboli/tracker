@@ -54,7 +54,7 @@ class RecipeTipsScreenState extends State<RecipeTipsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.recipeTips),
@@ -76,7 +76,7 @@ class RecipeTipsScreenState extends State<RecipeTipsScreen> {
   Widget _buildBody() {
     return recipes.isEmpty
         ? Center(
-            child: Platform.isIOS
+            child: Platform.isIOS && false
                 ? const CupertinoActivityIndicator()
                 : const CircularProgressIndicator(),
           )

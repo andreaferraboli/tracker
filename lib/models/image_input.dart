@@ -34,7 +34,7 @@ class _ImageInputState extends State<ImageInput> {
   }
 
   void _showImageSourceActionSheet(BuildContext context) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       showCupertinoModalPopup(
         context: context,
         builder: (ctx) => CupertinoActionSheet(

@@ -154,7 +154,7 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
               ),
             ),
             const SizedBox(width: 16),
-            if (isIOS)
+            if (isIOS && false)
               CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: _showEditQuantityDialog,
@@ -171,7 +171,7 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
                 ),
                 onPressed: _showEditQuantityDialog,
               ),
-            if (isIOS)
+            if (isIOS && false)
               CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: widget.onDeleteProduct,

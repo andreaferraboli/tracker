@@ -195,7 +195,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? ToastificationWrapper(
             child: CupertinoApp(
               title: 'Tracker App',

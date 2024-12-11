@@ -770,7 +770,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            if (isIOS)
+            if (isIOS && false)
               CupertinoButton(
                 color: const Color.fromARGB(255, 33, 78, 52),
                 onPressed: () async {
@@ -794,7 +794,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
-            if (isIOS)
+            if (isIOS && false)
               // Stile iOS per i pulsanti
               Container(
                 decoration: BoxDecoration(
@@ -836,7 +836,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary)),
               ),
-            if (isIOS)
+            if (isIOS && false)
               CupertinoButton(
                 onPressed: () async {
                   final DateTime? picked = await showDatePicker(
@@ -942,7 +942,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
       ],
     );
 
-    if (isIOS) {
+    if (isIOS && false) {
       return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: Text(ref.watch(supermarketProvider)),

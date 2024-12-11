@@ -91,7 +91,7 @@ class MacronutrientTableState extends State<MacronutrientTable> {
   }
 
   Widget _buildPlatformTextField(AppLocalizations localizations) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return CupertinoTextField(
         controller: valueController,
         keyboardType: TextInputType.number,
@@ -118,7 +118,7 @@ class MacronutrientTableState extends State<MacronutrientTable> {
   }
 
   Widget _buildPlatformDropdown(AppLocalizations localizations) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return SizedBox(
         height: 40,
         child: CupertinoButton(
@@ -202,7 +202,7 @@ class MacronutrientTableState extends State<MacronutrientTable> {
 
   Widget _buildActionButton(
       IconData icon, VoidCallback onPressed, Color color) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: onPressed,
@@ -234,7 +234,7 @@ class MacronutrientTableState extends State<MacronutrientTable> {
           children: [
             SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: Platform.isIOS
+              child: Platform.isIOS && false
                   ? CupertinoListSection(
                       children: macronutrients.entries.map((entry) {
                         return CupertinoListTile(
@@ -354,14 +354,14 @@ class MacronutrientTableState extends State<MacronutrientTable> {
                   ),
                   if (_isEditing)
                     _buildActionButton(
-                      Platform.isIOS ? CupertinoIcons.add : Icons.add,
+                      Platform.isIOS && false ? CupertinoIcons.add : Icons.add,
                       _addRow,
-                      Platform.isIOS
+                      Platform.isIOS && false
                           ? CupertinoColors.activeBlue
                           : Theme.of(context).colorScheme.primary,
                     ),
                   _buildActionButton(
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? (_isEditing
                             ? CupertinoIcons.check_mark
                             : CupertinoIcons.pencil)
@@ -372,7 +372,7 @@ class MacronutrientTableState extends State<MacronutrientTable> {
                         if (!_isEditing) widget.onSave(macronutrients);
                       });
                     },
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoColors.activeBlue
                         : Theme.of(context).colorScheme.primary,
                   ),

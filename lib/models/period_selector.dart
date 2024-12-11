@@ -27,7 +27,7 @@ class PeriodSelector extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Pulsante precedente
-        if (isIOS)
+        if (isIOS && false)
           CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: onPreviousPeriod,
@@ -40,7 +40,7 @@ class PeriodSelector extends StatelessWidget {
           ),
 
         // Dropdown per selezionare il periodo
-        if (isIOS)
+        if (isIOS && false)
           CupertinoPicker(
             itemExtent: 32.0,
             onSelectedItemChanged: (index) {
@@ -70,7 +70,7 @@ class PeriodSelector extends StatelessWidget {
           ),
 
         // Pulsante per selezionare la data
-        if (isIOS)
+        if (isIOS && false)
           CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: onSelectDate,
@@ -88,7 +88,7 @@ class PeriodSelector extends StatelessWidget {
           ),
 
         // Pulsante successivo
-        if (isIOS)
+        if (isIOS && false)
           CupertinoButton(
             padding: EdgeInsets.zero,
             onPressed: onNextPeriod,

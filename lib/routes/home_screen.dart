@@ -200,7 +200,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       ],
     );
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: Text(AppLocalizations.of(context)!.home),
@@ -393,7 +393,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildMenuButton(BuildContext context, String label, IconData icon,
       String? route, Color color) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return CupertinoButton(
         onPressed: route != null
             ? () {

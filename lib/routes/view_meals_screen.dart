@@ -317,7 +317,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.viewMeals),
@@ -415,7 +415,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             // Dropdown per il tipo di pasto
-                            Platform.isIOS
+                            Platform.isIOS && false
                                 ? CupertinoButton(
                                     padding: EdgeInsets.zero,
                                     onPressed: _showMealTypePicker,
@@ -441,7 +441,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                                     },
                                   ),
                             // Dropdown per il macronutriente
-                            Platform.isIOS
+                            Platform.isIOS && false
                                 ? CupertinoButton(
                                     padding: EdgeInsets.zero,
                                     onPressed: _showMacronutrientPicker,
@@ -509,7 +509,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     // Dropdown per il tipo di pasto
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoButton(
                             padding: EdgeInsets.zero,
                             onPressed: _showMealTypePicker,
@@ -534,7 +534,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                             },
                           ),
                     // Dropdown per il macronutriente
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoButton(
                             padding: EdgeInsets.zero,
                             onPressed: _showMacronutrientPicker,

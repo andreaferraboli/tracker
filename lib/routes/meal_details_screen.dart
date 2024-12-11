@@ -19,7 +19,7 @@ class MealDetailScreen extends StatelessWidget {
   const MealDetailScreen({super.key, required this.meal});
 
   Future<bool?> _showDeleteConfirmation(BuildContext context) {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return showCupertinoDialog<bool>(
         context: context,
         builder: (BuildContext context) {

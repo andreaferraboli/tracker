@@ -94,7 +94,7 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(
@@ -125,7 +125,7 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Platform.isIOS
+                  Platform.isIOS && false
                       ? CupertinoButton(
                           onPressed: _showFilterDialog,
                           child: Icon(
@@ -138,7 +138,7 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
                           icon: Icon(Icons.filter_list,
                               color: Theme.of(context).iconTheme.color),
                         ),
-                  Platform.isIOS
+                  Platform.isIOS && false
                       ? CupertinoButton(
                           onPressed: _showSearchDialog,
                           child: Icon(
@@ -151,7 +151,7 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
                           icon: Icon(Icons.search,
                               color: Theme.of(context).iconTheme.color),
                         ),
-                  Platform.isIOS
+                  Platform.isIOS && false
                       ? CupertinoButton(
                           onPressed: () {
                             setState(() {
@@ -180,7 +180,7 @@ class StorageScreenState extends ConsumerState<StorageScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Platform.isIOS
+            Platform.isIOS && false
                 ? CupertinoButton.filled(
                     onPressed: () {
                       Navigator.push(

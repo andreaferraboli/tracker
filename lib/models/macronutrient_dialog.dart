@@ -46,7 +46,7 @@ class MacronutrientDialogState extends State<MacronutrientDialog> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoAlertDialog(
             title: Text(localizations.edit_macronutrient),
             content: Column(

@@ -339,7 +339,7 @@ class ProductSelectionScreenState
   }
 
   void _showFilterDialog() {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
@@ -369,7 +369,7 @@ class ProductSelectionScreenState
   }
 
   void _showSearchDialog() {
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
@@ -463,7 +463,7 @@ class ProductSelectionScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(
@@ -490,7 +490,7 @@ class ProductSelectionScreenState
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Platform.isIOS
+            Platform.isIOS && false
                 ? CupertinoButton.filled(
                     onPressed: mealProducts.isNotEmpty ? _saveMeal : null,
                     child: Text(AppLocalizations.of(context)!.save_meal),
@@ -499,7 +499,7 @@ class ProductSelectionScreenState
                     onPressed: mealProducts.isNotEmpty ? _saveMeal : null,
                     child: Text(AppLocalizations.of(context)!.save_meal),
                   ),
-            Platform.isIOS
+            Platform.isIOS && false
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: _showFilterDialog,
@@ -509,7 +509,7 @@ class ProductSelectionScreenState
                     onPressed: _showFilterDialog,
                     icon: const Icon(Icons.filter_list),
                   ),
-            Platform.isIOS
+            Platform.isIOS && false
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: _showSearchDialog,
@@ -519,7 +519,7 @@ class ProductSelectionScreenState
                     onPressed: _showSearchDialog,
                     icon: const Icon(Icons.search),
                   ),
-            Platform.isIOS
+            Platform.isIOS && false
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
                     child: const Icon(CupertinoIcons.calendar),
@@ -560,7 +560,7 @@ class ProductSelectionScreenState
                       }
                     },
                   ),
-            Platform.isIOS
+            Platform.isIOS && false
                 ? CupertinoButton(
                     padding: EdgeInsets.zero,
                     child: const Icon(CupertinoIcons.refresh),
@@ -587,7 +587,7 @@ class ProductSelectionScreenState
                 ExpansionTile(
                   title: Text(
                     AppLocalizations.of(context)!.selectedProducts,
-                    style: Platform.isIOS
+                    style: Platform.isIOS && false
                         ? CupertinoTheme.of(context).textTheme.textStyle
                         : Theme.of(context).textTheme.bodyLarge,
                   ),
@@ -633,7 +633,7 @@ class ProductSelectionScreenState
                 ExpansionTile(
                   title: Text(
                     AppLocalizations.of(context)!.listProducts,
-                    style: Platform.isIOS
+                    style: Platform.isIOS && false
                         ? CupertinoTheme.of(context).textTheme.textStyle
                         : Theme.of(context).textTheme.bodyLarge,
                   ),

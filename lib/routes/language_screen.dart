@@ -9,7 +9,7 @@ class LanguageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.language),
@@ -103,7 +103,7 @@ class LanguageScreen extends StatelessWidget {
     final currentLocale = Localizations.localeOf(context);
     final isSelected = currentLocale.languageCode == languageCode;
 
-    if (Platform.isIOS) {
+    if (Platform.isIOS && false) {
       return CupertinoListTile(
         leading: CircleAvatar(
           backgroundImage: flagImage,

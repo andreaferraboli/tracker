@@ -194,7 +194,7 @@ class ViewExpensesScreenState extends State<ViewExpensesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
               middle: Text(AppLocalizations.of(context)!.viewExpenses),

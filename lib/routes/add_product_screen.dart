@@ -177,7 +177,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Widget _buildValueInput() {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoTextField(
             controller: _priceController,
             style: TextStyle(
@@ -271,7 +271,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
       selectedCategory = categories.isNotEmpty ? categories[0] : '';
     }
 
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPicker(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             itemExtent: 32.0,
@@ -356,7 +356,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
       _productData['store'] = selectedStore;
     }
 
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoPicker(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             itemExtent: 32.0,
@@ -440,7 +440,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   Widget _buildTextField(String label, TextEditingController controller,
       Function(String?) onChange) {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? CupertinoTextField(
             controller: controller,
             style: TextStyle(
@@ -490,7 +490,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Widget _buildQuantityInput() {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? Row(
             children: [
               CupertinoButton(
@@ -602,7 +602,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
   }
 
   Widget _buildBottomButtons() {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? Row(
             children: [
               Expanded(
@@ -655,7 +655,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   //funzione per creare il widget per inserire a mano imageUrl del prodotto
   Widget _buildImageUrlInput() {
-    return Platform.isIOS
+    return Platform.isIOS && false
         ? Row(
             children: [
               Expanded(
@@ -1213,7 +1213,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                         color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    Platform.isIOS
+                    Platform.isIOS && false
                         ? CupertinoButton(
                             child: Icon(CupertinoIcons.calendar,
                                 color: Theme.of(context).colorScheme.primary),
