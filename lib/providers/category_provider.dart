@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Definizione della classe Category
@@ -36,7 +38,15 @@ class CategoriesNotifier extends StateNotifier<List<Category>> {
   void addCategory(Category category) {
     state = [...state, category];
   }
-
+// Metodo per esportare le categorie in formato JSON
+Future<String> getCategoriesAsJson() async {
+  final categoriesJson = state.map((category) => {
+    'nomeCategoria': category.name,
+    'iconaFlutter': category.icon,
+    'coloreSfondo': category.color,
+  }).toList();
+  return jsonEncode(categoriesJson);
+}
   // Metodo per rimuovere una categoria
   void removeCategory(String categoryName) {
     state = state.where((category) => category.name != categoryName).toList();

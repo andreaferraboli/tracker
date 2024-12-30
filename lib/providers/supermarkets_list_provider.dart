@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +28,11 @@ class SupermarketsNotifier extends StateNotifier<List<String>> {
       ToastNotifier.showError("Errore nel recupero dei supermercati: $e");
     }
   }
-
+// Funzione per esportare la lista dei supermercati in formato JSON
+  Future<String> getSupermarketsAsJson() async {
+    final supermarketsJson = state.map((supermarket) => jsonEncode(supermarket)).toList();
+    return jsonEncode(supermarketsJson);
+  }
   // Funzione per aggiungere un supermercato
   void addSupermarket(String supermarket) async {
     state = [...state, supermarket];

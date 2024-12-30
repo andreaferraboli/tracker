@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +42,10 @@ class StoresNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   Future<void> removeStore(int index) async {
     state = [...state]..removeAt(index);
     await _updateFirestore();
+  }
+Future<String> getStoresAsJson() async {
+    final storesJson = state.map((store) => jsonEncode(store)).toList();
+    return jsonEncode(storesJson);
   }
 
   // Elimina tutti gli store e sincronizza con Firestore

@@ -32,14 +32,22 @@ class AuthPageState extends ConsumerState<AuthPage> {
 
     try {
       if (isLogin) {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        final userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+
+        if (!userCredential.user!.emailVerified) {
+          ToastNotifier.showError(localizations.emailNotVerified);
+          await FirebaseAuth.instance.signOut();
+          return;
+        }
+        // Creazione documenti Firestore dopo verifica email
+        await _createUserDocuments(userCredential.user!.uid);
       } else {
         if (_passwordController.text.trim() !=
             _confirmPasswordController.text.trim()) {
-          if (!mounted) return;
           ToastNotifier.showError(localizations.passwordsDoNotMatch);
           return;
         }
@@ -50,51 +58,104 @@ class AuthPageState extends ConsumerState<AuthPage> {
           password: _passwordController.text.trim(),
         );
 
-        final userDocRef = FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid);
+        await userCredential.user!.sendEmailVerification();
+        ToastNotifier.showSuccess(
+            localContext, localizations.verificationEmailSent);
 
-        await userDocRef.set({
-          "username": _usernameController.text.trim(),
-          "supermarkets": [],
-          "stores": [
-            {"name": "fridge", "icon": "kitchen"},
-            {"name": "pantry", "icon": "storage"},
-            {"name": "freezer", "icon": "ac_unit"}
-          ],
-        });
-
-        await FirebaseFirestore.instance
-            .collection('products')
-            .doc(userCredential.user!.uid)
-            .set({"products": []});
-
-        await FirebaseFirestore.instance
-            .collection('expenses')
-            .doc(userCredential.user!.uid)
-            .set({"expenses": []});
-
-        await FirebaseFirestore.instance
-            .collection('meals')
-            .doc(userCredential.user!.uid)
-            .set({"meals": []});
-
-        await FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(userCredential.user!.uid)
-            .set({"discounted_products": []});
+        // Non creare documenti ora, aspetta la verifica dell'email
       }
 
-      if (!mounted) return;
       ToastNotifier.showSuccess(
         localContext,
         isLogin ? localizations.loginSuccess : localizations.signupSuccess,
       );
     } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      ToastNotifier.showError(
-        '${localizations.error}: ${e.message}',
+      ToastNotifier.showError('${localizations.error}: ${e.message}');
+    }
+  }
+
+  Future<void> _createUserDocuments(String userId) async {
+    //ritorna se ci sono già i documenti
+    final userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+    final userDoc = await userDocRef.get();
+    if (userDoc.exists) return;
+
+    try {
+      await userDocRef.set({
+        "username": _usernameController.text.trim(),
+        "supermarkets": [],
+        "stores": [
+          {"name": "fridge", "icon": "kitchen"},
+          {"name": "pantry", "icon": "storage"},
+          {"name": "freezer", "icon": "ac_unit"}
+        ],
+      });
+
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(userId)
+          .set({"products": []});
+
+      await FirebaseFirestore.instance
+          .collection('expenses')
+          .doc(userId)
+          .set({"expenses": []});
+
+      await FirebaseFirestore.instance
+          .collection('meals')
+          .doc(userId)
+          .set({"meals": []});
+
+      await FirebaseFirestore.instance
+          .collection('discounted_products')
+          .doc(userId)
+          .set({"discounted_products": []});
+    } catch (e) {
+      ToastNotifier.showError('Error creating user documents: $e');
+    }
+  }
+
+  Future<void> _sendPasswordResetEmail() async {
+    final localizations = AppLocalizations.of(context)!;
+
+    final email = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final emailController = TextEditingController();
+        return AlertDialog(
+          title: Text(localizations.passwordReset),
+          content: TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: localizations.email,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(localizations.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, emailController.text.trim());
+              },
+              child: Text(localizations.send),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (email == null) return;
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email,
       );
+      ToastNotifier.showSuccess(context, localizations.passwordResetEmailSent);
+    } on FirebaseAuthException catch (e) {
+      ToastNotifier.showError('${localizations.error}: ${e.message}');
     }
   }
 
@@ -307,22 +368,54 @@ class AuthPageState extends ConsumerState<AuthPage> {
                     )
                   : Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: _authenticateUser,
-                          child: Text(isLogin
-                              ? AppLocalizations.of(context)!.login
-                              : AppLocalizations.of(context)!.signUp),
+                        if (isLogin)
+                          TextButton(
+                            onPressed: _sendPasswordResetEmail,
+                            child: Text(
+                                AppLocalizations.of(context)!.forgotPassword,
+                                style: const TextStyle(
+                                  decoration: TextDecoration.underline,
+                                )),
+                          ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: ElevatedButton(
+                            onPressed: _authenticateUser,
+                            child: Text(
+                              isLogin
+                                  ? AppLocalizations.of(context)!.login
+                                  : AppLocalizations.of(context)!.signUp,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              isLogin = !isLogin;
-                            });
-                          },
-                          child: Text(isLogin
-                              ? AppLocalizations.of(context)!.createAccount
-                              : AppLocalizations.of(context)!
-                                  .alreadyHaveAccount),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shadowColor: Colors.transparent,
+                              backgroundColor: Colors.transparent,
+                              side: BorderSide(
+                                width: 2,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isLogin = !isLogin;
+                              });
+                            },
+                            child: Text(
+                                isLogin
+                                    ? AppLocalizations.of(context)!
+                                        .createAccount
+                                    : AppLocalizations.of(context)!
+                                        .alreadyHaveAccount,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                )),
+                          ),
                         ),
                       ],
                     ),

@@ -297,6 +297,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
                       child: CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasData) {
+                    if (!snapshot.data!.emailVerified) {
+                      FirebaseAuth.instance.signOut();
+                      return const AuthPage();
+                    }
                     return HomeScreen(
                         toggleTheme: _toggleTheme, user: snapshot.data!);
                   } else {

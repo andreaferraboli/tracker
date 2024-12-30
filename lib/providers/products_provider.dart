@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +28,25 @@ class ProductsNotifier extends StateNotifier<List<Product>> {
   void loadProducts(List<Product> products) {
     state = products;
   }
-
+  Future<void> postProducts(productsJson) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    try {
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(user.uid)
+          .set({'products': jsonDecode(productsJson)});
+    } catch (e) {
+      // Handle error
+      print('Error posting products: $e');
+    }
+  }
+}
+Future<String> getProductsAsJson() async {
+    final products = state;
+    final productsJson = products.map((product) => product.toJson()).toList();
+    return jsonEncode(productsJson);
+  }
   Future<void> fetchProducts() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {

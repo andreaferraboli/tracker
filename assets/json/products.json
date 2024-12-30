@@ -130,6 +130,19 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/29/609/main/thumb/5034901-10997701-20240829001423.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/29/609/main/photo/5034901-10997701-20240829001423.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6770678,
+        "discount": 0.7,
+        "discountPerc": 35.176,
+        "promoType": "tap_RB hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_quantita_limitata tap_RB promo_tap_RB hidden",
+          "bubble": "hidden",
+          "body": "RIBASSATI"
+        }
+      },
       "price": 1.99,
       "priceId": 1322770490,
       "priceListName": "Base",
@@ -140,11 +153,12 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.99,
+      "priceDisplay": 1.29,
+      "priceStandardDisplay": 1.99,
       "priceStandardUmDisplay": 2.84,
       "priceUnitDisplay": "pz",
       "priceUm": 2.84,
-      "priceUmDisplay": 2.84,
+      "priceUmDisplay": 1.84,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -270,21 +284,8 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/14/218/main/thumb/11013501-12097601-20240814150247.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/14/218/main/photo/11013501-12097601-20240814150247.jpg",
-      "warehousePromo": {
-        "warehousePromoId": 6522034,
-        "discount": 0.2,
-        "discountPerc": 8.734,
-        "promoType": "tap_RB hidden",
-        "warehousePromoTypeId": 5,
-        "cashDeskPromo": true,
-        "view": {
-          "cssClass": "promo_discount promo_quantita_limitata tap_RB promo_tap_RB hidden",
-          "bubble": "hidden",
-          "body": "RIBASSATI"
-        }
-      },
       "price": 2.29,
-      "priceId": 1349930237,
+      "priceId": 1361298997,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -293,12 +294,153 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 2.09,
-      "priceStandardDisplay": 2.29,
+      "priceDisplay": 2.29,
       "priceStandardUmDisplay": 28.63,
       "priceUnitDisplay": "pz",
       "priceUm": 28.63,
-      "priceUmDisplay": 26.13,
+      "priceUmDisplay": 28.63,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380238,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1064231,
+      "productId": 1064231,
+      "codInt": "0012271901",
+      "codVar": "11294501",
+      "code": "0012271901",
+      "codeVariant": "11294501",
+      "name": "Bustone di mozzarelle 4 pezzi",
+      "shortDescr": "PASCOLI ITALIANI",
+      "description": "1.000g (4 x 250g)",
+      "pubState": 1,
+      "slug": "bustmozzarel-100-italiano-4x125g-pascoli-italiani",
+      "itemUrl": "/product/bustmozzarel-100-italiano-4x125g-pascoli-italiani",
+      "vendor": {
+        "vendorId": 3511,
+        "name": "PASCOLI ITALIANI"
+      },
+      "categoryId": 40132,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 9,
+      "productInfos": {
+        "DRAINED_WEIGHT_DESCR": "500g (4 x 125g)",
+        "WEIGHT_SELLING": "1000.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "SECTOR_ID": "10",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/17/304/main/thumb/11294501-12271901-20240415001610.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/17/304/main/photo/11294501-12271901-20240415001610.jpg",
+      "price": 3.49,
+      "priceId": 1361179687,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 3.49,
+      "priceStandardUmDisplay": 6.98,
+      "priceUnitDisplay": "pz",
+      "priceUm": 6.98,
+      "priceUmDisplay": 6.98,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380242,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1026832,
+      "productId": 1026832,
+      "codInt": "0080034201",
+      "codVar": "05041201",
+      "code": "0080034201",
+      "codeVariant": "05041201",
+      "name": "Carote",
+      "shortDescr": "",
+      "description": "1kg",
+      "pubState": 1,
+      "slug": "carote-1kg",
+      "itemUrl": "/product/carote-1kg",
+      "vendor": {
+        "vendorId": 0
+      },
+      "categoryId": 40174,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 1,
+      "productInfos": {
+        "WEIGHT_SELLING": "1.0",
+        "WEIGHT_UNIT_SELLING": "KG",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "SECTOR_ID": "7",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/17/646/main/thumb/5041201-80034201-20240926124614.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/17/646/main/photo/5041201-80034201-20240926124614.jpg",
+      "price": 1.19,
+      "priceId": 1338402144,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.19,
+      "priceStandardUmDisplay": 1.19,
+      "priceUnitDisplay": "pz",
+      "priceUm": 1.19,
+      "priceUmDisplay": 1.19,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -354,6 +496,18 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2023/10/13/823/main/thumb/5852001-17478501-20230607040945.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2023/10/13/823/main/photo/5852001-17478501-20230607040945.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6806300,
+        "discount": 0.24,
+        "discountPerc": 22.018,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
       "price": 1.09,
       "priceId": 1353231329,
       "priceListName": "Base",
@@ -364,11 +518,83 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.09,
+      "priceDisplay": 0.85,
+      "priceStandardDisplay": 1.09,
       "priceStandardUmDisplay": 2.18,
       "priceUnitDisplay": "pz",
       "priceUm": 2.18,
-      "priceUmDisplay": 2.18,
+      "priceUmDisplay": 1.7,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380233,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1026271,
+      "productId": 1026271,
+      "codInt": "0016152501",
+      "codVar": "00395401",
+      "code": "0016152501",
+      "codeVariant": "00395401",
+      "name": "Cordon bleu di pollo e tacchino",
+      "shortDescr": "LA COLLINA DELLE BONTA'",
+      "description": "490g",
+      "pubState": 1,
+      "slug": "cordon-bleu-pollotacchino-490g",
+      "itemUrl": "/product/cordon-bleu-pollotacchino-490g",
+      "vendor": {
+        "vendorId": 3582,
+        "name": "LA COLLINA DELLE BONTA'"
+      },
+      "categoryId": 40247,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 8,
+      "productInfos": {
+        "WEIGHT_SELLING": "490.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "10",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/28/500/main/thumb/395401-16152501-20240821154714.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/28/500/main/photo/395401-16152501-20240821154714.jpg",
+      "price": 2.49,
+      "priceId": 1292082562,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 2.49,
+      "priceStandardUmDisplay": 5.08,
+      "priceUnitDisplay": "pz",
+      "priceUm": 5.08,
+      "priceUmDisplay": 5.08,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -445,6 +671,77 @@
     }
   },
   {
+    "itemId": 2380236,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1026275,
+      "productId": 1026275,
+      "codInt": "0016154301",
+      "codVar": "00395401",
+      "code": "0016154301",
+      "codeVariant": "00395401",
+      "name": "Cotoletta di pollo e tacchino",
+      "shortDescr": "LA COLLINA DELLE BONTA'",
+      "description": "220g (2 x 110g)",
+      "pubState": 1,
+      "slug": "cotoletta-pollo-e-tacchino-220g",
+      "itemUrl": "/product/cotoletta-pollo-e-tacchino-220g",
+      "vendor": {
+        "vendorId": 3582,
+        "name": "LA COLLINA DELLE BONTA'"
+      },
+      "categoryId": 40247,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 8,
+      "productInfos": {
+        "WEIGHT_SELLING": "220.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "10",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2023/05/12/389/main/thumb/395401-16154301-20230512160511.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2023/05/12/389/main/photo/395401-16154301-20230512160511.jpg",
+      "price": 0.99,
+      "priceId": 1292082840,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 0.99,
+      "priceStandardUmDisplay": 4.5,
+      "priceUnitDisplay": "pz",
+      "priceUm": 4.5,
+      "priceUmDisplay": 4.5,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
     "itemId": 2324258,
     "quantity": 1,
     "weight": 0,
@@ -492,8 +789,8 @@
       },
       "dayLock": "",
       "productClasses": [],
-      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/09/03/610/main/thumb/5035503-14605501-20240903104450.jpg",
-      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/09/03/610/main/photo/5035503-14605501-20240903104450.jpg",
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/12/19/640/main/thumb/5035503-14605501-20241204150314.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/12/19/640/main/photo/5035503-14605501-20241204150314.jpg",
       "price": 2.05,
       "priceId": 1291074913,
       "priceListName": "Base",
@@ -509,6 +806,78 @@
       "priceUnitDisplay": "pz",
       "priceUm": 7.32,
       "priceUmDisplay": 7.32,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380249,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1071150,
+      "productId": 1071150,
+      "codInt": "0016185202",
+      "codVar": "05293501",
+      "code": "0016185202",
+      "codeVariant": "05293501",
+      "name": "Fagiolini finissimi",
+      "shortDescr": "DELIZIE DAL SOLE",
+      "description": "400g",
+      "pubState": 1,
+      "slug": "fagiolini-finissimi-400g-delizie-dal-sole1",
+      "itemUrl": "/product/fagiolini-finissimi-400g-delizie-dal-sole1",
+      "vendor": {
+        "vendorId": 3488,
+        "name": "DELIZIE DAL SOLE"
+      },
+      "categoryId": 40180,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 12,
+      "productInfos": {
+        "DRAINED_WEIGHT_DESCR": "220g",
+        "WEIGHT_SELLING": "400.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/03/15/726/main/thumb/5293501-16185202-20240315173609.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/03/15/726/main/photo/5293501-16185202-20240315173609.jpg",
+      "price": 0.99,
+      "priceId": 1318857753,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 0.99,
+      "priceStandardUmDisplay": 2.48,
+      "priceUnitDisplay": "pz",
+      "priceUm": 2.48,
+      "priceUmDisplay": 2.48,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -564,6 +933,18 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/22/1114/main/thumb/90008901-13625301-20240822101630.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/22/1114/main/photo/90008901-13625301-20240822101630.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6801047,
+        "discount": 2,
+        "discountPerc": 28.612,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
       "price": 6.99,
       "priceId": 1332013831,
       "priceListName": "Base",
@@ -574,11 +955,12 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 6.99,
+      "priceDisplay": 4.99,
+      "priceStandardDisplay": 6.99,
       "priceStandardUmDisplay": 18.39,
       "priceUnitDisplay": "pz",
       "priceUm": 18.39,
-      "priceUmDisplay": 18.39,
+      "priceUmDisplay": 13.13,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -632,8 +1014,8 @@
       },
       "dayLock": "",
       "productClasses": [],
-      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/14/1111/main/thumb/90008901-13625201-20240812001030.jpg",
-      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/14/1111/main/photo/90008901-13625201-20240812001030.jpg",
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/11/21/1154/main/thumb/90008901-13625201-20241107120733.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/11/21/1154/main/photo/90008901-13625201-20241107120733.jpg",
       "price": 6.99,
       "priceId": 1318149343,
       "priceListName": "Base",
@@ -649,6 +1031,150 @@
       "priceUnitDisplay": "pz",
       "priceUm": 18.39,
       "priceUmDisplay": 18.39,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380246,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1090488,
+      "productId": 1090488,
+      "codInt": "0009024701",
+      "codVar": "05024102",
+      "code": "0009024701",
+      "codeVariant": "05024102",
+      "name": "Filetti di sgombro all'olio di oliva 34%",
+      "shortDescr": "ONDINA",
+      "description": "250g",
+      "pubState": 1,
+      "slug": "filetti-di-sgombro-olio-oliva-250g-ondina",
+      "itemUrl": "/product/filetti-di-sgombro-olio-oliva-250g-ondina",
+      "vendor": {
+        "vendorId": 3509,
+        "name": "ONDINA"
+      },
+      "newProduct": true,
+      "categoryId": 40268,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 10,
+      "productInfos": {
+        "DRAINED_WEIGHT_DESCR": "165g",
+        "WEIGHT_SELLING": "250.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/12/10/623/main/thumb/5024102-9024701-20241210102135.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/12/10/623/main/photo/5024102-9024701-20241210102135.jpg",
+      "price": 3.29,
+      "priceId": 1364357631,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 3.29,
+      "priceStandardUmDisplay": 13.16,
+      "priceUnitDisplay": "pz",
+      "priceUm": 13.16,
+      "priceUmDisplay": 13.16,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380235,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 995328,
+      "productId": 995328,
+      "codInt": "0010953501",
+      "codVar": "04303401",
+      "code": "0010953501",
+      "codeVariant": "04303401",
+      "name": "Formaggio Parmigiano Reggiano DOP grattugiato",
+      "shortDescr": "PASCOLI ITALIANI",
+      "description": "100g",
+      "pubState": 1,
+      "slug": "parmigiano-reggiano-grattdop-100g",
+      "itemUrl": "/product/parmigiano-reggiano-grattdop-100g",
+      "vendor": {
+        "vendorId": 3511,
+        "name": "PASCOLI ITALIANI"
+      },
+      "categoryId": 40198,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 12,
+      "productInfos": {
+        "WEIGHT_SELLING": "100.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "10",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/11/21/551/main/thumb/4303401-10953501-20241112094810.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/11/21/551/main/photo/4303401-10953501-20241112094810.jpg",
+      "price": 1.79,
+      "priceId": 1361102911,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.79,
+      "priceStandardUmDisplay": 17.9,
+      "priceUnitDisplay": "pz",
+      "priceUm": 17.9,
+      "priceUmDisplay": 17.9,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -702,8 +1228,8 @@
       },
       "dayLock": "",
       "productClasses": [],
-      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/06/24/590/main/thumb/5034801-17799301-20240624092851.jpg",
-      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/06/24/590/main/photo/5034801-17799301-20240624092851.jpg",
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/11/11/628/main/thumb/5034801-17799301-20240729000942.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/11/11/628/main/photo/5034801-17799301-20240729000942.jpg",
       "price": 1.99,
       "priceId": 1317945955,
       "priceListName": "Base",
@@ -795,6 +1321,151 @@
     }
   },
   {
+    "itemId": 2380247,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1001733,
+      "productId": 1001733,
+      "codInt": "0015765901",
+      "codVar": "10965801",
+      "code": "0015765901",
+      "codeVariant": "10965801",
+      "name": "Mais dolce",
+      "shortDescr": "DELIZIE DAL SOLE",
+      "description": "340g",
+      "pubState": 1,
+      "slug": "mais-dolce-340g",
+      "itemUrl": "/product/mais-dolce-340g",
+      "vendor": {
+        "vendorId": 3488,
+        "name": "DELIZIE DAL SOLE"
+      },
+      "categoryId": 40181,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 9,
+      "productInfos": {
+        "DRAINED_WEIGHT_DESCR": "285g",
+        "WEIGHT_SELLING": "340.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/09/09/178/main/thumb/10965801-15765901-20240909151030.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/09/09/178/main/photo/10965801-15765901-20240909151030.jpg",
+      "price": 0.79,
+      "priceId": 1348290005,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 0.79,
+      "priceStandardUmDisplay": 2.32,
+      "priceUnitDisplay": "pz",
+      "priceUm": 2.32,
+      "priceUmDisplay": 2.32,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380243,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1050655,
+      "productId": 1050655,
+      "codInt": "0080413701",
+      "codVar": "05041201",
+      "code": "0080413701",
+      "codeVariant": "05041201",
+      "name": "Mela Red Delicious IGP",
+      "shortDescr": "LE NOSTRE STELLE",
+      "description": "850g",
+      "pubState": 1,
+      "slug": "mele-red-delicious-igp-fn-850g",
+      "itemUrl": "/product/mele-red-delicious-igp-fn-850g",
+      "vendor": {
+        "vendorId": 3564,
+        "name": "Le nostre stelle"
+      },
+      "categoryId": 40220,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 1,
+      "productInfos": {
+        "WEIGHT_SELLING": "850.0",
+        "WEIGHT_SELLING_SINGLE_UNIT": "212.0",
+        "WEB_ENABLED": "1",
+        "MAXACQ": "24",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "SECTOR_ID": "7",
+        "CHECKED": "true",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "WEIGHT_SELLING_SINGLE_UNIT_UM": "mele"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/14/704/main/thumb/5041201-80413701-20241014144629.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/14/704/main/photo/5041201-80413701-20241014144629.jpg",
+      "price": 1.99,
+      "priceId": 1355334979,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.99,
+      "priceStandardUmDisplay": 2.34,
+      "priceUnitDisplay": "pz",
+      "priceUm": 2.34,
+      "priceUmDisplay": 2.34,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
     "itemId": 2324270,
     "quantity": 1,
     "weight": 0,
@@ -859,6 +1530,308 @@
       "priceUnitDisplay": "pz",
       "priceUm": 1.7,
       "priceUmDisplay": 1.7,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380251,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1015059,
+      "productId": 1015059,
+      "codInt": "0004362001",
+      "codVar": "00969601",
+      "code": "0004362001",
+      "codeVariant": "00969601",
+      "name": "Olio di semi di girasole",
+      "shortDescr": "COLLINA D'ORO",
+      "description": "1l",
+      "pubState": 1,
+      "slug": "olio-semi-girasole-pet-1l",
+      "itemUrl": "/product/olio-semi-girasole-pet-1l",
+      "vendor": {
+        "vendorId": 3487,
+        "name": "COLLINA D'ORO"
+      },
+      "categoryId": 40760,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 10,
+      "productInfos": {
+        "WEIGHT_SELLING": "1.0",
+        "QTY_LOCKED": "false",
+        "limited_qty": "false",
+        "WEB_ENABLED": "1",
+        "MAXACQ": "2",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "LT",
+        "ALCOHOLIC": "false",
+        "CHECKED": "true",
+        "LIMITED_QUANTITY_ALERT": "false",
+        "WEIGHT_UNIT_SELLING": "LT",
+        "MINACQ": "1",
+        "WEIGHT_VARIABLE": "false",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/12/18/1186/main/thumb/969601-4362001-20241217201553.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/12/18/1186/main/photo/969601-4362001-20241217201553.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6816827,
+        "discount": 0.3,
+        "discountPerc": 18.868,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
+      "price": 1.59,
+      "priceId": 1349926198,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.29,
+      "priceStandardDisplay": 1.59,
+      "priceStandardUmDisplay": 1.59,
+      "priceUnitDisplay": "pz",
+      "priceUm": 1.59,
+      "priceUmDisplay": 1.29,
+      "maxAcq": 2,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380239,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 997447,
+      "productId": 997447,
+      "codInt": "0012670401",
+      "codVar": "03177302",
+      "code": "0012670401",
+      "codeVariant": "03177302",
+      "name": "Pancetta affumicata a cubetti",
+      "shortDescr": "LA BOTTEGA DEL GUSTO",
+      "description": "200g (2 x 100g)",
+      "pubState": 1,
+      "slug": "pancetta-premium-affumcub2x100g",
+      "itemUrl": "/product/pancetta-premium-affumcub2x100g",
+      "vendor": {
+        "vendorId": 3566,
+        "name": "La bottega del gusto"
+      },
+      "categoryId": 40252,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 12,
+      "productInfos": {
+        "WEIGHT_SELLING": "200.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "10",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/03/468/main/thumb/3177302-12670401-20240927145819.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/03/468/main/photo/3177302-12670401-20240927145819.jpg",
+      "price": 1.99,
+      "priceId": 1290958010,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.99,
+      "priceStandardUmDisplay": 9.95,
+      "priceUnitDisplay": "pz",
+      "priceUm": 9.95,
+      "priceUmDisplay": 9.95,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380240,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 997448,
+      "productId": 997448,
+      "codInt": "0012670402",
+      "codVar": "03177302",
+      "code": "0012670402",
+      "codeVariant": "03177302",
+      "name": "Pancetta dolce a cubetti",
+      "shortDescr": "LA BOTTEGA DEL GUSTO",
+      "description": "200g (2 x 100g)",
+      "pubState": 1,
+      "slug": "pancetta-premium-dolce-cub2x100g",
+      "itemUrl": "/product/pancetta-premium-dolce-cub2x100g",
+      "vendor": {
+        "vendorId": 3566,
+        "name": "La bottega del gusto"
+      },
+      "categoryId": 40252,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 12,
+      "productInfos": {
+        "WEIGHT_SELLING": "200.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "10",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/03/468/main/thumb/3177302-12670402-20240927145819.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/03/468/main/photo/3177302-12670402-20240927145819.jpg",
+      "price": 1.99,
+      "priceId": 1290958059,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.99,
+      "priceStandardUmDisplay": 9.95,
+      "priceUnitDisplay": "pz",
+      "priceUm": 9.95,
+      "priceUmDisplay": 9.95,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380250,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1001460,
+      "productId": 1001460,
+      "codInt": "0015589301",
+      "codVar": "05843901",
+      "code": "0015589301",
+      "codeVariant": "05843901",
+      "name": "Pane per tramezzino",
+      "shortDescr": "TRE MULINI",
+      "description": "250g",
+      "pubState": 1,
+      "slug": "pane-per-tramezzino-250g1",
+      "itemUrl": "/product/pane-per-tramezzino-250g1",
+      "vendor": {
+        "vendorId": 3523,
+        "name": "TRE MULINI"
+      },
+      "categoryId": 40738,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 9,
+      "productInfos": {
+        "WEIGHT_SELLING": "250.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/09/17/929/main/thumb/5843901-15589301-20240729152805.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/09/17/929/main/photo/5843901-15589301-20240729152805.jpg",
+      "price": 1.19,
+      "priceId": 1335004391,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.19,
+      "priceStandardUmDisplay": 4.76,
+      "priceUnitDisplay": "pz",
+      "priceUm": 4.76,
+      "priceUmDisplay": 4.76,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -941,7 +1914,7 @@
     "grossTotal": 0,
     "promoPoints": 0,
     "wishlistItemInfo": {
-      "AVAILABLE": 100
+      "AVAILABLE": 0
     },
     "product": {
       "id": 996771,
@@ -982,10 +1955,10 @@
       },
       "dayLock": "",
       "productClasses": [],
-      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/19/406/main/thumb/157802-12111901-20240903102953.jpg",
-      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/19/406/main/photo/157802-12111901-20240903102953.jpg",
-      "price": 0.85,
-      "priceId": 1357119971,
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/11/05/409/main/thumb/157802-12111901-20241030000926.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/11/05/409/main/photo/157802-12111901-20241030000926.jpg",
+      "price": 0.79,
+      "priceId": 1360373069,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -994,13 +1967,13 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 0.85,
-      "priceStandardUmDisplay": 1.21,
+      "priceDisplay": 0.79,
+      "priceStandardUmDisplay": 1.13,
       "priceUnitDisplay": "pz",
-      "priceUm": 1.21,
-      "priceUmDisplay": 1.21,
+      "priceUm": 1.13,
+      "priceUmDisplay": 1.13,
       "maxAcq": 24,
-      "available": 100000000,
+      "available": 0,
       "selectOptions": []
     }
   },
@@ -1124,8 +2097,8 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/07/12/823/main/thumb/5677101-15955101-20240712121754.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/07/12/823/main/photo/5677101-15955101-20240712121754.jpg",
-      "price": 1.19,
-      "priceId": 1342019560,
+      "price": 0.99,
+      "priceId": 1363787936,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -1134,11 +2107,11 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.19,
-      "priceStandardUmDisplay": 6.26,
+      "priceDisplay": 0.99,
+      "priceStandardUmDisplay": 5.21,
       "priceUnitDisplay": "pz",
-      "priceUm": 6.26,
-      "priceUmDisplay": 6.26,
+      "priceUm": 5.21,
+      "priceUmDisplay": 5.21,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -1189,14 +2162,14 @@
         "SELECT_OPTIONS_1_NAME": "GUSTO",
         "WEIGHT_UNIT_SELLING": "GR",
         "MINACQ": "1",
-        "SELECT_OPTIONS_1": "Pesto peperoni e ricotta:Pesto peperoni e ricotta;Pesto ricotta e noci:Pesto ricotta e noci;",
+        "SELECT_OPTIONS_1": "Pesto ricotta e noci:Pesto ricotta e noci;Pesto peperoni e ricotta:Pesto peperoni e ricotta;",
         "HIDE_MAX_ACQ": "true",
         "TIPOLOGIA": "Pezzo"
       },
       "dayLock": "",
       "productClasses": [],
-      "mediaURL": "https://laspesaonline.eurospin.it/photo/2023/04/27/778/main/thumb/5869501-15076001-20230426202918.jpg",
-      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2023/04/27/778/main/photo/5869501-15076001-20230426202918.jpg",
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/12/19/1001/main/thumb/5869501-15076001-20241204150435.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/12/19/1001/main/photo/5869501-15076001-20241204150435.jpg",
       "price": 1.29,
       "priceId": 1330932586,
       "priceListName": "Base",
@@ -1220,12 +2193,12 @@
           "parameterName": "size",
           "options": [
             {
-              "key": "Pesto peperoni e ricotta",
-              "value": "Pesto peperoni e ricotta"
-            },
-            {
               "key": "Pesto ricotta e noci",
               "value": "Pesto ricotta e noci"
+            },
+            {
+              "key": "Pesto peperoni e ricotta",
+              "value": "Pesto peperoni e ricotta"
             }
           ]
         }
@@ -1282,19 +2255,6 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/01/23/843/main/thumb/5833901-16908901-20240111091153.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/01/23/843/main/photo/5833901-16908901-20240111091153.jpg",
-      "warehousePromo": {
-        "warehousePromoId": 6528661,
-        "discount": 0.2,
-        "discountPerc": 10.582,
-        "promoType": "tap_RB hidden",
-        "warehousePromoTypeId": 5,
-        "cashDeskPromo": true,
-        "view": {
-          "cssClass": "promo_discount promo_quantita_limitata tap_RB promo_tap_RB hidden",
-          "bubble": "hidden",
-          "body": "RIBASSATI"
-        }
-      },
       "price": 1.89,
       "priceId": 1292959413,
       "priceListName": "Base",
@@ -1305,12 +2265,90 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.69,
-      "priceStandardDisplay": 1.89,
+      "priceDisplay": 1.89,
       "priceStandardUmDisplay": 9.95,
       "priceUnitDisplay": "pz",
       "priceUm": 9.95,
-      "priceUmDisplay": 8.89,
+      "priceUmDisplay": 9.95,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380234,
+    "quantity": 0,
+    "weight": 0.65,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1038753,
+      "productId": 1038753,
+      "codInt": "0070040001",
+      "codVar": "05682401",
+      "code": "0070040001",
+      "codeVariant": "05682401",
+      "name": "Petto di pollo a fette confezione famiglia",
+      "shortDescr": "",
+      "description": "650g",
+      "pubState": 1,
+      "slug": "petto-di-pollo-a-fette-conffam",
+      "itemUrl": "/product/petto-di-pollo-a-fette-conffam",
+      "vendor": {
+        "vendorId": 0
+      },
+      "categoryId": 40249,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "unitMeasureBase": {
+        "umId": 1,
+        "um": "KG",
+        "umDes": "KG"
+      },
+      "productInfos": {
+        "WEIGHT_SELLING": "650.0",
+        "QTY_LOCKED": "false",
+        "limited_qty": "false",
+        "WEB_ENABLED": "1",
+        "MAXACQ": "24",
+        "STEP_SELLING": "650.0",
+        "UNITA_DI_MISURA_FISCALE": "$$",
+        "SECTOR_ID": "8",
+        "ALCOHOLIC": "false",
+        "CHECKED": "true",
+        "LIMITED_QUANTITY_ALERT": "false",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "0.001",
+        "WEIGHT_VARIABLE": "false",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Sfuso",
+        "WEIGHT_UNIT_BASE": "KG"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/06/24/829/main/thumb/5682401-70040001-20240624121857.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/06/24/829/main/photo/5682401-70040001-20240624121857.jpg",
+      "price": 9.99,
+      "priceId": 1361490405,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 9.99,
+      "weightUnitDisplay": "KG",
+      "priceUnitDisplay": "pz",
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -1391,6 +2429,316 @@
       "priceUnitDisplay": "pz",
       "priceUm": 13.21,
       "priceUmDisplay": 13.21,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380248,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1045086,
+      "productId": 1045086,
+      "codInt": "0016498801",
+      "codVar": "90006301",
+      "code": "0016498801",
+      "codeVariant": "90006301",
+      "name": "Piselli",
+      "shortDescr": "DELIZIE DAL SOLE",
+      "description": "400g",
+      "pubState": 1,
+      "slug": "piselli-400g-delizie-dal-sole",
+      "itemUrl": "/product/piselli-400g-delizie-dal-sole",
+      "vendor": {
+        "vendorId": 3488,
+        "name": "DELIZIE DAL SOLE"
+      },
+      "categoryId": 40180,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 12,
+      "productInfos": {
+        "DRAINED_WEIGHT_DESCR": "240g",
+        "WEIGHT_SELLING": "400.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/09/09/1109/main/thumb/90006301-16498801-20240901001536.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/09/09/1109/main/photo/90006301-16498801-20240901001536.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6804845,
+        "discount": 0.16,
+        "discountPerc": 21.333,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
+      "price": 0.75,
+      "priceId": 1292688100,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 0.59,
+      "priceStandardDisplay": 0.75,
+      "priceStandardUmDisplay": 1.88,
+      "priceUnitDisplay": "pz",
+      "priceUm": 1.88,
+      "priceUmDisplay": 1.47,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380232,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1024822,
+      "productId": 1024822,
+      "codInt": "0015101501",
+      "codVar": "00807801",
+      "code": "0015101501",
+      "codeVariant": "00807801",
+      "name": "Piselli finissimi cotti a vapore",
+      "shortDescr": "DELIZIE DAL SOLE",
+      "description": "450g (3 x 150g)",
+      "pubState": 1,
+      "slug": "piselli-finissimi-coltita-3x150g",
+      "itemUrl": "/product/piselli-finissimi-coltita-3x150g",
+      "vendor": {
+        "vendorId": 3488,
+        "name": "DELIZIE DAL SOLE"
+      },
+      "categoryId": 40180,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 12,
+      "productInfos": {
+        "DRAINED_WEIGHT_DESCR": "420g (3 x 140g)",
+        "WEIGHT_SELLING": "450.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/02/28/1009/main/thumb/807801-15101501-20240227202325.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/02/28/1009/main/photo/807801-15101501-20240227202325.jpg",
+      "price": 1.85,
+      "priceId": 1341485767,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.85,
+      "priceStandardUmDisplay": 4.11,
+      "priceUnitDisplay": "pz",
+      "priceUm": 4.11,
+      "priceUmDisplay": 4.11,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380244,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1026850,
+      "productId": 1026850,
+      "codInt": "0080043801",
+      "codVar": "05041201",
+      "code": "0080043801",
+      "codeVariant": "05041201",
+      "name": "Pomodoro piccadilly",
+      "shortDescr": "",
+      "description": "500g",
+      "pubState": 1,
+      "slug": "pomodoro-piccadilly-500g2",
+      "itemUrl": "/product/pomodoro-piccadilly-500g2",
+      "vendor": {
+        "vendorId": 0
+      },
+      "categoryId": 40174,
+      "ivaCategory": {
+        "ivaCategoryId": 25,
+        "code": "4",
+        "descr": "IVA 4%",
+        "ivaPct": "0.04"
+      },
+      "logisticPackagingItems": 999,
+      "productInfos": {
+        "WEIGHT_SELLING": "500.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "SECTOR_ID": "7",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/07/23/625/main/thumb/5041201-80043801-20240603001700.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/07/23/625/main/photo/5041201-80043801-20240603001700.jpg",
+      "price": 1.99,
+      "priceId": 1365544771,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 1.99,
+      "priceStandardUmDisplay": 3.98,
+      "priceUnitDisplay": "pz",
+      "priceUm": 3.98,
+      "priceUmDisplay": 3.98,
+      "maxAcq": 24,
+      "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380237,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 100,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1041905,
+      "productId": 1041905,
+      "codInt": "0013089501",
+      "codVar": "03636801",
+      "code": "0013089501",
+      "codeVariant": "03636801",
+      "name": "Salmone norvegese affumicato",
+      "shortDescr": "",
+      "description": "150g",
+      "pubState": 1,
+      "slug": "salmone-affumicato-norvegia-150g2",
+      "itemUrl": "/product/salmone-affumicato-norvegia-150g2",
+      "vendor": {
+        "vendorId": 0
+      },
+      "categoryId": 40237,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 24,
+      "productInfos": {
+        "WEIGHT_SELLING": "150.0",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "WEB_ENABLED": "1",
+        "HIDE_MAX_ACQ": "true",
+        "TIPOLOGIA": "Pezzo",
+        "MAXACQ": "24",
+        "SECTOR_ID": "10",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/12/06/508/main/thumb/3636801-13089501-20241118151727.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/12/06/508/main/photo/3636801-13089501-20241118151727.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6801166,
+        "discount": 0.8,
+        "discountPerc": 20.05,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
+      "price": 3.99,
+      "priceId": 1360188542,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 3.19,
+      "priceStandardDisplay": 3.99,
+      "priceStandardUmDisplay": 26.6,
+      "priceUnitDisplay": "pz",
+      "priceUm": 26.6,
+      "priceUmDisplay": 21.27,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -1656,8 +3004,20 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/26/393/main/thumb/1554501-15527601-20240826002649.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/26/393/main/photo/1554501-15527601-20240826002649.jpg",
-      "price": 1.49,
-      "priceId": 1316053645,
+      "warehousePromo": {
+        "warehousePromoId": 6801271,
+        "discount": 0.1,
+        "discountPerc": 7.194,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
+      "price": 1.39,
+      "priceId": 1360382124,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -1666,11 +3026,12 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.49,
-      "priceStandardUmDisplay": 3.73,
+      "priceDisplay": 1.29,
+      "priceStandardDisplay": 1.39,
+      "priceStandardUmDisplay": 3.48,
       "priceUnitDisplay": "pz",
-      "priceUm": 3.73,
-      "priceUmDisplay": 3.73,
+      "priceUm": 3.48,
+      "priceUmDisplay": 3.23,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -1724,8 +3085,8 @@
       },
       "dayLock": "",
       "productClasses": [],
-      "mediaURL": "https://laspesaonline.eurospin.it/photo/2023/12/11/840/main/thumb/5842901-17374701-20231124115549.jpg",
-      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2023/12/11/840/main/photo/5842901-17374701-20231124115549.jpg",
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/10/29/947/main/thumb/5842901-17374701-20241010101307.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/10/29/947/main/photo/5842901-17374701-20241010101307.jpg",
       "price": 2.79,
       "priceId": 1293169392,
       "priceListName": "Base",
@@ -1796,8 +3157,8 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/01/25/350/main/thumb/1554501-8023501-20240124103521.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/01/25/350/main/photo/1554501-8023501-20240124103521.jpg",
-      "price": 1.49,
-      "priceId": 1291215291,
+      "price": 1.35,
+      "priceId": 1360384380,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -1806,11 +3167,11 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.49,
-      "priceStandardUmDisplay": 3.73,
+      "priceDisplay": 1.35,
+      "priceStandardUmDisplay": 3.38,
       "priceUnitDisplay": "pz",
-      "priceUm": 3.73,
-      "priceUmDisplay": 3.73,
+      "priceUm": 3.38,
+      "priceUmDisplay": 3.38,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -1866,6 +3227,18 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/22/922/main/thumb/5842901-11283701-20240822001727.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/22/922/main/photo/5842901-11283701-20240822001727.jpg",
+      "warehousePromo": {
+        "warehousePromoId": 6802470,
+        "discount": 0.6,
+        "discountPerc": 21.505,
+        "promoType": "tap_PM hidden",
+        "warehousePromoTypeId": 5,
+        "cashDeskPromo": true,
+        "view": {
+          "cssClass": "promo_discount promo_tap_PM hidden",
+          "bubble": "hidden"
+        }
+      },
       "price": 2.79,
       "priceId": 1311392674,
       "priceListName": "Base",
@@ -1876,11 +3249,12 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 2.79,
+      "priceDisplay": 2.19,
+      "priceStandardDisplay": 2.79,
       "priceStandardUmDisplay": 9.3,
       "priceUnitDisplay": "pz",
       "priceUm": 9.3,
-      "priceUmDisplay": 9.3,
+      "priceUmDisplay": 7.3,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -1936,8 +3310,8 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/09/17/604/main/thumb/5030101-13405701-20240917175432.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/09/17/604/main/photo/5030101-13405701-20240917175432.jpg",
-      "price": 1.99,
-      "priceId": 1300538723,
+      "price": 1.79,
+      "priceId": 1360449893,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -1946,11 +3320,11 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.99,
-      "priceStandardUmDisplay": 5.53,
+      "priceDisplay": 1.79,
+      "priceStandardUmDisplay": 4.97,
       "priceUnitDisplay": "pz",
-      "priceUm": 5.53,
-      "priceUmDisplay": 5.53,
+      "priceUm": 4.97,
+      "priceUmDisplay": 4.97,
       "maxAcq": 24,
       "available": 100000000,
       "selectOptions": []
@@ -2006,8 +3380,8 @@
       "productClasses": [],
       "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/08/29/394/main/thumb/1554501-8665801-20240829001432.jpg",
       "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/08/29/394/main/photo/1554501-8665801-20240829001432.jpg",
-      "price": 1.49,
-      "priceId": 1291223702,
+      "price": 1.35,
+      "priceId": 1361608014,
       "priceListName": "Base",
       "priceListId": -1,
       "currency": {
@@ -2016,13 +3390,87 @@
         "currencySymbol": "",
         "codInt": "EUR"
       },
-      "priceDisplay": 1.49,
-      "priceStandardUmDisplay": 3.73,
+      "priceDisplay": 1.35,
+      "priceStandardUmDisplay": 3.38,
       "priceUnitDisplay": "pz",
-      "priceUm": 3.73,
-      "priceUmDisplay": 3.73,
+      "priceUm": 3.38,
+      "priceUmDisplay": 3.38,
       "maxAcq": 24,
       "available": 100000000,
+      "selectOptions": []
+    }
+  },
+  {
+    "itemId": 2380245,
+    "quantity": 1,
+    "weight": 0,
+    "grossTotal": 0,
+    "promoPoints": 0,
+    "wishlistItemInfo": {
+      "AVAILABLE": 0,
+      "isTrusted": "true"
+    },
+    "product": {
+      "id": 1006789,
+      "productId": 1006789,
+      "codInt": "0010622601",
+      "codVar": "10721201",
+      "code": "0010622601",
+      "codeVariant": "10721201",
+      "name": "Tonno all'olio di oliva",
+      "shortDescr": "ONDINA",
+      "description": "960g (12 x 80g)",
+      "pubState": 1,
+      "slug": "tonno-ondina-olio-oliva-12x80g2",
+      "itemUrl": "/product/tonno-ondina-olio-oliva-12x80g2",
+      "vendor": {
+        "vendorId": 3509,
+        "name": "ONDINA"
+      },
+      "categoryId": 40268,
+      "ivaCategory": {
+        "ivaCategoryId": 24,
+        "code": "10",
+        "descr": "IVA 10%",
+        "ivaPct": "0.1"
+      },
+      "logisticPackagingItems": 1,
+      "productInfos": {
+        "WEIGHT_SELLING": "960.0",
+        "WEB_ENABLED": "1",
+        "MAXACQ": "24",
+        "SECTOR_ID": "1",
+        "UNITA_DI_MISURA_FISCALE": "KG",
+        "CHECKED": "true",
+        "DRAINED_WEIGHT_DESCR": "624g (12 x 52g)",
+        "WEIGHT_UNIT_SELLING": "GR",
+        "MINACQ": "1",
+        "FORCE_ASSORTMENT_B2B": "true",
+        "HIDE_MAX_ACQ": "true",
+        "FORCE_ASSORTMENT_B2C": "false",
+        "TIPOLOGIA": "Pezzo"
+      },
+      "dayLock": "",
+      "productClasses": [],
+      "mediaURL": "https://laspesaonline.eurospin.it/photo/2024/12/11/24/main/thumb/10721201-10622601-20241210143838.jpg",
+      "mediaURLMedium": "https://laspesaonline.eurospin.it/photo/2024/12/11/24/main/photo/10721201-10622601-20241210143838.jpg",
+      "price": 10.99,
+      "priceId": 1351295430,
+      "priceListName": "Base",
+      "priceListId": -1,
+      "currency": {
+        "currencyTypeId": 2,
+        "name": "Euro",
+        "currencySymbol": "",
+        "codInt": "EUR"
+      },
+      "priceDisplay": 10.99,
+      "priceStandardUmDisplay": 11.45,
+      "priceUnitDisplay": "pz",
+      "priceUm": 11.45,
+      "priceUmDisplay": 11.45,
+      "maxAcq": 24,
+      "available": 0,
       "selectOptions": []
     }
   },

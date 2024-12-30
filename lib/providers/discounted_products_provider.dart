@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +39,24 @@ class DiscountedProductsNotifier
     }
   }
 
+Future<void> postDiscountedProducts(String productsJson) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('discounted_products')
+            .doc(user.uid)
+            .set({'discounted_products': jsonDecode(productsJson)});
+      } catch (e) {
+        // Handle error
+        print('Error posting discounted products: $e');
+      }
+    }
+  }
+  Future<String> getDiscountedProductsAsJson() async {
+    final productsJson = state.map((product) => product.toJson()).toList();
+    return jsonEncode(productsJson);
+  }
   Future<void> addDiscountedProduct(DiscountedProduct product) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
