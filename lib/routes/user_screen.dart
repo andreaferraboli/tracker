@@ -1,32 +1,32 @@
-import 'dart:convert';
 import 'dart:io'; // Aggiunto per rilevare la piattaforma
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:tracker/services/toast_notifier.dart';
-import 'package:flutter/cupertino.dart';
-
-import '../models/discounted_product.dart';
-import '../models/expense.dart';
-import '../models/meal.dart';
-import '../models/product.dart';
+import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/category_provider.dart';
+import '../providers/discounted_products_provider.dart';
+import '../providers/expenses_provider.dart';
 import '../providers/meals_provider.dart';
 import '../providers/products_provider.dart';
-import '../providers/discounted_products_provider.dart';
-import '../providers/expenses_provider.dart'; // Aggiunto per i widget Cupertino
+import '../providers/stores_provider.dart';
+import '../providers/supermarket_provider.dart';
+import 'package:path_provider/path_provider.dart';
+import '../providers/supermarkets_list_provider.dart';
+import 'dart:convert';
 
-class UserScreen extends StatefulWidget {
+class UserScreen extends ConsumerStatefulWidget {
   const UserScreen({super.key});
 
   @override
-  State<UserScreen> createState() => _UserScreenState();
+  ConsumerState<UserScreen> createState() => _UserScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class _UserScreenState extends ConsumerState<UserScreen> {
   final user = FirebaseAuth.instance.currentUser;
   String? username;
   final TextEditingController _currentPasswordController =
@@ -47,101 +47,40 @@ class _UserScreenState extends State<UserScreen> {
     _fetchUsername();
   }
 
-  Future<void> _importDatabase() async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-
-    // Accesso al ref del provider
-    final ref = ProviderContainer();
-
-    try {
-      // Seleziona il file dal dispositivo
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/database.json');
-
-      if (!await file.exists()) {
-        ToastNotifier.showError('File database.json non trovato');
-        return;
-      }
-
-      // Leggi il file JSON
-      final jsonString = await file.readAsString();
-      final Map<String, dynamic> importedData = jsonDecode(jsonString);
-
-      final List<dynamic> mealsData = importedData['meals'];
-      final List<dynamic> productsData = importedData['products'];
-      final List<dynamic> expensesData = importedData['expenses'];
-      final List<dynamic> discountedProductsData =
-          importedData['discounted_products'];
-      final List<dynamic> categoriesData = importedData['categories'];
-
-      // Aggiorna i dati nei provider Riverpod
-      ref
-          .read(mealsProvider.notifier)
-          .loadMeals(mealsData.map((data) => Meal.fromJson(data)).toList());
-      ref.read(productsProvider.notifier).loadProducts(
-          productsData.map((data) => Product.fromJson(data)).toList());
-      ref.read(expensesProvider.notifier).loadExpenses(
-          expensesData.map((data) => Expense.fromJson(data)).toList());
-      ref.read(discountedProductsProvider.notifier).loadDiscountedProducts(
-          discountedProductsData
-              .map((data) => DiscountedProduct.fromJson(data))
-              .toList());
-      ref.read(categoriesProvider.notifier).loadCategories(
-          categoriesData.map((data) => Category.fromJson(data)).toList());
-
-      // Aggiorna il documento utente in Firestore (opzionale)
-
-      // Notifica di successo
-      ToastNotifier.showSuccess(context, 'Database importato con successo');
-    } catch (e) {
-      ToastNotifier.showError(
-           'Errore durante l\'importazione del database: $e');
-    }
+  void _showOpenFileDialog(File file) {
+    final directory = file.parent.path;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Esportazione completata'),
+          content: Text('Vuoi aprire la cartella contenente il file in $directory?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Annulla'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Apri'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _openFileExplorer(file);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  Future<void> _exportDatabase() async {
-    final userId = FirebaseAuth.instance.currentUser!.uid;
-
-    // Accesso al ref del provider
-    final ref = ProviderContainer();
-
-    try {
-      // Fetch user data
-
-      // Fetch dati dai provider Riverpod
-      final mealsJson = await ref.read(mealsProvider.notifier).getMealsAsJson();
-      final productsJson =
-          await ref.read(productsProvider.notifier).getProductsAsJson();
-      final expensesJson =
-          await ref.read(expensesProvider.notifier).getExpensesAsJson();
-      final discountedProductsJson = await ref
-          .read(discountedProductsProvider.notifier)
-          .getDiscountedProductsAsJson();
-      final categoriesJson =
-          await ref.read(categoriesProvider.notifier).getCategoriesAsJson();
-
-      // Combina i dati in un singolo oggetto JSON
-      final combinedData = {
-        'products': jsonDecode(productsJson),
-        'meals': jsonDecode(mealsJson),
-        'expenses': jsonDecode(expensesJson),
-        'discounted_products': jsonDecode(discountedProductsJson),
-        'categories': jsonDecode(categoriesJson),
-      };
-
-      // Converte i dati combinati in una stringa JSON
-      final json = jsonEncode(combinedData);
-
-      // Salva il file
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/database.json');
-      await file.writeAsString(json);
-
-      // Notifica di successo
-      ToastNotifier.showSuccess(context, 'Database esportato con successo');
-    } catch (e) {
-      ToastNotifier.showError(
-          'Errore durante l\'esportazione del database: $e');
+  void _openFileExplorer(File file) async {
+    final directory = file.parent.path;
+    if (await canLaunch(directory)) {
+      await launch(directory);
+    } else {
+      ToastNotifier.showError('Impossibile aprire il file explorer');
     }
   }
 
@@ -202,6 +141,101 @@ class _UserScreenState extends State<UserScreen> {
     }
   }
 
+  Future<void> exportDataToJson() async {
+    try {
+      // Ottieni i dati da tutti i provider
+      final categories = ref.read(categoriesProvider.notifier).exportToJson();
+      final discountedProducts =
+          ref.read(discountedProductsProvider.notifier).exportToJson();
+      final expenses = ref.read(expensesProvider.notifier).exportToJson();
+      final meals = ref.read(mealsProvider.notifier).exportToJson();
+      final products = ref.read(productsProvider.notifier).exportToJson();
+      final stores = ref.read(storesProvider.notifier).exportToJson();
+      final supermarketsList =
+          ref.read(supermarketsListProvider.notifier).exportToJson();
+      // Crea un oggetto JSON con tutti i dati
+      final exportData = {
+        'categories': json.decode(categories),
+        'discountedProducts': json.decode(discountedProducts),
+        'expenses': json.decode(expenses),
+        'meals': json.decode(meals),
+        'products': json.decode(products),
+        'stores': json.decode(stores),
+        'supermarketsList': json.decode(supermarketsList),
+      };
+
+      // Converti in stringa JSON
+      final jsonString = json.encode(exportData);
+      final directory = await getExternalStorageDirectory();
+      final outputFile = File('${directory!.path}/FSF_food_tracker_data.json');
+
+      await outputFile.writeAsString(jsonString);
+      ToastNotifier.showSuccess(
+          context, 'Dati esportati con successo');
+      _showOpenFileDialog(outputFile);
+    } catch (e) {
+      print('Errore durante l\'esportazione dei dati: $e');
+      ToastNotifier.showError('$e');
+    }
+  }
+
+  Future<void> importDataFromJson() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (result != null) {
+        final file = File(result.files.single.path!);
+        final jsonString = await file.readAsString();
+        final data = json.decode(jsonString);
+
+        // Importa i dati in ogni provider
+        if (data['categories'] != null) {
+          ref
+              .read(categoriesProvider.notifier)
+              .importFromJson(json.encode(data['categories']));
+        }
+        if (data['discountedProducts'] != null) {
+          ref
+              .read(discountedProductsProvider.notifier)
+              .importFromJson(json.encode(data['discountedProducts']));
+        }
+        if (data['expenses'] != null) {
+          ref
+              .read(expensesProvider.notifier)
+              .importFromJson(json.encode(data['expenses']));
+        }
+        if (data['meals'] != null) {
+          ref
+              .read(mealsProvider.notifier)
+              .importFromJson(json.encode(data['meals']));
+        }
+        if (data['products'] != null) {
+          ref
+              .read(productsProvider.notifier)
+              .importFromJson(json.encode(data['products']));
+        }
+        if (data['stores'] != null) {
+          ref
+              .read(storesProvider.notifier)
+              .importFromJson(json.encode(data['stores']));
+        }
+        if (data['supermarketsList'] != null) {
+          ref
+              .read(supermarketsListProvider.notifier)
+              .importFromJson(json.encode(data['supermarketsList']));
+        }
+
+        ToastNotifier.showSuccess(context, 'Dati importati con successo');
+      }
+    } catch (e) {
+      print('Errore durante l\'importazione dei dati: $e');
+      ToastNotifier.showError('Errore durante l\'importazione dei dati: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Platform.isIOS && false
@@ -239,6 +273,23 @@ class _UserScreenState extends State<UserScreen> {
                     // Campo email
                     Text(
                       '${AppLocalizations.of(context)!.email}: ${user?.email}',
+                    ),
+                    const SizedBox(height: 16),
+                    // Bottoni per importare/esportare dati
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: exportDataToJson,
+                          icon: const Icon(Icons.file_upload),
+                          label: const Text('Esporta dati'),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: importDataFromJson,
+                          icon: const Icon(Icons.file_download),
+                          label: const Text('Importa dati'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     // Campo per la password corrente
@@ -382,32 +433,6 @@ class _UserScreenState extends State<UserScreen> {
                             child: Text(
                                 AppLocalizations.of(context)!.updatePassword),
                           ),
-// Bottone per esportare il database
-                    Platform.isIOS && false
-                        ? CupertinoButton.filled(
-                            onPressed: _exportDatabase,
-                            child: Text(
-                                AppLocalizations.of(context)!.exportDatabase),
-                          )
-                        : ElevatedButton(
-                            onPressed: _exportDatabase,
-                            child: Text(
-                                AppLocalizations.of(context)!.exportDatabase),
-                          ),
-                    const SizedBox(height: 8),
-// Bottone per importare il database
-                    Platform.isIOS && false
-                        ? CupertinoButton.filled(
-                            onPressed: _importDatabase,
-                            child: Text(
-                                AppLocalizations.of(context)!.importDatabase),
-                          )
-                        : ElevatedButton(
-                            onPressed: _importDatabase,
-                            child: Text(
-                                AppLocalizations.of(context)!.importDatabase),
-                          ),
-                    //Bottone che richiama le funzioni di export dei providers
                   ],
                 )
           : Center(

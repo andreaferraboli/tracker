@@ -57,29 +57,46 @@ class Product extends BaseProduct {
   // Metodo per la deserializzazione da JSON (fromJson)
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
-      productId: json['productId'].toString(),
-      productName: json['productName'],
-      category: json['category'],
-      totalPrice: double.parse(json['totalPrice'].toStringAsFixed(2)),
-      price: double.parse(json['price'].toStringAsFixed(2)),
-      quantity: json['quantity'],
-      unit: json['unit'],
-      macronutrients: (json['macronutrients'] as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, value.toDouble())),
-      expirationDate: json['expirationDate'],
-      supermarket: json['supermarket'],
-      purchaseDate: json['purchaseDate'],
-      barcode: json['barcode'],
-      imageUrl: json['imageUrl'],
+      productId: json['productId']?.toString() ?? '',
+      productName: json['productName'] ?? '',
+      category: json['category'] ?? '',
+      totalPrice: (json['totalPrice'] is num)
+          ? (json['totalPrice'] as num).toDouble()
+          : 0.0,
+      price: (json['price'] is num) ? (json['price'] as num).toDouble() : 0.0,
+      quantity: json['quantity'] ?? 0,
+      unit: json['unit'] ?? '',
+      macronutrients: (json['macronutrients'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(key, (value as num?)?.toDouble() ?? 0.0),
+      ),
+      expirationDate: json['expirationDate'] ?? '',
+      supermarket: json['supermarket'] ?? '',
+      purchaseDate: json['purchaseDate'] ?? '',
+      barcode: json['barcode'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
       store: json['store'] ?? 'other',
-      buyQuantity: json['buyQuantity'],
-      quantityOwned: double.parse(json['quantityOwned'].toString()),
-      quantityUnitOwned: (json['quantityUnitOwned'] as num).toInt(),
-      quantityWeightOwned: (json['quantityWeightOwned'] as num).toDouble(),
-      totalWeight: double.parse(json['totalWeight'].toString()),
-      unitWeight: double.parse(json['unitWeight'].toString()),
-      unitPrice: double.parse(json['unitPrice'].toString()),
-      selectedQuantity: json['selectedQuantity'] ?? 0,
+      buyQuantity: json['buyQuantity'] ?? 0,
+      quantityOwned: (json['quantityOwned'] is num)
+          ? (json['quantityOwned'] as num).toDouble()
+          : 0.0,
+      quantityUnitOwned: (json['quantityUnitOwned'] is num)
+          ? (json['quantityUnitOwned'] as num).toInt()
+          : 0,
+      quantityWeightOwned: (json['quantityWeightOwned'] is num)
+          ? (json['quantityWeightOwned'] as num).toDouble()
+          : 0.0,
+      totalWeight: (json['totalWeight'] is num)
+          ? (json['totalWeight'] as num).toDouble()
+          : 0.0,
+      unitWeight: (json['unitWeight'] is num)
+          ? (json['unitWeight'] as num).toDouble()
+          : 0.0,
+      unitPrice: (json['unitPrice'] is num)
+          ? (json['unitPrice'] as num).toDouble()
+          : 0.0,
+      selectedQuantity: (json['selectedQuantity'] is num)
+          ? (json['selectedQuantity'] as num).toDouble()
+          : 0.0,
     );
   }
 

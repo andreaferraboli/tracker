@@ -4,19 +4,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/models/product.dart';
+import 'package:tracker/providers/expenses_provider.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
 import 'package:tracker/services/toast_notifier.dart';
 
 import '../models/expense.dart';
 
-class ExpenseDetailScreen extends StatelessWidget {
+class ExpenseDetailScreen extends ConsumerWidget {
   final Expense expense;
 
   const ExpenseDetailScreen({super.key, required this.expense});
 
-  Future<void> deleteExpense(Expense expense) async {
+  Future<void> deleteExpense(Expense expense, WidgetRef ref) async {
     // Recupera l'ID dell'utente
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final expensesDocRef =
@@ -35,7 +37,7 @@ class ExpenseDetailScreen extends StatelessWidget {
 
     // Rimuove la spesa specifica
     expenses.removeWhere((e) => e.id == expense.id);
-
+    ref.read(expensesProvider.notifier).loadExpenses(expenses);
     // Aggiorna il documento delle spese
     await expensesDocRef
         .update({'expenses': expenses.map((e) => e.toJson()).toList()});
@@ -94,10 +96,10 @@ class ExpenseDetailScreen extends StatelessWidget {
     }
   }
 
-  void _deleteExpense(BuildContext context) async {
+  void _deleteExpense(BuildContext context, WidgetRef ref) async {
     final confirm = await _showDeleteConfirmation(context);
     if (confirm == true) {
-      await deleteExpense(expense);
+      await deleteExpense(expense, ref);
       if (!context.mounted) return;
       Navigator.of(context).pop(expense);
       ToastNotifier.showSuccess(
@@ -108,7 +110,7 @@ class ExpenseDetailScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Platform.isIOS && false
         ? CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
@@ -119,7 +121,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                   CupertinoIcons.delete,
                   color: CupertinoColors.destructiveRed,
                 ),
-                onPressed: () => _deleteExpense(context),
+                onPressed: () => _deleteExpense(context, ref),
               ),
             ),
             child: _buildBody(context),
@@ -132,7 +134,7 @@ class ExpenseDetailScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _deleteExpense(context),
+                  onPressed: () => _deleteExpense(context, ref),
                 ),
               ],
             ),

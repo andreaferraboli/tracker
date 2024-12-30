@@ -12,9 +12,11 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:tracker/l10n/app_localizations.dart';
 import 'package:tracker/models/discounted_product.dart';
+import 'package:tracker/models/expense.dart';
 import 'package:tracker/models/product.dart';
 import 'package:tracker/models/product_list_item.dart';
 import 'package:tracker/providers/discounted_products_provider.dart';
+import 'package:tracker/providers/expenses_provider.dart';
 import 'package:tracker/providers/meals_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
@@ -246,23 +248,27 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         ref
             .read(discountedProductsProvider.notifier)
             .addDiscountedProducts(productToAdd);
+
         await productDocRef.update({
           'products': productsList,
         });
       }
 
+      final expenseData = {
+        'id': uuid.v4(),
+        'supermarket': ref.read(supermarketProvider),
+        'totalAmount': totalBalance,
+        'products': productsToSave,
+        'date': DateFormat('dd-MM-yyyy').format(selectedDate),
+      };
+
       await userDocRef.update({
-        'expenses': FieldValue.arrayUnion([
-          {
-            'id': uuid.v4(),
-            'supermarket': ref.read(supermarketProvider),
-            'totalAmount': totalBalance,
-            'products': productsToSave,
-            'date': DateFormat('dd-MM-yyyy').format(selectedDate),
-          }
-        ])
+        'expenses': FieldValue.arrayUnion([expenseData])
       });
 
+      ref
+          .read(expensesProvider.notifier)
+          .addExpense(Expense.fromJson(expenseData));
       if (!mounted) return;
       ToastNotifier.showSuccess(
           context, AppLocalizations.of(context)!.expenseSaved);

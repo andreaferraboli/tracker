@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/services/icons_helper.dart';
+import 'dart:convert';
 
 final storesProvider =
     StateNotifierProvider<StoresNotifier, List<Map<String, dynamic>>>((ref) {
@@ -64,5 +65,22 @@ Future<String> getStoresAsJson() async {
         .collection('users')
         .doc(userId)
         .update({'stores': storesToSave});
+  }
+
+  String exportToJson() {
+    return json.encode(state);
+  }
+
+  void importFromJson(String jsonString) {
+    try {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<Map<String, dynamic>> stores = jsonList
+          .map((json) => Map<String, dynamic>.from(json))
+          .toList();
+      state = stores;
+      _updateFirestore();
+    } catch (e) {
+      print('Error importing stores from JSON: $e');
+    }
   }
 }

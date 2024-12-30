@@ -56,6 +56,12 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  static Locale?
+      _currentLocale; // Variabile statica per memorizzare il locale corrente
+
+  Locale? get locale => _locale;
+
+  static Locale? get currentLocale => _currentLocale; // Getter statico
   bool _isDarkTheme = false;
   Locale? _locale;
   static const String _languageKey = 'selected_language';
@@ -136,6 +142,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _loadSavedTheme();
   }
 
+  String get localeLanguages => _languageKey;
   Future<void> _loadSavedLanguage() async {
     final prefs = await SharedPreferences.getInstance();
     final savedLanguage = prefs.getString(_languageKey);
@@ -162,6 +169,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (!mounted) return;
     setState(() {
       _locale = locale;
+      _currentLocale = locale;
     });
     // Save the selected language
     final prefs = await SharedPreferences.getInstance();

@@ -9,6 +9,23 @@ class DiscountedProductsNotifier
     extends StateNotifier<List<DiscountedProduct>> {
   DiscountedProductsNotifier() : super([]);
 
+  Future<void> _syncToFirebase() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('discounted_products')
+            .doc(user.uid)
+            .set({
+          'discounted_products':
+              state.map((product) => product.toJson()).toList(),
+        });
+      } catch (e) {
+        print('Error syncing discounted products to Firebase: $e');
+      }
+    }
+  }
+
   void loadDiscountedProducts(List<DiscountedProduct> products) {
     state = products;
   }
@@ -39,38 +56,11 @@ class DiscountedProductsNotifier
     }
   }
 
-Future<void> postDiscountedProducts(String productsJson) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(user.uid)
-            .set({'discounted_products': jsonDecode(productsJson)});
-      } catch (e) {
-        // Handle error
-        print('Error posting discounted products: $e');
-      }
-    }
-  }
-  Future<String> getDiscountedProductsAsJson() async {
-    final productsJson = state.map((product) => product.toJson()).toList();
-    return jsonEncode(productsJson);
-  }
   Future<void> addDiscountedProduct(DiscountedProduct product) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        final docRef = FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(user.uid);
-
         final currentProducts = [...state, product];
-        await docRef.set({
-          'discounted_products':
-              currentProducts.map((p) => p.toJson()).toList(),
-        });
-
         state = currentProducts;
       } catch (e) {
         print('Error adding discounted product: $e');
@@ -82,16 +72,7 @@ Future<void> postDiscountedProducts(String productsJson) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        final docRef = FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(user.uid);
-
         final currentProducts = [...state, ...products];
-        await docRef.set({
-          'discounted_products':
-              currentProducts.map((p) => p.toJson()).toList(),
-        });
-
         state = currentProducts;
       } catch (e) {
         print('Error adding discounted products: $e');
@@ -103,17 +84,8 @@ Future<void> postDiscountedProducts(String productsJson) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        final docRef = FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(user.uid);
-
         final currentProducts =
             state.where((p) => p.productId != productId).toList();
-        await docRef.set({
-          'discounted_products':
-              currentProducts.map((p) => p.toJson()).toList(),
-        });
-
         state = currentProducts;
       } catch (e) {
         print('Error removing discounted product: $e');
@@ -126,10 +98,6 @@ Future<void> postDiscountedProducts(String productsJson) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        final docRef = FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(user.uid);
-
         final productIds = products.map((product) => product.productId).toSet();
         final currentProducts = state
             .map((p) => productIds.contains(p.productId)
@@ -137,11 +105,6 @@ Future<void> postDiscountedProducts(String productsJson) async {
                     .firstWhere((product) => product.productId == p.productId)
                 : p)
             .toList();
-
-        await docRef.set({
-          'discounted_products':
-              currentProducts.map((p) => p.toJson()).toList(),
-        });
 
         state = currentProducts;
       } catch (e) {
@@ -154,23 +117,32 @@ Future<void> postDiscountedProducts(String productsJson) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        final docRef = FirebaseFirestore.instance
-            .collection('discounted_products')
-            .doc(user.uid);
-
         final currentProducts = state
             .map((p) => p.productId == product.productId ? product : p)
             .toList();
-
-        await docRef.set({
-          'discounted_products':
-              currentProducts.map((p) => p.toJson()).toList(),
-        });
 
         state = currentProducts;
       } catch (e) {
         print('Error updating discounted product: $e');
       }
+    }
+  }
+
+  String exportToJson() {
+    final List<Map<String, dynamic>> jsonList =
+        state.map((product) => product.toJson()).toList();
+    return json.encode(jsonList);
+  }
+
+  void importFromJson(String jsonString) {
+    try {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<DiscountedProduct> products =
+          jsonList.map((json) => DiscountedProduct.fromJson(json)).toList();
+      state = products;
+      _syncToFirebase();
+    } catch (e) {
+      print('Error importing discounted products from JSON: $e');
     }
   }
 }

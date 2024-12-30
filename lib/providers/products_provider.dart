@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/product.dart';
+import 'dart:convert';
 
 class ProductsNotifier extends StateNotifier<List<Product>> {
   ProductsNotifier() : super([]);
@@ -69,6 +70,40 @@ Future<String> getProductsAsJson() async {
       } catch (e) {
         // Handle error
         print('Error fetching products: $e');
+      }
+    }
+  }
+
+  String exportToJson() {
+    final List<Map<String, dynamic>> jsonList =
+        state.map((product) => product.toJson()).toList();
+    return json.encode(jsonList);
+  }
+
+  void importFromJson(String jsonString) {
+    try {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<Product> products =
+          jsonList.map((json) => Product.fromJson(json)).toList();
+      state = products;
+      _syncToFirebase();
+    } catch (e) {
+      print('Error importing products from JSON: $e');
+    }
+  }
+
+  Future<void> _syncToFirebase() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('products')
+            .doc(user.uid)
+            .set({
+          'products': state.map((product) => product.toJson()).toList(),
+        });
+      } catch (e) {
+        print('Error syncing products to Firebase: $e');
       }
     }
   }

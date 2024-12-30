@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tracker/services/toast_notifier.dart';
+import 'dart:convert';
 
 class SupermarketsNotifier extends StateNotifier<List<String>> {
   SupermarketsNotifier() : super([]) {
@@ -66,6 +67,33 @@ class SupermarketsNotifier extends StateNotifier<List<String>> {
 
   void loadSupermarkets() {
     _fetchSupermarkets();
+  }
+
+  String exportToJson() {
+    return json.encode(state);
+  }
+
+  void importFromJson(String jsonString) {
+    try {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<String> supermarkets = jsonList.cast<String>();
+      state = supermarkets;
+      _updateFirestore();
+    } catch (e) {
+      print('Error importing supermarkets from JSON: $e');
+    }
+  }
+
+  Future<void> _updateFirestore() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser!.uid;
+      final userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
+      await userDocRef.update({
+        "supermarkets": state,
+      });
+    } catch (e) {
+      print('Error updating supermarkets in Firestore: $e');
+    }
   }
 }
 

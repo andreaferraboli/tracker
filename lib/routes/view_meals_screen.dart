@@ -54,6 +54,9 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
   void _changePeriod(int delta) {
     setState(() {
       switch (selectedPeriod) {
+        case 'day':
+          currentDate = currentDate.add(Duration(days: delta));
+          break;
         case 'week':
           currentDate = currentDate.add(Duration(days: 7 * delta));
           break;
@@ -273,17 +276,34 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
   }
 
   // Funzione per calcolare il totale speso per ogni tipo di pasto
-  Map<String, double> _calculateMealTypeExpenses(List<Meal> filteredMeals) {
-    final Map<String, double> mealTypeData = {};
+  Map<String, double> _calculateMealTypeExpenses(
+      List<Meal> filteredMeals, Map<String, Color> mealColors) {
+    final Map<String, double> mealTypeData = {
+      'breakfast': 0.0,
+      'lunch': 0.0,
+      'snack': 0.0,
+      'dinner': 0.0,
+    };
+
     for (var meal in filteredMeals) {
-      mealTypeData[meal.mealType] =
-          (mealTypeData[meal.mealType] ?? 0) + meal.totalExpense;
+      if (mealTypeData.containsKey(meal.mealType.toLowerCase())) {
+        mealTypeData[meal.mealType.toLowerCase()] =
+            (mealTypeData[meal.mealType.toLowerCase()] ?? 0) +
+                meal.totalExpense;
+      }
     }
-    return mealTypeData.map((type, total) {
-      return MapEntry(
-          '${AppLocalizations.of(context)!.mealString(type)} - €${total.toStringAsFixed(2)}',
-          total);
+
+    mealTypeData.removeWhere((key, value) {
+      if (value == 0.0) {
+        mealColors.remove(key);
+        return true; // Rimuovi l'elemento
+      }
+      return false; // Mantieni l'elemento
     });
+
+    return mealTypeData.map((key, value) => MapEntry(
+        '${AppLocalizations.of(context)!.mealString(key)} - €${value.toStringAsFixed(2)}',
+        value));
   }
 
   List<Meal> _filterMeals(List<Meal> meals) {
@@ -358,6 +378,13 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
           ? AppColors.recipeTipsLight
           : AppColors.recipeTipsDark,
     ];
+    final Map<String, Color> mealColors = {
+      'breakfast': colors[0],
+      'lunch': colors[1],
+      'snack': colors[2],
+      'dinner': colors[3],
+    };
+
     return FutureBuilder<List<Meal>>(
       future: _fetchMeals(),
       builder: (context, snapshot) {
@@ -478,7 +505,8 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
             );
           }
 
-          final mealTypeData = _calculateMealTypeExpenses(filteredMeals);
+          final mealTypeData =
+              _calculateMealTypeExpenses(filteredMeals, mealColors);
           final periodData = _prepareBarChartData(filteredMeals);
           final macronutrientData = _prepareMacronutrientData(filteredMeals);
 
@@ -572,31 +600,52 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                   child: CustomBarChart(periodData: macronutrientData),
                 ),
                 // Grafico a torta per il totale speso per tipo di pasto
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: pie_chart.PieChart(
-                    dataMap: mealTypeData,
-                    colorList: colors,
-                    chartRadius: MediaQuery.of(context).size.width / 2.2,
-                    legendOptions: const pie_chart.LegendOptions(
-                      legendPosition: pie_chart.LegendPosition.right,
-                    ),
-                    chartValuesOptions: const pie_chart.ChartValuesOptions(
-                      showChartValuesInPercentage: true,
-                      decimalPlaces: 1,
+                if (mealTypeData.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: pie_chart.PieChart(
+                      dataMap: mealTypeData,
+                      colorList: mealColors.values.toList(),
+                      chartRadius: MediaQuery.of(context).size.width / 2.2,
+                      legendOptions: const pie_chart.LegendOptions(
+                        legendPosition: pie_chart.LegendPosition.right,
+                      ),
+                      chartValuesOptions: const pie_chart.ChartValuesOptions(
+                        showChartValuesInPercentage: true,
+                        decimalPlaces: 1,
+                      ),
                     ),
                   ),
-                ),
+
                 // Lista dei pasti
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: filteredMeals.map((meal) {
+                      var nameMeal = meal.mealType.toLowerCase();
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: nameMeal == 'breakfast'
+                                ? Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? AppColors.shoppingLight
+                                    : AppColors.shoppingDark
+                                : nameMeal == 'lunch'
+                                    ? Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? AppColors.addMealLight
+                                        : AppColors.addMealDark
+                                    : nameMeal == 'snack'
+                                        ? Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.viewExpensesLight
+                                            : AppColors.viewExpensesDark
+                                        : Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.inventoryLight
+                                            : AppColors.inventoryDark,
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           child: ListTile(
@@ -606,11 +655,27 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                                   color:
                                       Theme.of(context).colorScheme.onPrimary),
                             ),
-                            trailing: Text(
-                              meal.date,
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary),
+                            trailing: SizedBox(
+                              width: 80, // Adjust the width as needed
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    meal.dayOfWeek,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                                  ),
+                                  Text(
+                                    meal.date,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                                  ),
+                                ],
+                              ),
                             ),
                             onTap: () {
                               Navigator.push(
