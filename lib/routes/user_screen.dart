@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tracker/services/toast_notifier.dart';
 import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 import 'package:file_picker/file_picker.dart';
@@ -54,7 +55,8 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Esportazione completata'),
-          content: Text('Vuoi aprire la cartella contenente il file in $directory?'),
+          content:
+              Text('Vuoi aprire la cartella contenente il file in $directory?'),
           actions: <Widget>[
             TextButton(
               child: Text('Annulla'),
@@ -166,12 +168,21 @@ class _UserScreenState extends ConsumerState<UserScreen> {
 
       // Converti in stringa JSON
       final jsonString = json.encode(exportData);
-      final directory = await getExternalStorageDirectory();
+      bool dirDownloadExists = true;
+      Directory? directory;
+      if (Platform.isIOS) {
+        directory = await getDownloadsDirectory();
+      } else {
+        directory = Directory("/storage/emulated/0/Download/");
+        dirDownloadExists = await directory.exists();
+        if (!dirDownloadExists) {
+          directory = Directory("/storage/emulated/0/Downloads/");
+        }
+      }
       final outputFile = File('${directory!.path}/FSF_food_tracker_data.json');
 
       await outputFile.writeAsString(jsonString);
-      ToastNotifier.showSuccess(
-          context, 'Dati esportati con successo');
+      ToastNotifier.showSuccess(context, 'Dati esportati con successo');
       _showOpenFileDialog(outputFile);
     } catch (e) {
       print('Errore durante l\'esportazione dei dati: $e');
