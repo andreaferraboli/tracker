@@ -146,13 +146,14 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       // Ottieni i dati da tutti i provider
       final categories = ref.read(categoriesProvider.notifier).exportToJson();
       final discountedProducts =
-          ref.read(discountedProductsProvider.notifier).exportToJson();
+      ref.read(discountedProductsProvider.notifier).exportToJson();
       final expenses = ref.read(expensesProvider.notifier).exportToJson();
       final meals = ref.read(mealsProvider.notifier).exportToJson();
       final products = ref.read(productsProvider.notifier).exportToJson();
       final stores = ref.read(storesProvider.notifier).exportToJson();
       final supermarketsList =
-          ref.read(supermarketsListProvider.notifier).exportToJson();
+      ref.read(supermarketsListProvider.notifier).exportToJson();
+
       // Crea un oggetto JSON con tutti i dati
       final exportData = {
         'categories': json.decode(categories),
@@ -164,20 +165,32 @@ class _UserScreenState extends ConsumerState<UserScreen> {
         'supermarketsList': json.decode(supermarketsList),
       };
 
-      // Converti in stringa JSON
+      // Converte in stringa JSON
       final jsonString = json.encode(exportData);
-      final directory = await getExternalStorageDirectory();
-      final outputFile = File('${directory!.path}/FSF_food_tracker_data.json');
 
+      // Lascia che l'utente scelga la cartella di destinazione
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+        dialogTitle: 'Scegli la cartella di destinazione per il file',
+      );
+
+      if (selectedDirectory == null) {
+        // L'utente ha annullato la selezione della cartella
+        ToastNotifier.showError('Selezione cartella annullata');
+        return;
+      }
+
+      // Crea il file nella cartella selezionata
+      final outputFile = File('$selectedDirectory/FSF_food_tracker_data.json');
       await outputFile.writeAsString(jsonString);
-      ToastNotifier.showSuccess(
-          context, 'Dati esportati con successo');
+
+      ToastNotifier.showSuccess(context, 'Dati esportati con successo');
       _showOpenFileDialog(outputFile);
     } catch (e) {
       print('Errore durante l\'esportazione dei dati: $e');
       ToastNotifier.showError('$e');
     }
   }
+
 
   Future<void> importDataFromJson() async {
     try {
