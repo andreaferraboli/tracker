@@ -265,37 +265,33 @@ class ProductSelectionScreenState
 
       case QuantityUpdateType.weight:
         if (product[globalQuantityWeightOwned] >= mealProduct.unitWeight) {
-          if (mealProduct.selectedQuantity <=
-              mealProduct.unitWeight * mealProduct.quantityUnitOwned) {
-            product[globalQuantityUnitOwned] -=
-                (mealProduct.selectedQuantity / mealProduct.unitWeight).ceil();
-            if (product[globalQuantityUnitOwned] <= 0) {
-              product[globalQuantityOwned] -= 1;
-              product[globalQuantityUnitOwned] = mealProduct.quantity;
-            }
-          } else {
-            // correggi per togliere le quantità non di fisso 1 ma dipende da quanto è mealProduct.selectedQuantity rispetto a mealProduct.totalWeight
-            double counter = 0;
-            do {
-              if (counter == 0) {
-                counter =
-                    mealProduct.unitWeight * mealProduct.quantityUnitOwned;
-              } else {
-                product[globalQuantityOwned] -= 1;
-                counter = counter + mealProduct.totalWeight;
-              }
-            } while (counter < mealProduct.selectedQuantity);
-            //ho inserito esattamente una quantità che mi fa arrivare ad avere solo scatole piene
-            if ((product[globalQuantityWeightOwned] -
-                        mealProduct.selectedQuantity) %
-                    mealProduct.totalWeight ==
-                0) {
-              product[globalQuantityUnitOwned] = mealProduct.quantity;
+          double counter = 0;
+          do {
+            if (counter == 0) {
+              counter = mealProduct.unitWeight *
+                  (mealProduct.quantityUnitOwned == 0
+                      ? 1
+                      : mealProduct.quantityUnitOwned);
             } else {
-              product[globalQuantityUnitOwned] = mealProduct.quantity -
-                  ((mealProduct.selectedQuantity / mealProduct.unitWeight)
-                          .ceil() -
-                      mealProduct.quantityUnitOwned);
+              if (product[globalQuantityOwned] != 0) {
+                product[globalQuantityOwned] -= 1;
+              }
+              counter = counter + mealProduct.totalWeight;
+            }
+          } while (counter < mealProduct.selectedQuantity);
+
+          if ((product[globalQuantityWeightOwned] -
+                      mealProduct.selectedQuantity) %
+                  mealProduct.totalWeight ==
+              0) {
+            product[globalQuantityUnitOwned] = mealProduct.quantity;
+          } else {
+            product[globalQuantityUnitOwned] = mealProduct.quantity -
+                ((mealProduct.selectedQuantity / mealProduct.unitWeight)
+                        .ceil() -
+                    mealProduct.quantityUnitOwned);
+            if(product[globalQuantityOwned] == 0){
+              product[globalQuantityUnitOwned] = 0;
             }
           }
         }

@@ -109,8 +109,7 @@ class MealDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations =
-        AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
+    final localizations = AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
 
     // Determina se la piattaforma è iOS
     final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
@@ -118,31 +117,29 @@ class MealDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: isIOS
           ? CupertinoNavigationBar(
-              middle: Text(localizations.mealString(meal.mealType)),
-              trailing: GestureDetector(
-                onTap: () async {
-                  await deleteMeal(meal, context);
-                },
-                child: const Icon(CupertinoIcons.trash, color: Colors.red),
-              ),
-            )
+        middle: Text(localizations.mealString(meal.mealType)),
+        trailing: GestureDetector(
+          onTap: () async {
+            await deleteMeal(meal, context);
+          },
+          child: const Icon(CupertinoIcons.trash, color: Colors.red),
+        ),
+      )
           : AppBar(
-              titleSpacing: 0,
-              centerTitle: true,
-              title: Text(localizations.mealString(meal.mealType)),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  color: Colors.red,
-                  onPressed: () async {
-                    await deleteMeal(meal, context);
-                  },
-                ),
-              ],
-            ),
+        titleSpacing: 0,
+        centerTitle: true,
+        title: Text(localizations.mealString(meal.mealType)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            color: Colors.red,
+            onPressed: () async {
+              await deleteMeal(meal, context);
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        physics: const BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -160,8 +157,7 @@ class MealDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 localizations.macronutrients,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Table(
@@ -181,73 +177,72 @@ class MealDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 localizations.products,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: meal.products.length,
-                  itemBuilder: (context, index) {
-                    final product = meal.products[index];
-                    return GestureDetector(
-                      onTap: () async {
-                        DocumentReference productDocRef = FirebaseFirestore
-                            .instance
-                            .collection('products')
-                            .doc(FirebaseAuth.instance.currentUser!.uid);
+              ListView.builder(
+                shrinkWrap: true, // Add this to make the ListView shrink-wrap its content
+                physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
+                itemCount: meal.products.length,
+                itemBuilder: (context, index) {
+                  final product = meal.products[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      DocumentReference productDocRef = FirebaseFirestore
+                          .instance
+                          .collection('products')
+                          .doc(FirebaseAuth.instance.currentUser!.uid);
 
-                        DocumentSnapshot snapshot = await productDocRef.get();
-                        dynamic existingProduct;
-                        Product? product;
-                        if (snapshot.exists) {
-                          final List<dynamic> productsList =
-                              snapshot['products'] ?? [];
-                          existingProduct = productsList.firstWhere(
-                              (p) =>
-                                  p['productId'] ==
-                                  meal.products[index]["idProdotto"],
-                              orElse: () => null);
-                          product = Product.fromJson(existingProduct);
-                        }
-                        if (!context.mounted || product == null) return;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProductScreen(product: product!),
+                      DocumentSnapshot snapshot = await productDocRef.get();
+                      dynamic existingProduct;
+                      Product? product;
+                      if (snapshot.exists) {
+                        final List<dynamic> productsList =
+                            snapshot['products'] ?? [];
+                        existingProduct = productsList.firstWhere(
+                                (p) =>
+                            p['productId'] ==
+                                meal.products[index]["idProdotto"],
+                            orElse: () => null);
+                        product = Product.fromJson(existingProduct);
+                      }
+                      if (!context.mounted || product == null) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProductScreen(product: product!),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: ListTile(
+                          leading: CategoryServices.iconFromCategory(
+                              product['category']),
+                          title: Text(product['productName']),
+                          subtitle: Text(
+                              '${localizations.category}: ${localizations.translateCategory(product['category'])}'),
+                          trailing: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                  '${localizations.quantity}: ${product['quantitySelected']?.toStringAsFixed(3)} kg'),
+                              Text(
+                                  '${localizations.price}: €${product['price']}'),
+                            ],
                           ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: ListTile(
-                            leading: CategoryServices.iconFromCategory(
-                                product['category']),
-                            title: Text(product['productName']),
-                            subtitle: Text(
-                                '${localizations.category}: ${localizations.translateCategory(product['category'])}'),
-                            trailing: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                    '${localizations.quantity}: ${product['quantitySelected']?.toStringAsFixed(3)} kg'),
-                                Text(
-                                    '${localizations.price}: €${product['price']}'),
-                              ],
-                            ),
-                            textColor: Theme.of(context).colorScheme.onPrimary,
-                          ),
+                          textColor: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ],
           ),

@@ -23,10 +23,12 @@ class ViewMealsScreen extends StatefulWidget {
 }
 
 class ViewMealsScreenState extends State<ViewMealsScreen> {
+  List<Meal> filteredMeals = [];
   String selectedPeriod = 'week';
   String selectedMealType = 'All';
   String selectedMacronutrient = 'Energy';
   DateTime currentDate = DateTime.now();
+  bool _groupByDay = false; // Variabile per il raggruppamento per giorni
 
   // Liste di opzioni per tipo di pasto e macronutrienti
   final List<String> mealTypes = [
@@ -118,8 +120,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
         return mealDate.year == currentDate.year;
       }).toList();
     } else {
-      // Optionally handle cases where `selectedPeriod` doesn't match known periods
-      filteredMeals = meals; // or return an empty list if desired
+      filteredMeals = meals;
     }
 
     return filteredMeals;
@@ -296,9 +297,9 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
     mealTypeData.removeWhere((key, value) {
       if (value == 0.0) {
         mealColors.remove(key);
-        return true; // Rimuovi l'elemento
+        return true;
       }
-      return false; // Mantieni l'elemento
+      return false;
     });
 
     return mealTypeData.map((key, value) => MapEntry(
@@ -399,7 +400,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
               child: Text(AppLocalizations.of(context)!.noMealsFound));
         } else {
           final meals = snapshot.data!;
-          var filteredMeals = _filterMeals(meals);
+          filteredMeals = _filterMeals(meals);
           filteredMeals.sort((a, b) {
             final aDate = DateFormat('dd-MM-yyyy').parse(a.date);
             final bDate = DateFormat('dd-MM-yyyy').parse(b.date);
@@ -588,6 +589,8 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                           ),
                   ],
                 ),
+                // Pulsante per raggruppare i pasti per giorni
+
                 // Grafico a barre per le spese giornaliere
                 SizedBox(
                   height: 150,
@@ -616,97 +619,143 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                       ),
                     ),
                   ),
-
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _groupByDay = !_groupByDay;
+                      });
+                    },
+                    child: Text(_groupByDay
+                        ? AppLocalizations.of(context)!.ungroupMeals
+                        : AppLocalizations.of(context)!.groupMealsByDay),
+                  ),
+                ),
                 // Lista dei pasti
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: filteredMeals.map((meal) {
-                      var nameMeal = meal.mealType.toLowerCase();
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: nameMeal == 'breakfast'
-                                ? Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? AppColors.shoppingLight
-                                    : AppColors.shoppingDark
-                                : nameMeal == 'lunch'
-                                    ? Theme.of(context).brightness ==
-                                            Brightness.light
-                                        ? AppColors.addMealLight
-                                        : AppColors.addMealDark
-                                    : nameMeal == 'snack'
-                                        ? Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? AppColors.viewExpensesLight
-                                            : AppColors.viewExpensesDark
-                                        : Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? AppColors.inventoryLight
-                                            : AppColors.inventoryDark,
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              '${AppLocalizations.of(context)!.mealString(meal.mealType)} - €${meal.totalExpense.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary),
-                            ),
-                            trailing: SizedBox(
-                              width: 80, // Adjust the width as needed
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    meal.dayOfWeek,
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  Text(
-                                    meal.date,
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MealDetailScreen(meal: meal),
-                                ),
-                              ).then((returnedMeal) {
-                                if (returnedMeal != null) {
-                                  // Chiama la funzione desiderata, ad esempio updateMeal
-                                  _fetchMeals().then((meals) {
-                                    setState(() {
-                                      filteredMeals.clear();
-                                      filteredMeals.addAll(_filterMeals(meals));
-                                    });
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                  child: _groupByDay
+                      ? _buildGroupedMealsList(filteredMeals)
+                      : _buildMealsList(filteredMeals),
                 ),
               ],
             ),
           );
         }
       },
+    );
+  }
+
+  // Funzione per raggruppare i pasti per giorni
+  Map<String, List<Meal>> _groupMealsByDay(List<Meal> meals) {
+    final Map<String, List<Meal>> groupedMeals = {};
+
+    for (var meal in meals) {
+      final date = meal.date;
+      if (!groupedMeals.containsKey(date)) {
+        groupedMeals[date] = [];
+      }
+      groupedMeals[date]!.add(meal);
+    }
+
+    return groupedMeals;
+  }
+
+  // Costruisce la lista dei pasti raggruppati per giorni
+  Widget _buildGroupedMealsList(List<Meal> meals) {
+    final groupedMeals = _groupMealsByDay(meals);
+
+    return Column(
+      children: groupedMeals.entries.map((entry) {
+        final date = entry.key;
+        final mealsForDay = entry.value;
+
+        return ExpansionTile(
+          title: Text("${mealsForDay.first.dayOfWeek} $date"),
+          children: mealsForDay.map((meal) {
+            return _buildMealItem(meal);
+          }).toList(),
+        );
+      }).toList(),
+    );
+  }
+
+  // Costruisce la lista normale dei pasti
+  Widget _buildMealsList(List<Meal> meals) {
+    return Column(
+      children: meals.map((meal) {
+        return _buildMealItem(meal);
+      }).toList(),
+    );
+  }
+
+  // Costruisce un singolo elemento della lista dei pasti
+  Widget _buildMealItem(Meal meal) {
+    var nameMeal = meal.mealType.toLowerCase();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: nameMeal == 'breakfast'
+              ? Theme.of(context).brightness == Brightness.light
+                  ? AppColors.shoppingLight
+                  : AppColors.shoppingDark
+              : nameMeal == 'lunch'
+                  ? Theme.of(context).brightness == Brightness.light
+                      ? AppColors.addMealLight
+                      : AppColors.addMealDark
+                  : nameMeal == 'snack'
+                      ? Theme.of(context).brightness == Brightness.light
+                          ? AppColors.viewExpensesLight
+                          : AppColors.viewExpensesDark
+                      : Theme.of(context).brightness == Brightness.light
+                          ? AppColors.inventoryLight
+                          : AppColors.inventoryDark,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: ListTile(
+          title: Text(
+            '${AppLocalizations.of(context)!.mealString(meal.mealType)} - €${meal.totalExpense.toStringAsFixed(2)}',
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+          trailing: SizedBox(
+            width: 80,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  meal.dayOfWeek,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+                Text(
+                  meal.date,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ],
+            ),
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MealDetailScreen(meal: meal),
+              ),
+            ).then((returnedMeal) {
+              if (returnedMeal != null) {
+                _fetchMeals().then((meals) {
+                  setState(() {
+                    filteredMeals.clear();
+                    filteredMeals.addAll(_filterMeals(meals));
+                  });
+                });
+              }
+            });
+          },
+        ),
+      ),
     );
   }
 
@@ -759,6 +808,40 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                   AppLocalizations.of(context)!.getNutrientString(nutrient)))
               .toList(),
         ),
+      ),
+    );
+  }
+}
+
+// Schermata per visualizzare i pasti di un giorno specifico
+class DayMealsScreen extends StatelessWidget {
+  final List<Meal> meals;
+
+  const DayMealsScreen({Key? key, required this.meals}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.mealsForDay),
+      ),
+      body: ListView.builder(
+        itemCount: meals.length,
+        itemBuilder: (context, index) {
+          final meal = meals[index];
+          return ListTile(
+            title: Text(meal.mealType),
+            subtitle: Text('€${meal.totalExpense.toStringAsFixed(2)}'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MealDetailScreen(meal: meal),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
