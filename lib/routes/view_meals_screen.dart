@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart' as pie_chart;
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/main.dart';
 import 'package:tracker/services/app_colors.dart';
 import 'package:tracker/services/toast_notifier.dart';
 import 'package:flutter/cupertino.dart';
@@ -528,7 +529,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredMeals.map((meal) => meal.totalExpense).reduce((value, element) => value + element).toStringAsFixed(2)} €',
+                  '${selectedPeriod == 'week' ? '${AppLocalizations.of(context)!.weekOf} ${DateFormat('dd/MM/yyyy').format(currentDate.subtract(Duration(days: currentDate.weekday - 1)))}' : selectedPeriod == 'month' ? '${AppLocalizations.of(context)!.monthOf} ${DateFormat('MMMM yyyy', 'it_IT').format(currentDate)}' : '${currentDate.year}'} : ${filteredMeals.map((meal) => meal.totalExpense).reduce((value, element) => value + element).toStringAsFixed(2)} € (${(filteredMeals.map((meal) => meal.totalExpense).reduce((value, element) => value + element) / (filteredMeals.map((meal) => meal.date).toSet().length > 0 ? filteredMeals.map((meal) => meal.date).toSet().length : 1)).toStringAsFixed(2)} €)',
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -672,7 +673,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
         final mealsForDay = entry.value;
 
         return ExpansionTile(
-          title: Text("${mealsForDay.first.dayOfWeek} $date"),
+          title: Text("${mealsForDay.first.dayOfWeek} ${_formatDate(date)}"),
           children: mealsForDay.map((meal) {
             return _buildMealItem(meal);
           }).toList(),
@@ -730,7 +731,7 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
                 Text(
-                  meal.date,
+                  _formatDate(meal.date),
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 ),
@@ -810,6 +811,27 @@ class ViewMealsScreenState extends State<ViewMealsScreen> {
         ),
       ),
     );
+  }
+
+  // Aggiungi questa funzione per formattare la data
+  String _formatDate(String date) {
+    List<String> parts = date.split('-');
+    DateTime dateTime =
+        DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+
+    // Controlla la lingua corrente e formatta di conseguenza
+    if (MyAppState.currentLocale?.languageCode == 'it') {
+      return DateFormat('dd-MM-yyyy').format(dateTime); // Formato italiano
+    } else {
+      return DateFormat('yyyy-MM-dd').format(dateTime); // Formato inglese
+    }
+  }
+
+  // Aggiungi questa funzione per calcolare la media della spesa
+  double _calculateAverageExpense(List<Meal> meals) {
+    if (meals.isEmpty) return 0.0;
+    double total = meals.fold(0, (sum, meal) => sum + meal.totalExpense);
+    return total / meals.length;
   }
 }
 

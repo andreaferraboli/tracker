@@ -144,7 +144,7 @@ class _ProductAddedToMealState extends State<ProductAddedToMeal> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${AppLocalizations.of(context)!.selectedQuantity}: ${widget.selectedQuantity.toStringAsFixed(3)} kg',
+                    '${AppLocalizations.of(context)!.selectedQuantity}: ${(widget.selectedQuantity * 1000).toStringAsFixed(0)} g',
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).colorScheme.onPrimary,
