@@ -8,7 +8,6 @@ import requests
 categorie = [
     "drinks",
     "vegetables",
-    "legumes",
     "fruit",
     "dairy_products",
     "pasta_bread_rice",
@@ -25,7 +24,8 @@ categorie = [
 def get_categories_for_products(product_names):
     # Header e URL per la richiesta API
     headers = {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTg0OTM3MjMtYjBlYy00MTk3LTg3M2UtZWY1Mzk2YTgzY2UzIiwidHlwZSI6ImFwaV90b2tlbiJ9.MPYFcsuJEx8UJxYfr7xlZST4gsowHtg7CNFQ7ciP6_E"}
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTg0OTM3MjMtYjBlYy00MTk3LTg3M2UtZWY1Mzk2YTgzY2UzIiwidHlwZSI6ImFwaV90b2tlbiJ9.MPYFcsuJEx8UJxYfr7xlZST4gsowHtg7CNFQ7ciP6_E"
+    }
 
     url = "https://api.edenai.run/v2/workflow/02ee8630-3ee4-43f0-ae57-7d4876d3d95f/execution/"
     payload = {"listNameProducts": product_names, "listCategories": categorie}
@@ -44,12 +44,15 @@ def get_categories_for_products(product_names):
 
     if response.status_code == 200:
         try:
-            # Parsing della risposta per estrarre il testo generato
-            generated_text = response.json()['content']['results']['text__chat']['results'][0]['generated_text']
-            # Converti il testo JSON in una lista effettiva di categorie
+            response_data = response.json()
+            # Per sicurezza, se response_data è una stringa, la converto in dizionario
+            if isinstance(response_data, str):
+                response_data = json.loads(response_data)
+            # Estrai il campo generated_text dal percorso corretto
+            generated_text = response_data["content"]["results"]["text__chat"]["results"][0]["generated_text"]
             return json.loads(generated_text)
-        except (KeyError, json.JSONDecodeError) as e:
-            print(f"Errore nella risposta dell'API: {e}")
+        except (KeyError, IndexError, json.JSONDecodeError) as e:
+            print(f"Errore durante l'estrazione dei dati: {e}")
             return []
     else:
         print(f"Errore nella richiesta API: {response.status_code}")
@@ -72,37 +75,35 @@ def transform_product(item, category_map, index):
     if weight_selling_unit == 0:
         weight_selling_unit = weight_selling_
     return {
-        "unitWeight": float(weight_selling_unit)/1000,
+        "unitWeight": float(weight_selling_unit) / 1000,
         "purchaseDate": "",  # Data di acquisto, se disponibile
         "quantity": quantity_,
         "buyQuantity": 0,
         "quantityOwned": 0,
         "productId": str(product["productId"]),
         "totalPrice": round(product.get("price", 0) * quantity_, 2),
-        # Prezzo totale calcolato  # Prezzo totale calcolato
         "productName": product_name,
         "supermarket": "Eurospin",  # Supermercato, se disponibile
         "unit": product["productInfos"]["UNITA_DI_MISURA_FISCALE"],
         "price": product.get("price", 0),
         "unitPrice": product.get("price", 0) / quantity_,  # Prezzo per unità di peso
         "imageUrl": product["mediaURLMedium"],
-        "totalWeight": round(float(weight_selling_)/1000, 3),
+        "totalWeight": round(float(weight_selling_) / 1000, 3),
         "macronutrients": {
-            "Proteins": random.randint(0, 100),  # Valori casuali
+            "Proteins": random.randint(0, 100),
             "Carbohydrates": random.randint(0, 100),
             "Energy": random.randint(0, 1000),
             "Fiber": random.randint(0, 100),
             "Fats": random.randint(0, 100),
             "Sugars": random.randint(0, 100)
         },
-        "category": category,  # Assegna la categoria ricevuta o "Sconosciuta" come default
+        "category": category,
         "barcode": product["codeVariant"],
         "expirationDate": (datetime.now() + timedelta(days=random.randint(1, 365))).strftime('%Y-%m-%d'),
-        # Data scadenza casuale
         "store": "Eurospin",
-        "quantityUnitOwned": 0,  # Valore ipotetico
-        "quantityWeightOwned": 0.0,  # Valore ipotetico
-        "selectedQuantity": 0  # Valore ipotetico
+        "quantityUnitOwned": 0,
+        "quantityWeightOwned": 0.0,
+        "selectedQuantity": 0
     }
 
 
@@ -131,6 +132,6 @@ def transform_json_file(input_file, output_file):
 
 # Esegui la funzione
 input_file = 'products.json'  # Nome del file di input
-output_file = 'output.json'  # Nome del file di output
+output_file = 'output.json'     # Nome del file di output
 
 transform_json_file(input_file, output_file)

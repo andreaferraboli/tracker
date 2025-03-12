@@ -65,6 +65,7 @@ dependencies:
   collection: ^1.18.0
   path_provider: ^2.1.5
   permission_handler: ^11.3.1
+  file_saver: ^0.2.14
 
 dev_dependencies:
   flutter_test:

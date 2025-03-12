@@ -1,4 +1,7 @@
 import 'dart:io'; // Aggiunto per rilevare la piattaforma
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:file_saver/file_saver.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +146,27 @@ class _UserScreenState extends ConsumerState<UserScreen> {
     }
   }
 
+// Aggiorna la funzione per richiedere i permessi, inclusi quelli per la gestione dello storage esterno su Android.
+  Future<void> requestStoragePermission() async {
+    if (Platform.isAndroid) {
+      if (!await Permission.storage.isGranted) {
+        await Permission.storage.request();
+      }
+      // Richiede il permesso di gestione dello storage (disponibile su Android 11+)
+      if (!await Permission.manageExternalStorage.isGranted) {
+        await Permission.manageExternalStorage.request();
+      }
+    } else {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+    }
+  }
+
   Future<void> exportDataToJson() async {
+    await requestStoragePermission(); // Richiede i permessi
+
     try {
       // Ottieni i dati da tutti i provider
       final categories = ref.read(categoriesProvider.notifier).exportToJson();
@@ -155,6 +178,7 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       final stores = ref.read(storesProvider.notifier).exportToJson();
       final supermarketsList =
           ref.read(supermarketsListProvider.notifier).exportToJson();
+
       // Crea un oggetto JSON con tutti i dati
       final exportData = {
         'categories': json.decode(categories),
@@ -168,25 +192,28 @@ class _UserScreenState extends ConsumerState<UserScreen> {
 
       // Converti in stringa JSON
       final jsonString = json.encode(exportData);
-      bool dirDownloadExists = true;
-      Directory? directory;
-      if (Platform.isIOS) {
-        directory = await getDownloadsDirectory();
-      } else {
-        directory = Directory("/storage/emulated/0/Download/");
-        dirDownloadExists = await directory.exists();
-        if (!dirDownloadExists) {
-          directory = Directory("/storage/emulated/0/Downloads/");
-        }
-      }
-      final outputFile = File('${directory!.path}/FSF_food_tracker_data.json');
+      // Converte la stringa in byte
+      Uint8List jsonBytes = Uint8List.fromList(utf8.encode(jsonString));
 
-      await outputFile.writeAsString(jsonString);
-      ToastNotifier.showSuccess(context, 'Dati esportati con successo');
-      _showOpenFileDialog(outputFile);
+      // Utilizza FileSaver per salvare il file nella cartella Downloads
+      String? filePath = await FileSaver.instance.saveFile(
+        name: 'FSF_food_tracker_data',
+        bytes: jsonBytes,
+        ext: 'json',
+        mimeType: MimeType.other,
+      );
+
+      if (filePath != null && filePath.isNotEmpty) {
+        ToastNotifier.showSuccess(
+            context, 'Dati esportati con successo: $filePath');
+        // Se vuoi, puoi gestire ulteriori operazioni (apertura file, ecc.)
+      } else {
+        ToastNotifier.showError(
+            'Errore: il file non è stato salvato correttamente.');
+      }
     } catch (e) {
       print('Errore durante l\'esportazione dei dati: $e');
-      ToastNotifier.showError('$e');
+      ToastNotifier.showError(e.toString());
     }
   }
 
