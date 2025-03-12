@@ -252,6 +252,7 @@ class SupermarketScreenState extends ConsumerState<SupermarketScreen> {
         await productDocRef.update({
           'products': productsList,
         });
+        
       }
 
       final expenseData = {

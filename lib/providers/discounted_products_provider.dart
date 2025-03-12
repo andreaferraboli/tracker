@@ -39,7 +39,8 @@ class DiscountedProductsNotifier
             .doc(user.uid)
             .get();
 
-        if (snapshot.exists && snapshot.data() != null) {
+        if (snapshot.exists) {
+          print('Documento trovato per l\'utente: ${user.uid}');
           final data = snapshot.data()!;
           if (data['discounted_products'] != null) {
             final List<dynamic> productsData = data['discounted_products'];
@@ -47,11 +48,19 @@ class DiscountedProductsNotifier
                 .map((product) => DiscountedProduct.fromJson(product))
                 .toList();
             state = products;
+            print('Prodotti scontati caricati: ${products.length}');
+          } else {
+            print('Nessun prodotto scontato trovato nel documento.');
+            state =
+                []; // Imposta lo stato a un array vuoto se non ci sono prodotti
           }
+        } else {
+          print('Nessun documento trovato per l\'utente: ${user.uid}');
+          state =
+              []; // Imposta lo stato a un array vuoto se il documento non esiste
         }
       } catch (e) {
-        // Handle error
-        print('Error fetching discounted products: $e');
+        print('Errore durante il recupero dei prodotti scontati: $e');
       }
     }
   }

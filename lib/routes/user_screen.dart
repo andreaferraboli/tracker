@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tracker/services/toast_notifier.dart';
 import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 import 'package:file_picker/file_picker.dart';
@@ -204,7 +205,25 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       if (filePath != null && filePath.isNotEmpty) {
         ToastNotifier.showSuccess(
             context, 'Dati esportati con successo: $filePath');
-        // Se vuoi, puoi gestire ulteriori operazioni (apertura file, ecc.)
+        
+        // Mostra un dialog con la cartella dove è stato salvato il file
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('File Salvato'),
+              content: Text('Il file è stato salvato in: $filePath'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
       } else {
         ToastNotifier.showError(
             'Errore: il file non è stato salvato correttamente.');
