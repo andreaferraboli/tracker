@@ -96,6 +96,23 @@ class ProductSelectionScreenState
           filteredProducts = loadedProducts
               .where((product) => selectedCategories.contains(product.category))
               .toList(); // Lista filtrata
+
+          // Ordinamento dei prodotti
+          // Questo metodo di ordinamento confronta due prodotti, a e b.
+          // Viene creata una condizione per ciascun prodotto:
+          // aCondition è vera se la quantità di a è maggiore della quantità unità posseduta
+          // oppure se il peso posseduto di a è diverso da zero.
+          // bCondition funziona allo stesso modo per il prodotto b.
+          // Se entrambe le condizioni sono uguali, restituisce 0 (nessun cambiamento nell'ordine).
+          // Se aCondition è vera e bCondition è falsa, restituisce -1 (a precede b).
+          // Altrimenti, restituisce 1 (b precede a).
+          filteredProducts.sort((a, b) {
+            bool aCondition = a.quantity > a.quantityUnitOwned &&
+                (a.quantityWeightOwned / a.totalWeight != 0);
+            bool bCondition = b.quantity > b.quantityUnitOwned &&
+                (b.quantityWeightOwned / b.totalWeight != 0);
+            return aCondition == bCondition ? 0 : (aCondition ? -1 : 1);
+          });
         });
       } else {
         ToastNotifier.showError('Nessun documento trovato per l\'utente.');
@@ -290,7 +307,7 @@ class ProductSelectionScreenState
                 ((mealProduct.selectedQuantity / mealProduct.unitWeight)
                         .ceil() -
                     mealProduct.quantityUnitOwned);
-            if(product[globalQuantityOwned] == 0){
+            if (product[globalQuantityOwned] == 0) {
               product[globalQuantityUnitOwned] = 0;
             }
           }

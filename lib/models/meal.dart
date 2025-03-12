@@ -66,14 +66,17 @@ class Meal {
     List<String> parts = date.split('-'); // Divide la stringa in parti
     return int.parse(parts[0]); // Giorno è la prima parte
   }
+
   // Getter per ottenere il giorno della settimana in lettere
-String get dayOfWeek {
-  List<String> parts = date.split('-'); // Divide la stringa in parti
-  DateTime dateTime = DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
-  return DateFormat('EEEE', MyAppState.currentLocale?.languageCode).format(dateTime); // Ritorna il giorno della settimana in lettere lettere
-}
+  String get dayOfWeek {
+    List<String> parts = date.split('-'); // Divide la stringa in parti
+    DateTime dateTime =
+        DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+    return DateFormat('EEEE', MyAppState.currentLocale?.languageCode)
+        .format(dateTime); // Ritorna il giorno della settimana in lettere
+  }
+
   num get totalCalories {
     return macronutrients['Energy'] ?? 0;
   }
-
 }

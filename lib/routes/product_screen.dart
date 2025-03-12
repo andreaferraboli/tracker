@@ -9,6 +9,7 @@ import 'package:tracker/models/product.dart';
 import 'package:tracker/providers/discounted_products_provider.dart';
 import 'package:tracker/routes/add_product_screen.dart';
 import 'package:tracker/services/toast_notifier.dart';
+import 'package:tracker/providers/supermarkets_list_provider.dart';
 
 class ProductScreen extends ConsumerWidget {
   final Product product;
@@ -22,6 +23,14 @@ class ProductScreen extends ConsumerWidget {
     final discountedVersion = discountedProducts
         .where((p) => p.productId == product.productId)
         .firstOrNull;
+
+    // Initialize selectedSupermarket directly in the build method
+    String? selectedSupermarket = product
+        .supermarket; // Ensure your Product model has a supermarket field
+
+    // Lista di supermercati (puoi sostituirla con i tuoi dati)
+    final List<String> supermarkets =
+        ref.watch(supermarketsListProvider); // Usa il provider corretto
 
     void deleteProduct() async {
       User? user = FirebaseAuth.instance.currentUser;
@@ -169,37 +178,37 @@ class ProductScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Spacer(flex: 1),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
                 Expanded(
                   flex: 2,
-                  child: Column(
-                    children: [
-                      Text(
-                        '${AppLocalizations.of(context)!.unitPrice}: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
-                        style: isIOS
-                            ? CupertinoTheme.of(context).textTheme.textStyle
-                            : Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      if (discountedVersion != null)
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.discount,
-                              color: Colors.green,
-                              size: 14,
-                            ),
-                            Text(
-                              ': €${(discountedVersion.discountedPrice / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
-                              style: const TextStyle(
-                                color: Colors.green,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
+                  child: Text(
+                    '${AppLocalizations.of(context)!.unitPrice}: €${(product.price / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
+                    style: isIOS
+                        ? CupertinoTheme.of(context).textTheme.textStyle
+                        : Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
+                if (discountedVersion != null)
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.discount,
+                        color: Colors.green,
+                        size: 14,
+                      ),
+                      Text(
+                        ': €${(discountedVersion.discountedPrice / (product.quantity > 0 ? product.quantity : 1)).toStringAsFixed(3)}',
+                        style: const TextStyle(
+                          color: Colors.green,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
             const SizedBox(height: 16),
@@ -393,7 +402,9 @@ class ProductScreen extends ConsumerWidget {
                       Center(
                           child: Text(AppLocalizations.of(context)!
                               .getNutrientString(entry.key))),
-                      Center(child: Text('${entry.value}g')),
+                      Center(
+                          child: Text(
+                              '${entry.value} ${entry.key == 'Energy' ? 'kcal' : 'g'}')),
                     ],
                   ),
                 ),

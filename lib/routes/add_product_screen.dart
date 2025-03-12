@@ -14,6 +14,7 @@ import 'package:tracker/models/discounted_product.dart';
 import 'package:tracker/models/image_input.dart';
 import 'package:tracker/models/macronutrients_table.dart';
 import 'package:tracker/providers/discounted_products_provider.dart';
+import 'package:tracker/providers/supermarkets_list_provider.dart';
 
 import '../models/product.dart';
 import '../providers/stores_provider.dart';
@@ -87,6 +88,8 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
       TextEditingController();
   final TextEditingController _discountedQuantityWeightOwnedController =
       TextEditingController();
+  String? selectedSupermarket;
+  List<String> supermarkets = [];
 
   //aggiungi i controller per ogni campo di testo
 
@@ -96,6 +99,7 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
     _loadCategories();
     discountedProducts = ref.read(discountedProductsProvider);
     stores = ref.read(storesProvider);
+    supermarkets = ref.read(supermarketsListProvider);
     if (widget.product != null) {
       _productData['barcode'] = widget.product!.barcode;
       _productData['category'] = widget.product!.category;
@@ -122,11 +126,12 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
       selectedStore = widget.product!.store;
       discountedProduct = discountedProducts.firstWhereOrNull(
           (element) => element.productId == widget.product!.productId);
+      selectedSupermarket = widget.product!.supermarket;
     } else {
       _productData['supermarket'] =
           widget.supermarketName ?? ref.read(supermarketProvider);
+      selectedSupermarket = widget.supermarketName;
       _productData['unit'] = 'kg';
-
       _productData['purchaseDate'] = DateTime.now().toString();
       _productData['productId'] = UniqueKey().toString();
     }
@@ -1186,6 +1191,22 @@ class AddProductScreenState extends ConsumerState<AddProductScreen> {
                       const Divider(),
                     ],
                   ),
+                DropdownButton<String>(
+                  value: selectedSupermarket,
+                  hint: Text(AppLocalizations.of(context)!.selectSupermarket),
+                  items: supermarkets.map((String supermarket) {
+                    return DropdownMenuItem<String>(
+                      value: supermarket,
+                      child: Text(supermarket),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedSupermarket = newValue;
+                      _productData['supermarket'] = newValue ?? '';
+                    });
+                  },
+                ),
                 Row(
                   children: [
                     Flexible(

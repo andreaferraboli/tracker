@@ -62,6 +62,7 @@ class DiscountedProductsNotifier
       try {
         final currentProducts = [...state, product];
         state = currentProducts;
+        await _syncToFirebase();
       } catch (e) {
         print('Error adding discounted product: $e');
       }
@@ -74,6 +75,7 @@ class DiscountedProductsNotifier
       try {
         final currentProducts = [...state, ...products];
         state = currentProducts;
+        await _syncToFirebase();
       } catch (e) {
         print('Error adding discounted products: $e');
       }
@@ -87,6 +89,7 @@ class DiscountedProductsNotifier
         final currentProducts =
             state.where((p) => p.productId != productId).toList();
         state = currentProducts;
+        await _syncToFirebase();
       } catch (e) {
         print('Error removing discounted product: $e');
       }
@@ -107,6 +110,7 @@ class DiscountedProductsNotifier
             .toList();
 
         state = currentProducts;
+        await _syncToFirebase();
       } catch (e) {
         print('Error updating discounted products: $e');
       }
@@ -122,6 +126,7 @@ class DiscountedProductsNotifier
             .toList();
 
         state = currentProducts;
+        await _syncToFirebase();
       } catch (e) {
         print('Error updating discounted product: $e');
       }

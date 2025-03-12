@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Assicurati di avere il pacchetto flutter_localizations configurato
 import 'package:tracker/l10n/app_localizations.dart';
+import 'package:tracker/main.dart';
 import 'package:tracker/routes/product_screen.dart';
 import 'package:tracker/services/category_services.dart';
 import 'package:tracker/services/toast_notifier.dart';
+import 'package:intl/intl.dart';
 
 import '../models/meal.dart';
 import '../models/product.dart';
@@ -107,38 +109,58 @@ class MealDetailScreen extends StatelessWidget {
     }
   }
 
+  String _formatDate(String date) {
+    List<String> parts = date.split('-');
+    DateTime dateTime =
+        DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+    return DateFormat('dd MMMM yyyy', MyAppState.currentLocale?.languageCode)
+        .format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
+    final localizations =
+        AppLocalizations.of(context)!; // Ottieni l'istanza di AppLocalizations
 
     // Determina se la piattaforma è iOS
     final bool isIOS = Theme.of(context).platform == TargetPlatform.iOS;
 
+    // Aggiungi questa lista per definire l'ordine desiderato dei macronutrienti
+    final List<String> macronutrientOrder = [
+      'Energy',
+      'Fats',
+      'Saturated Fats',
+      'Carbohydrates',
+      'Sugars',
+      'Fiber',
+      'Proteins',
+    ];
+
     return Scaffold(
       appBar: isIOS
           ? CupertinoNavigationBar(
-        middle: Text(localizations.mealString(meal.mealType)),
-        trailing: GestureDetector(
-          onTap: () async {
-            await deleteMeal(meal, context);
-          },
-          child: const Icon(CupertinoIcons.trash, color: Colors.red),
-        ),
-      )
+              middle: Text(localizations.mealString(meal.mealType)),
+              trailing: GestureDetector(
+                onTap: () async {
+                  await deleteMeal(meal, context);
+                },
+                child: const Icon(CupertinoIcons.trash, color: Colors.red),
+              ),
+            )
           : AppBar(
-        titleSpacing: 0,
-        centerTitle: true,
-        title: Text(localizations.mealString(meal.mealType)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            color: Colors.red,
-            onPressed: () async {
-              await deleteMeal(meal, context);
-            },
-          ),
-        ],
-      ),
+              titleSpacing: 0,
+              centerTitle: true,
+              title: Text(localizations.mealString(meal.mealType)),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  color: Colors.red,
+                  onPressed: () async {
+                    await deleteMeal(meal, context);
+                  },
+                ),
+              ],
+            ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -146,7 +168,7 @@ class MealDetailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${localizations.date}: ${meal.date}',
+                '${localizations.date}: ${_formatDate(meal.date)}',
                 style: const TextStyle(fontSize: 18),
               ),
               const SizedBox(height: 8),
@@ -157,17 +179,24 @@ class MealDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 localizations.macronutrients,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Table(
                 border: TableBorder.all(color: Colors.grey, width: 0.5),
-                children: meal.macronutrients.entries.map((entry) {
-                  return _buildMacronutrientRow(
-                    localizations.getNutrientString(entry.key),
-                    '${entry.value.toStringAsFixed(2)} ${entry.key == 'Energy' ? 'kcal' : 'g'}',
-                  );
-                }).toList(),
+                children: macronutrientOrder
+                    .map((nutrient) {
+                      if (meal.macronutrients.containsKey(nutrient)) {
+                        return _buildMacronutrientRow(
+                          localizations.getNutrientString(nutrient),
+                          '${meal.macronutrients[nutrient]?.toStringAsFixed(2)} ${nutrient == 'Energy' ? 'kcal' : 'g'}',
+                        );
+                      }
+                      return null; // Ignora i macronutrienti non presenti
+                    })
+                    .whereType<TableRow>() // Filtra i null
+                    .toList(), // Convert to List<TableRow>
               ),
               const SizedBox(height: 16),
               Text(
@@ -177,12 +206,15 @@ class MealDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 localizations.products,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               ListView.builder(
-                shrinkWrap: true, // Add this to make the ListView shrink-wrap its content
-                physics: NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
+                shrinkWrap:
+                    true, // Add this to make the ListView shrink-wrap its content
+                physics:
+                    NeverScrollableScrollPhysics(), // Disable scrolling for the inner ListView
                 itemCount: meal.products.length,
                 itemBuilder: (context, index) {
                   final product = meal.products[index];
@@ -200,8 +232,8 @@ class MealDetailScreen extends StatelessWidget {
                         final List<dynamic> productsList =
                             snapshot['products'] ?? [];
                         existingProduct = productsList.firstWhere(
-                                (p) =>
-                            p['productId'] ==
+                            (p) =>
+                                p['productId'] ==
                                 meal.products[index]["idProdotto"],
                             orElse: () => null);
                         product = Product.fromJson(existingProduct);
@@ -232,7 +264,7 @@ class MealDetailScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                  '${localizations.quantity}: ${product['quantitySelected']?.toStringAsFixed(3)} kg'),
+                                  '${localizations.quantity}: ${((product['quantitySelected'] as double) * 1000).toStringAsFixed(0)} g'),
                               Text(
                                   '${localizations.price}: €${product['price']}'),
                             ],

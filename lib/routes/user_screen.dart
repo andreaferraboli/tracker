@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:tracker/services/toast_notifier.dart';
 import 'package:flutter/cupertino.dart'; // Aggiunto per i widget Cupertino
 import 'package:file_picker/file_picker.dart';
@@ -58,8 +57,7 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Esportazione completata'),
-          content:
-              Text('Vuoi aprire la cartella contenente il file in $directory?'),
+          content: Text('Vuoi aprire la cartella contenente il file in $directory?'),
           actions: <Widget>[
             TextButton(
               child: Text('Annulla'),
@@ -171,7 +169,7 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       // Ottieni i dati da tutti i provider
       final categories = ref.read(categoriesProvider.notifier).exportToJson();
       final discountedProducts =
-          ref.read(discountedProductsProvider.notifier).exportToJson();
+      ref.read(discountedProductsProvider.notifier).exportToJson();
       final expenses = ref.read(expensesProvider.notifier).exportToJson();
       final meals = ref.read(mealsProvider.notifier).exportToJson();
       final products = ref.read(productsProvider.notifier).exportToJson();
@@ -190,7 +188,7 @@ class _UserScreenState extends ConsumerState<UserScreen> {
         'supermarketsList': json.decode(supermarketsList),
       };
 
-      // Converti in stringa JSON
+      // Converte in stringa JSON
       final jsonString = json.encode(exportData);
       // Converte la stringa in byte
       Uint8List jsonBytes = Uint8List.fromList(utf8.encode(jsonString));
@@ -216,6 +214,7 @@ class _UserScreenState extends ConsumerState<UserScreen> {
       ToastNotifier.showError(e.toString());
     }
   }
+
 
   Future<void> importDataFromJson() async {
     try {
